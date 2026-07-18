@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: xi-backend
+    runtime: python
+    rootDir: xi
+    plan: free
+    buildCommand: "pip install -r requirements.txt || true"
+    startCommand: "python server.py"
+    healthCheckPath: /api/state
+    envVars:
+      - key: PORT
+        value: "8088"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: OPenCode_BASE_URL
+        value: "https://opencode.ai/go/v1"
+      - key: OPenCode_KEY
+        value: ""
+      - key: OPenCode_MODEL
+        value: "deepseek-v4-flash"
+      - key: XI_FREE_PER_DAY
+        value: "3"
+      - key: XI_CARDS
+        sync: false

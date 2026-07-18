@@ -33,23 +33,24 @@ python server.py
 start.bat
 ```
 
-`index.html` 顶部 `API_BASE = ''` 表示同域调后端。
-若前端和后端不同域，改成后端地址，如 `const API_BASE = 'https://xi-api.up.railway.app'`。
+`index.html` 顶部 `XI_API_BASE = ''` 表示同域调后端。
+若前端和后端不同域，改成后端地址，如 `const XI_API_BASE = 'https://xi-backend.onrender.com'`。
 
 ## 公网部署
 
-### 后端 → Railway（跑 server.py，连 opencode）
+### 后端 → Render（免费层，跑 server.py，连 opencode）
 
-1. 把本仓库推到 GitHub。
-2. Railway 新建项目 → Deploy from GitHub repo。
-3. Variables 里填 `.env.example` 的内容（PORT/HOST/XI_CARDS/OPenCode_*）。
-4. 部署完成后拿到域名，如 `https://xi-api.up.railway.app`。
+1. 注册 https://render.com （用 GitHub 登录）。
+2. New → Blueprint → 选本仓库（仓库根目录已有 `render.yaml`）。
+3. 在 `XI_CARDS` 变量填入你的卡密串（格式见 `.env.example`，其余变量已预填）。
+4. Create New Resources → 等待部署，拿到域名如 `https://xi-backend.onrender.com`。
+5. 免费层会休眠，首次访问需冷启动几秒，正常。
 
 ### 前端 → GitHub Pages（静态托管）
 
-1. 把仓库推到 `uskj.github.io`（或 `username.github.io` 的 `xi` 子目录）。
-2. 改 `index.html` 顶部 `API_BASE` 为后端域名：
-   `const API_BASE = 'https://xi-api.up.railway.app'`
+1. 仓库已推到 `uskj.github.io`（前端在 `xi/` 子目录）。
+2. 改 `index.html` 顶部 `XI_API_BASE` 为 Render 后端域名：
+   `const XI_API_BASE = 'https://xi-backend.onrender.com'`
 3. 开启 GitHub Pages（main 分支根目录）。
 4. 手机访问 `https://uskj.github.io/xi/` → 加到主屏即可离线使用。
 
@@ -64,6 +65,6 @@ start.bat
 - `index.html` — 前端（PWA，零依赖）
 - `server.py` — 后端（opencode 之手，配额/卡密/情绪分类/模型调用）
 - `sw.js` / `manifest.json` / `icon.svg` — PWA
-- `railway.json` / `Procfile` / `requirements.txt` — 部署配置
+- `railway.json` / `Procfile` / `requirements.txt` / `render.yaml` — 部署配置
 - `config.json` — 参考配置（前端已内置，不必读取）
 - `gen_codes.py` — 卡密生成器（部署者本地用）
