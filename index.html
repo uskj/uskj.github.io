@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f14">
+<title>息</title>
+<link rel="manifest" href="/manifest.json">
+<style>
+  :root{
+    --bg:#0d0f14; --bg2:#141821; --ink:#e9edf2; --sub:#8b93a3;
+    --line:rgba(255,255,255,.08);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    overflow:hidden;}
+  #app{height:100%;display:flex;flex-direction:column;max-width:520px;margin:0 auto;}
+
+  /* 顶部状态条 */
+  .topbar{display:flex;justify-content:space-between;align-items:center;
+    padding:14px 20px;font-size:13px;color:var(--sub);}
+  .breath-count{letter-spacing:.5px;}
+  .member-badge{color:#0d0f14;background:linear-gradient(135deg,#8fe0d8,#aeb6c4);
+    padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;
+    box-shadow:0 0 14px rgba(143,224,216,.4);}
+  .topbar-right{display:flex;align-items:center;gap:10px;}
+  .mute-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:2px 4px;line-height:1;}
+  .mute-btn:active{transform:scale(.9);}
+
+
+  /* 主舞台 */
+  .stage{flex:1;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:22px;padding:20px;position:relative;}
+
+  .halo-wrap{position:relative;width:min(68vw,260px);aspect-ratio:1;}
+  canvas{width:100%;height:100%;display:block;}
+  .halo-center{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;pointer-events:none;}
+  .halo-emo{font-size:44px;line-height:1;filter:drop-shadow(0 0 18px currentColor);}
+  .halo-role{margin-top:8px;font-size:14px;color:var(--ink);opacity:.9;font-weight:500;}
+
+  /* 微表达输入 */
+  .expr{width:100%;max-width:420px;}
+  .voices{display:flex;gap:8px;justify-content:center;margin-bottom:18px;}
+  .voice{padding:7px 14px;border-radius:20px;border:1px solid var(--line);
+    background:var(--bg2);color:var(--sub);font-size:13px;cursor:pointer;transition:.18s;}
+  .voice:active{transform:scale(.94);}
+  .voice.on{color:var(--ink);border-color:rgba(143,224,216,.5);background:rgba(143,224,216,.1);}
+  .moods{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:16px;}
+  .mood{width:46px;height:46px;border-radius:16px;border:1px solid var(--line);
+    background:var(--bg2);font-size:22px;display:flex;align-items:center;
+    justify-content:center;cursor:pointer;transition:.18s;}
+  .mood:active{transform:scale(.9);}
+  .mood.on{outline:2px solid currentColor;background:rgba(255,255,255,.06);}
+  textarea{width:100%;height:62px;resize:none;background:var(--bg2);
+    border:1px solid var(--line);border-radius:14px;color:var(--ink);
+    padding:12px 14px;font-size:15px;font-family:inherit;line-height:1.5;}
+  textarea:focus{outline:none;border-color:rgba(255,255,255,.2);}
+  textarea::placeholder{color:var(--sub);}
+
+  .btn-row{display:flex;gap:12px;margin-top:16px;width:100%;max-width:420px;}
+  .btn{flex:1;padding:15px;border:none;border-radius:16px;font-size:16px;
+    font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;}
+  .btn-primary{background:linear-gradient(135deg,#e9edf2,#aeb6c4);color:#0d0f14;}
+  .btn-primary:active{transform:scale(.97);}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--sub);flex:0 0 54px;}
+
+  /* 洞察卡片 */
+  .echo{position:absolute;inset:0;background:var(--bg);display:none;
+    flex-direction:column;justify-content:center;padding:26px 24px;gap:20px;}
+  .echo.show{display:flex;animation:fade .5s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  .echo-role{font-size:13px;color:var(--sub);letter-spacing:1px;}
+  .echo-insight{font-size:21px;line-height:1.6;font-weight:500;}
+  .echo-breath{font-size:15px;line-height:1.7;color:#cfe8ff;
+    background:rgba(207,232,255,.06);border-left:2px solid #cfe8ff;padding:14px 16px;border-radius:0 12px 12px 0;}
+  .echo-closing{font-size:14px;color:var(--sub);text-align:right;}
+  .echo-actions{display:flex;gap:10px;margin-top:6px;}
+  .echo-actions .btn{font-size:14px;padding:12px;}
+
+  /* 引导呼吸层 */
+  .breath-guide{position:absolute;inset:0;background:rgba(13,15,20,.96);
+    display:none;flex-direction:column;align-items:center;justify-content:center;gap:30px;z-index:5;}
+  .breath-guide.show{display:flex;}
+  .guide-canvas{width:min(70vw,240px);height:min(70vw,240px);}
+  .guide-text{font-size:26px;font-weight:600;letter-spacing:2px;}
+  .guide-hint{font-size:13px;color:var(--sub);}
+
+  /* 弹层 */
+  .modal{position:absolute;inset:0;background:rgba(13,15,20,.94);display:none;
+    flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:34px 26px;z-index:9;}
+  .modal.show{display:flex;}
+  .modal-emo{font-size:46px;filter:drop-shadow(0 0 20px #8fe0d8);}
+  .modal h3{margin:0;font-weight:600;font-size:22px;letter-spacing:1px;}
+  .modal-sub{margin:0;color:var(--sub);font-size:13px;text-align:center;line-height:1.6;}
+  .modal input{width:100%;max-width:320px;padding:14px;border-radius:12px;
+    border:1px solid var(--line);background:var(--bg2);color:var(--ink);font-size:15px;text-align:center;}
+  .modal input:focus{outline:none;border-color:rgba(143,224,216,.5);}
+  .link{color:var(--sub);font-size:12px;text-decoration:underline;cursor:pointer;}
+  .card-help{width:100%;max-width:340px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;font-size:12px;color:var(--sub);line-height:1.7;}
+  .card-help-title{color:var(--ink);font-weight:600;margin-bottom:4px;}
+  .card-steps{line-height:1.8;}
+  .card-demo{margin-top:6px;color:#8fe0d8;}
+  .card-demo b{color:var(--ink);letter-spacing:.5px;}
+  .trial-codes{width:100%;max-width:340px;text-align:center;}
+  .trial-title{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .trial-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+  .trial-code{padding:8px 14px;border-radius:20px;border:1px solid rgba(143,224,216,.35);
+    background:rgba(143,224,216,.08);color:#bfeee9;font-size:13px;cursor:pointer;transition:.15s;font-family:ui-monospace,monospace;}
+  .trial-code:active{transform:scale(.94);}
+  .trial-code:hover{border-color:rgba(143,224,216,.7);}
+  .toast{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+    background:rgba(255,255,255,.1);padding:10px 18px;border-radius:20px;font-size:13px;
+    opacity:0;transition:.3s;pointer-events:none;z-index:20;}
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+    <div class="topbar">
+      <span class="breath-count" id="count">今日呼吸 · 3/3</span>
+      <span class="topbar-right">
+        <span class="member-badge" id="member" style="display:none">会员</span>
+        <button class="mute-btn" id="muteBtn" title="静音切换">🔊</button>
+      </span>
+    </div>
+
+  <div class="stage">
+    <!-- 待机 / 微表达 -->
+    <div class="halo-wrap" id="haloWrap">
+      <canvas id="halo"></canvas>
+      <div class="halo-center">
+        <div class="halo-emo" id="haloEmo">🌿</div>
+        <div class="halo-role" id="haloRole">息</div>
+      </div>
+    </div>
+
+    <div class="expr">
+      <div class="voices" id="voices"></div>
+      <div class="moods" id="moods"></div>
+      <textarea id="msg" placeholder="说点什么，或者什么都不说，长按下方按钮叹口气…"></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="echoBtn">呼吸</button>
+        <button class="btn btn-ghost" id="sighBtn" title="长按叹气">😮‍💨</button>
+      </div>
+    </div>
+
+    <!-- 洞察 -->
+    <div class="echo" id="echo">
+      <div class="echo-role" id="eRole"></div>
+      <div class="echo-insight" id="eInsight"></div>
+      <div class="echo-breath" id="eBreath"></div>
+      <div class="echo-closing" id="eClosing"></div>
+      <div class="echo-actions">
+        <button class="btn btn-primary" id="breathBtn">跟着做 60 秒</button>
+        <button class="btn btn-ghost" id="replayBtn" style="flex:0 0 54px" title="再听一次">🔊</button>
+        <button class="btn btn-ghost" id="againBtn" style="flex:0 0 54px">↻</button>
+      </div>
+    </div>
+
+    <!-- 引导呼吸 -->
+    <div class="breath-guide" id="guide">
+      <canvas class="guide-canvas" id="guideCanvas"></canvas>
+      <div class="guide-text" id="guideText">吸气</div>
+      <div class="guide-hint" id="guideHint">跟着光环 · 4 秒</div>
+    </div>
+
+    <!-- 激活弹层 -->
+    <div class="modal" id="modal">
+      <div class="modal-emo">🌿</div>
+      <h3>解锁无限呼吸</h3>
+      <p class="modal-sub">每天 3 次免费呼吸，剩下的留给愿意慢慢来的人。</p>
+
+      <div class="card-help">
+        <div class="card-help-title">怎么拿卡密？</div>
+        <div class="card-steps">
+          ① 关注「漫庐智园」· ② 在社群里领一张体验码 · ③ 粘贴到下面激活
+        </div>
+        <div class="card-demo">体验码长这样：<b>72-xi9823471235</b>（数字-xi开头）</div>
+      </div>
+
+      <input id="cardInput" placeholder="粘贴卡密，如 72-xi9823471235" />
+      <button class="btn btn-primary" id="activateBtn">解锁呼吸</button>
+
+      <div class="trial-codes">
+        <div class="trial-title">先试用一张（点一下自动填）：</div>
+        <div class="trial-list" id="trialList"></div>
+      </div>
+
+      <span class="link" id="skipLink">先这样，我待会儿再来 →</span>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+
+// ══ API 基地址 ══
+// 本地预览：留空 ''（相对路径，同域调 server.py）
+// 公网部署：改成你的后端地址，如 'https://xi-api.up.railway.app'
+// 前端永远只调 /api/echo 等普通接口，看不到背后的 opencode。
+const API_BASE = '';
+
+let selectedMood = null;
+let curRole = null;
+let sighTimer = null;
+let selectedVoice = localStorage.getItem('xi_voice') || 'gentle';
+let muted = localStorage.getItem('xi_muted') === '1';
+
+// ── 语音朗读（浏览器原生，零依赖，离线可用）──
+// 语言模式 → 朗读嗓音偏好
+const VOICE_PREF = {
+  gentle:  {rate:0.85, pitch:1.15, kw:['Xiaoxiao','Yaoyao','female','晓']},
+  sister:  {rate:0.82, pitch:1.0,  kw:['Xiaoyi','Yunyang','female','雅']},
+  charming:{rate:0.9,  pitch:0.8,  kw:['Yunxi','male','云','男']},
+};
+let synthVoices = [];
+function loadVoices(){ if('speechSynthesis' in window){ synthVoices = speechSynthesis.getVoices(); } }
+if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function pickVoice(pref){
+  if(!synthVoices.length) return null;
+  for(const k of pref.kw){ const v=synthVoices.find(x=>x.lang && x.lang.startsWith('zh') && x.name.includes(k)); if(v) return v; }
+  return synthVoices.find(x=>x.lang && x.lang.startsWith('zh')) || null;
+}
+function speak(text){
+  if(muted || !('speechSynthesis' in window) || !text) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    const pref = VOICE_PREF[selectedVoice] || VOICE_PREF.gentle;
+    u.rate = pref.rate; u.pitch = pref.pitch;
+    const v = pickVoice(pref); if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+$('#muteBtn').textContent = muted ? '🔇' : '🔊';
+$('#muteBtn').onclick = ()=>{ muted=!muted; localStorage.setItem('xi_muted', muted?'1':'0');
+  $('#muteBtn').textContent = muted ? '🔇' : '🔊'; if(muted && 'speechSynthesis' in window) speechSynthesis.cancel(); };
+
+// ══ 「息」前端：所有逻辑在浏览器，模型调用封在后端 server（opencode 之手）══
+// 前端只调 /api/echo /api/activate /api/state，永远看不到背后的 opencode。
+const api = p => API_BASE + p;
+
+// ── 状态（从后端拉取配置与配额）──
+async function loadState(){
+  try{
+    const d = await (await fetch(api('/api/state'))).json();
+    renderVoices(d.voices||[]);
+    renderMoods(d.roles||[]);
+    renderTrialCodes(d.trial_codes||[]);
+    updateCount(d.remain, d.member, d.free_per_day);
+    if(d.member) $('#member').style.display='inline';
+  }catch(e){
+    showToast('连接呼吸服务失败，稍后再来');
+  }
+}
+function renderVoices(voices){
+  const box=$('#voices'); box.innerHTML='';
+  if(!voices.length){ selectedVoice=''; return; }
+  if(!voices.some(v=>v.key===selectedVoice)) selectedVoice=voices[0].key;
+  voices.forEach(v=>{
+    const b=document.createElement('div');
+    b.className='voice'+(v.key===selectedVoice?' on':'');
+    b.textContent=v.name;
+    b.onclick=()=>{ selectedVoice=v.key; localStorage.setItem('xi_voice',v.key);
+      document.querySelectorAll('.voice').forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+    box.appendChild(b);
+  });
+}
+function updateCount(remain, member, free){
+  $('#count').textContent = member ? '今日呼吸 · ∞' : `今日呼吸 · ${remain}/${free}`;
+}
+function renderMoods(roles){
+  const box = $('#moods'); box.innerHTML='';
+  roles.forEach(r=>{
+    const b=document.createElement('div');
+    b.className='mood'; b.textContent=r.emoji; b.style.color=r.color;
+    b.onclick=()=>{ selectedMood=r.key; document.querySelectorAll('.mood').forEach(x=>x.classList.remove('on')); b.classList.add('on'); };
+    box.appendChild(b);
+  });
+}
+
+// ── 呼吸光环动画（待机）──
+const halo = $('#halo'), hctx = halo.getContext('2d');
+function sizeCanvas(c){ const r=c.getBoundingClientRect(); const d=devicePixelRatio||1; c.width=r.width*d; c.height=r.height*d; return d; }
+let haloD = sizeCanvas(halo);
+function drawHalo(t){
+  const w=halo.width,h=halo.height,cx=w/2,cy=h/2;
+  hctx.clearRect(0,0,w,h);
+  const pulse = (Math.sin(t/1400)+1)/2;
+  const base = Math.min(w,h)*0.30;
+  const r = base + pulse*base*0.35;
+  const col = curRole ? curRole.color : '#8fe0d8';
+  const g=hctx.createRadialGradient(cx,cy,r*0.2,cx,cy,r*1.4);
+  g.addColorStop(0, hexA(col,0.28)); g.addColorStop(1, hexA(col,0));
+  hctx.fillStyle=g; hctx.beginPath(); hctx.arc(cx,cy,r*1.4,0,7); hctx.fill();
+  hctx.strokeStyle=hexA(col,0.55); hctx.lineWidth=2*haloD;
+  hctx.beginPath(); hctx.arc(cx,cy,r,0,7); hctx.stroke();
+  if(!curRole){ requestAnimationFrame(drawHalo); }
+}
+function hexA(hex,a){ const n=parseInt(hex.slice(1),16); const r=(n>>16)&255,g=(n>>8)&255,b=n&255; return `rgba(${r},${g},${b},${a})`; }
+drawHalo(0);
+
+// ── 发出 ──
+$('#echoBtn').onclick = doEcho;
+async function doEcho(){
+  const msg = $('#msg').value.trim();
+  const btn = $('#echoBtn'); btn.disabled=true;
+  showToast('正在听…');
+  try{
+    const r = await fetch(api('/api/echo'),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg, emotion:selectedMood, voice:selectedVoice})});
+    const d = await r.json();
+    if(!d.ok){
+      hideToast(); showModal(); btn.disabled=false; return;
+    }
+    const role = d.role;
+    curRole = role;
+    $('#haloEmo').textContent = role.emoji;
+    $('#haloEmo').style.color = role.color;
+    $('#haloRole').textContent = role.name;
+    $('#eRole').textContent = `${role.emoji} ${role.name}`;
+    $('#eInsight').textContent = d.insight;
+    $('#eBreath').textContent = d.breath;
+    $('#eClosing').textContent = d.closing;
+    $('#echo').classList.add('show');
+    speak([d.insight, d.breath, d.closing].filter(Boolean).join('。'));
+    updateCount(d.remain, d.member, 3);
+    if(d.member) $('#member').style.display='inline';
+    hideToast();
+  }catch(e){ showToast('连接呼吸服务失败，稍后再来'); }
+  btn.disabled=false;
+}
+
+// ── 叹气长按 ──
+const sighBtn=$('#sighBtn');
+sighBtn.addEventListener('touchstart',startSigh); sighBtn.addEventListener('mousedown',startSigh);
+sighBtn.addEventListener('touchend',endSigh); sighBtn.addEventListener('mouseup',endSigh); sighBtn.addEventListener('mouseleave',endSigh);
+function startSigh(e){ e.preventDefault(); sighBtn.style.transform='scale(.85)'; sighTimer=setTimeout(()=>{ $('#msg').value='（一声长长的叹息）'; flashesigh(); }, 700); }
+function endSigh(){ sighBtn.style.transform=''; clearTimeout(sighTimer); }
+function flashesigh(){ sighBtn.textContent='🌫️'; setTimeout(()=>sighBtn.textContent='😮‍💨',600); }
+
+// ── 引导呼吸 ──
+$('#breathBtn').onclick = startGuide;
+const gc=$('#guideCanvas'), gctx=gc.getContext('2d'); let guideD=sizeCanvas(gc);
+let guiding=false;
+function startGuide(){ $('#guide').classList.add('show'); guiding=true; guideLoop(0); }
+function guideLoop(t){
+  if(!guiding) return;
+  const cycle=12000; const p=(t%cycle)/cycle; // 0..1
+  const phase = p<0.333 ? 'in' : p<0.416 ? 'hold' : 'out';
+  const w=gc.width,h=gc.height,cx=w/2,cy=h/2;
+  gctx.clearRect(0,0,w,h);
+  let scale = phase==='in' ? (p/0.333) : phase==='out' ? (1-(p-0.416)/0.584) : 1;
+  scale = 0.35+scale*0.5;
+  const r=Math.min(w,h)*0.32*scale;
+  const g=gctx.createRadialGradient(cx,cy,r*0.3,cx,cy,r);
+  g.addColorStop(0,hexA('#cfe8ff',0.4)); g.addColorStop(1,hexA('#cfe8ff',0));
+  gctx.fillStyle=g; gctx.beginPath(); gctx.arc(cx,cy,r,0,7); gctx.fill();
+  gctx.strokeStyle=hexA('#cfe8ff',0.7); gctx.lineWidth=2*guideD; gctx.beginPath(); gctx.arc(cx,cy,r,0,7); gctx.stroke();
+  $('#guideText').textContent = phase==='in'?'吸气':phase==='hold'?'屏息':'呼气';
+  $('#guideHint').textContent = phase==='in'?'跟着光环 · 4 秒':phase==='hold'?'停住 · 2 秒':'放慢 · 6 秒';
+  const elapsed=(t%cycle);
+  if(elapsed<30 && Math.floor(t/cycle)!==guideLoop._n){ guideLoop._n=Math.floor(t/cycle); }
+  requestAnimationFrame(guideLoop);
+}
+$('#guide').addEventListener('click',()=>{ guiding=false; $('#guide').classList.remove('show'); });
+
+// ── 重新 ──
+$('#againBtn').onclick = ()=>{ if('speechSynthesis' in window) speechSynthesis.cancel(); $('#echo').classList.remove('show'); $('#msg').value=''; selectedMood=null; document.querySelectorAll('.mood').forEach(x=>x.classList.remove('on')); curRole=null; $('#haloEmo').textContent='🌿'; $('#haloEmo').style.color=''; $('#haloRole').textContent='息'; drawHalo(performance.now()); };
+$('#replayBtn').onclick = ()=>{ speak([$('#eInsight').textContent, $('#eBreath').textContent, $('#eClosing').textContent].filter(Boolean).join('。')); };
+
+// ── 激活 ──
+function showModal(){ $('#modal').classList.add('show'); }
+$('#skipLink').onclick=()=>$('#modal').classList.remove('show');
+$('#activateBtn').onclick=()=>doActivate($('#cardInput').value.trim());
+async function doActivate(code){
+  if(!code){showToast('先填卡密');return;}
+  try{
+    const d = await (await fetch(api('/api/activate'),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({code})})).json();
+    if(d.ok){ $('#modal').classList.remove('show'); $('#member').style.display='inline'; updateCount(999,true,3); showToast(d.msg); loadState(); }
+    else showToast(d.msg||'卡密无效');
+  }catch(e){ showToast('连接呼吸服务失败'); }
+}
+function renderTrialCodes(list){
+  const box=$('#trialList'); box.innerHTML='';
+  list.forEach(t=>{
+    const b=document.createElement('div'); b.className='trial-code';
+    b.textContent=`${t.label} · ${t.code}`;
+    b.onclick=()=>{ $('#cardInput').value=t.code; doActivate(t.code); };
+    box.appendChild(b);
+  });
+}
+
+// ── toast ──
+let toastT=null;
+function showToast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+function hideToast(){ $('#toast').classList.remove('show'); }
+
+// ── PWA 唤醒 ──
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+window.addEventListener('resize',()=>{ haloD=sizeCanvas(halo); guideD=sizeCanvas(gc); });
+
+loadState();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "息 · 呼吸式情绪按摩",
+  "short_name": "息",
+  "description": "随手可得的情绪按摩：一句话，一次被看穿，一段呼吸。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0f14",
+  "theme_color": "#0d0f14",
+  "orientation": "portrait",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}
+  ]
+}

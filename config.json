@@ -1,0 +1,94 @@
+{
+  "ai_key": "sk-pZ2INWBXGbZICrVaI22qviNNdS3p5kehAgrBHtfSC11qxeNY",
+  "ai_url": "https://apihub.agnes-ai.com/v1/chat/completions",
+  "ai_model": "agnes-2.0-flash",
+  "port": 8088,
+  "admin_password": "admin123",
+  "free_per_day": 3,
+  "cards": [
+    {
+      "hours": 24,
+      "code": "24-xi9823471234"
+    },
+    {
+      "hours": 72,
+      "code": "72-xi9823471235"
+    },
+    {
+      "hours": 198,
+      "code": "198-xi9823471236"
+    },
+    {
+      "hours": 24,
+      "code": "24-xi30b706d7"
+    }
+  ],
+  "trial_codes": [
+    {"label": "24小时体验", "code": "24-xi9823471234"},
+    {"label": "72小时体验", "code": "72-xi9823471235"},
+    {"label": "198小时体验", "code": "198-xi9823471236"}
+  ],
+  "voices": [
+    {"key": "gentle", "name": "温婉女生", "tone": "声音轻软、语速放缓，像深夜电台里贴着耳朵说话的姑娘，多用『呀、呢、喔』等软尾音，从不命令，只陪伴。"},
+    {"key": "sister", "name": "知性姐姐", "tone": "理性温柔、有书卷气，像刚泡好一盏茶坐你对面的成熟女性，先接住情绪再轻轻点拨，偶尔引用一两句诗或生活哲理。"},
+    {"key": "charming", "name": "迷人帅哥", "tone": "低沉磁性、带点玩世不恭的松弛感，像懂你又爱逗你的男孩，用轻松调侃化解沉重，但关键时刻很认真。"}
+  ],
+  "roles": [
+    {
+      "key": "anger",
+      "name": "火焰守护者",
+      "color": "#ff6a3d",
+      "emoji": "🔥",
+      "seed": "火星藤蔓缠绕枯木，微微发亮"
+    },
+    {
+      "key": "fear",
+      "name": "迷雾行者",
+      "color": "#9b8cff",
+      "emoji": "🌫️",
+      "seed": "夜间发光的藤类，若隐若现"
+    },
+    {
+      "key": "sad",
+      "name": "深海潜水员",
+      "color": "#3d7bff",
+      "emoji": "🌊",
+      "seed": "蓝色蕨类在水下轻轻摇曳"
+    },
+    {
+      "key": "joy",
+      "name": "彩虹编织者",
+      "color": "#ff7ad9",
+      "emoji": "🌈",
+      "seed": "蔓延的七彩小花"
+    },
+    {
+      "key": "disgust",
+      "name": "荆棘守望者",
+      "color": "#7bbf6a",
+      "emoji": "🌵",
+      "seed": "仙人掌与荆棘，安静守卫"
+    },
+    {
+      "key": "surprise",
+      "name": "破晓者",
+      "color": "#ffce4d",
+      "emoji": "🌅",
+      "seed": "瞬间绽放的金色花朵"
+    },
+    {
+      "key": "anticip",
+      "name": "星轨航行者",
+      "color": "#cfe8ff",
+      "emoji": "🌠",
+      "seed": "螺旋上升的银白藤蔓"
+    },
+    {
+      "key": "calm",
+      "name": "湖面映照者",
+      "color": "#8fe0d8",
+      "emoji": "🪷",
+      "seed": "水中睡莲，涟漪平静"
+    }
+  ]
+}
