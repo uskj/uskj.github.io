@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0d0f14">
 <title>息</title>
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="manifest.json">
 <style>
   :root{
     --bg:#0d0f14; --bg2:#141821; --ink:#e9edf2; --sub:#8b93a3;
@@ -202,9 +202,10 @@ const $ = s => document.querySelector(s);
 
 // ══ API 基地址 ══
 // 本地预览：留空 ''（相对路径，同域调 server.py）
-// 公网部署：改成你的后端地址，如 'https://xi-api.up.railway.app'
+// 公网部署：把后端地址填到下面 XI_API_BASE，如 'https://xi-api.up.railway.app'
 // 前端永远只调 /api/echo 等普通接口，看不到背后的 opencode。
-const API_BASE = '';
+const XI_API_BASE = ''; // ← 部署后改这里为 Railway 后端域名
+const API_BASE = (typeof XI_API_BASE === 'string' && XI_API_BASE) ? XI_API_BASE.replace(/\/$/, '') : '';
 
 let selectedMood = null;
 let curRole = null;
@@ -404,7 +405,7 @@ function showToast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('sh
 function hideToast(){ $('#toast').classList.remove('show'); }
 
 // ── PWA 唤醒 ──
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
 window.addEventListener('resize',()=>{ haloD=sizeCanvas(halo); guideD=sizeCanvas(gc); });
 
 loadState();
