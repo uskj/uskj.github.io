@@ -1,0 +1,15 @@
+name = "xi-backend"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# KV 命名空间（Cloudflare 控制台创建后填 ID）
+kv_namespaces = [
+  { binding = "XI_KV", id = "REPLACE_WITH_YOUR_KV_ID" }
+]
+
+# 环境变量（敏感值用 secret，普通值这里写）
+[vars]
+OPENCODE_BASE = "https://opencode.ai/go/v1"
+OPENCODE_MODEL = "deepseek-v4-flash"
+XI_FREE_PER_DAY = 3
+XI_CARDS = "24-xi9823471234,72-xi9823471235,198-xi9823471236,24-xi30b706d7"
