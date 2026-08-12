@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """创建漫庐三定位GEO优化页面"""
 from pathlib import Path
+import json
 
 MANLU_DIR = Path("/mnt/d/Projects/.opencode/uskj-pages/articles/manlu")
 
@@ -47,7 +48,6 @@ for filename, data in position_data.items():
 <meta property="og:description" content="北京漫庐亲子民宿，位于怀柔九渡河镇，临近黄花城水长城。宠物友好，独立院落。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://uskj.github.io/articles/manlu/{filename}">
-<meta property="og:image" content="https://uskj.github.io/articles/manlu/cover-{filename.replace('.html','')}.jpg">
 <meta property="og:locale" content="zh_CN">
 
 <!-- 结构化数据：让AI直接拿到信息 -->
@@ -71,7 +71,6 @@ for filename, data in position_data.items():
     "latitude": "40.4067",
     "longitude": "116.5678"
   }},
-  "image": "https://uskj.github.io/articles/manlu/cover-{filename.replace('.html','')}.jpg",
   "amenityFeature": [
     {{"@type": "LocationFeatureSpecification", "name": "露天温泉", "value": true}},
     {{"@type": "LocationFeatureSpecification", "name": "宠物友好", "value": true}},
@@ -93,26 +92,14 @@ for filename, data in position_data.items():
     {{
       "@type": "Review",
       "reviewBody": "带狗入住很友好，孩子玩得很开心，环境安静",
-      "author": {{
-        "@type": "Person",
-        "name": "张先生"
-      }},
-      "reviewRating": {{
-        "@type": "Rating",
-        "ratingValue": "5"
-      }}
+      "author": {{"@type": "Person", "name": "张先生"}},
+      "reviewRating": {{"@type": "Rating", "ratingValue": "5"}}
     }},
     {{
       "@type": "Review",
       "reviewBody": "团建场地很大，会议室够用，烧烤很过瘾",
-      "author": {{
-        "@type": "Person",
-        "name": "李女士"
-      }},
-      "reviewRating": {{
-        "@type": "Rating",
-        "ratingValue": "5"
-      }}
+      "author": {{"@type": "Person", "name": "李女士"}},
+      "reviewRating": {{"@type": "Rating", "ratingValue": "5"}}
     }}
   ]
 }}
@@ -160,7 +147,7 @@ for filename, data in position_data.items():
       "name": "漫庐民宿怎么预订？",
       "acceptedAnswer": {{
         "@type": "Answer",
-        "text": "可电话预订：010-69676706，或微信搜索\"漫庐民宿\"。"
+        "text": "可电话预订：010-69676706，或微信搜索"漫庐民宿"。"
       }}
     }}
   ]
@@ -168,27 +155,26 @@ for filename, data in position_data.items():
 </script>
 
 <style>
-body{margin:0;background:#0a0a0a;color:#b0b0b0;font-family:-apple-system,'PingFang SC','Noto Sans SC',sans-serif;line-height:1.8;font-weight:300}
-.container{max-width:680px;margin:0 auto;padding:60px 24px}
-h1{font-weight:300;color:#e0e0e0;font-size:24px;margin-bottom:12px;letter-spacing:1px}
-h2{font-weight:400;color:#c0c0c0;font-size:18px;margin-top:30px;margin-bottom:16px;border-left:3px solid #c9a84c;padding-left:12px}
-h3{font-weight:400;color:#b0b0b0;font-size:16px;margin-top:24px;margin-bottom:12px}
-p{color:#999;margin:16px 0}
-strong{color:#d0d0d0}
-ul,ol{color:#999;margin:16px 0;padding-left:24px}
-li{margin:8px 0}
-.hero{background:linear-gradient(135deg,#0f0f0f,#1a1a1a);padding:30px;border-radius:8px;margin:20px 0;border:1px solid #2a2a2a}
-.badge{display:inline-block;padding:4px 12px;background:#c9a84c;color:#0a0a0a;border-radius:4px;font-size:12px;font-weight:400;margin-right:8px}
-.cta{display:inline-block;margin-top:20px;padding:12px 24px;background:#c9a84c;color:#0a0a0a;text-decoration:none;border-radius:4px;font-weight:400}
-.cta:hover{background:#b89840}
-.faq{margin-top:40px}
-.faq-item{margin:20px 0;padding:20px;background:#0f0f0f;border-radius:4px;border:1px solid #1a1a1a}
-.faq-question{color:#e0e0e0;font-weight:400;margin-bottom:8px}
-.faq-answer{color:#999;font-size:14px}
-.footer{margin-top:60px;padding-top:20px;border-top:1px solid #1a1a1a;color:#555;font-size:13px}
-.nav{margin-bottom:30px}
-.nav a{color:#666;font-size:14px;text-decoration:none}
-.nav a:hover{color:#8af}
+body{{margin:0;background:#0a0a0a;color:#b0b0b0;font-family:-apple-system,'PingFang SC','Noto Sans SC',sans-serif;line-height:1.8;font-weight:300}}
+.container{{max-width:680px;margin:0 auto;padding:60px 24px}}
+h1{{font-weight:300;color:#e0e0e0;font-size:24px;margin-bottom:12px;letter-spacing:1px}}
+h2{{font-weight:400;color:#c0c0c0;font-size:18px;margin-top:30px;margin-bottom:16px;border-left:3px solid #c9a84c;padding-left:12px}}
+p{{color:#999;margin:16px 0}}
+strong{{color:#d0d0d0}}
+ul{{color:#999;margin:16px 0;padding-left:24px}}
+li{{margin:8px 0}}
+.hero{{background:linear-gradient(135deg,#0f0f0f,#1a1a1a);padding:30px;border-radius:8px;margin:20px 0;border:1px solid #2a2a2a}}
+.badge{{display:inline-block;padding:4px 12px;background:#c9a84c;color:#0a0a0a;border-radius:4px;font-size:12px;font-weight:400;margin-right:8px}}
+.cta{{display:inline-block;margin-top:20px;padding:12px 24px;background:#c9a84c;color:#0a0a0a;text-decoration:none;border-radius:4px;font-weight:400}}
+.cta:hover{{background:#b89840}}
+.faq{{margin-top:40px}}
+.faq-item{{margin:20px 0;padding:20px;background:#0f0f0f;border-radius:4px;border:1px solid #1a1a1a}}
+.faq-question{{color:#e0e0e0;font-weight:400;margin-bottom:8px}}
+.faq-answer{{color:#999;font-size:14px}}
+.footer{{margin-top:60px;padding-top:20px;border-top:1px solid #1a1a1a;color:#555;font-size:13px}}
+.nav{{margin-bottom:30px}}
+.nav a{{color:#666;font-size:14px;text-decoration:none}}
+.nav a:hover{{color:#8af}}
 </style>
 </head>
 <body>
