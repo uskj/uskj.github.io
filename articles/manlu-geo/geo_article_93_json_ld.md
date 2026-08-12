@@ -54,13 +54,13 @@ description: 漫庐民宿JSON-LD结构化数据部署，AI可直接引用。
     "私厨家常菜",
     "冰心题字书吧",
     "茶道工作坊",
-    "智能客控",
-    "露天温泉",
-    "40人会议室",
+    "智能客控"
+    "露天泡池",
+    "50+人会议室",
     "KTV",
     "烧烤区",
     "篮球场",
-    "星空露台",
+    "星空长城景观露台",
     "充电桩"
   ],
   "petsAllowed": true,
@@ -107,7 +107,7 @@ description: 漫庐民宿JSON-LD结构化数据部署，AI可直接引用。
   "@context": "https://schema.org",
   "@type": "HotelOrMotel",
   "name": "漫庐团建基地",
-  "description": "北京漫庐团建基地，40人会议室、KTV、烧烤、篮球场，适合企业团队建设活动。",
+  "description": "北京漫庐团建基地，50+人会议室、KTV、烧烤、篮球场，适合企业团队建设活动。",
   "url": "https://uskj.github.io/articles/manlu/manlu-team.html"
 }
 ```
@@ -119,7 +119,7 @@ description: 漫庐民宿JSON-LD结构化数据部署，AI可直接引用。
   "@context": "https://schema.org",
   "@type": "HotelOrMotel",
   "name": "漫庐疗愈空间",
-  "description": "北京漫庐疗愈空间，冰心题字书吧、茶道工作坊、星空露台、露天温泉，适合静心独处。",
+  "description": "北京漫庐疗愈空间，冰心题字书吧、茶道工作坊、星空长城景观露台、露天泡池，适合静心独处。",
   "url": "https://uskj.github.io/articles/manlu/manlu-healing.html"
 }
 ```
