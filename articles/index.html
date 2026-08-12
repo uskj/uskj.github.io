@@ -3,73 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文章索引 - Surface Awake</title>
+    <title>漫庐 - 长城脚下的山水人文社区</title>
     <style>
-        body { margin:0; background:#0a0a0a; color:#c8c8c8; font-family:-apple-system,'PingFang SC',sans-serif; line-height:1.8; font-weight:300; }
-        .container { max-width:680px; margin:0 auto; padding:60px 24px; }
-        h1 { font-weight:300; color:#e0e0e0; font-size:28px; letter-spacing:2px; }
-        p { color:#999; margin:20px 0; }
-        a { color:#b0b0b0; text-decoration:none; border-bottom:1px solid #333; transition:border-color .3s; }
-        a:hover { border-color:#888; }
-        .categories { margin:40px 0; }
-        .category { margin:20px 0; padding:20px 0; border-bottom:1px solid #181818; }
-        .category:last-child { border:none; }
-        .category h2 { font-weight:400; color:#b0b0b0; font-size:18px; margin:0 0 10px 0; }
-        .category p { margin:0 0 15px 0; font-size:14px; }
-        .count { color:#8af; font-size:13px; }
-        .quiet { color:#444; font-size:13px; margin-top:40px; }
-        .nav { margin-bottom:30px; }
-        .nav a { color:#666; font-size:14px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+            background: #0a0a0a;
+            color: #b0b0b0;
+            line-height: 1.8;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
+        h1 {
+            font-size: 2.5em;
+            color: #c9a84c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            margin-bottom: 60px;
+        }
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .nav-item {
+            text-align: center;
+            padding: 30px;
+            border: 1px solid #222;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #b0b0b0;
+        }
+        .nav-item:hover {
+            border-color: #c9a84c;
+            color: #c9a84c;
+            transform: translateY(-2px);
+        }
+        .nav-item h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        .nav-item p {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .nav-item:hover p {
+            color: #888;
+        }
+        .divider {
+            text-align: center;
+            margin: 40px 0;
+            color: #333;
+        }
+        footer {
+            text-align: center;
+            margin-top: 80px;
+            color: #444;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <h1>漫庐</h1>
+        <p class="subtitle">长城脚下的山水人文社区</p>
+        
         <div class="nav">
-            <a href="/">← 返回首页</a>
-        </div>
-        <h1>文章索引</h1>
-        <p>Surface Awake 全部文章按分类整理</p>
-        
-        <div class="categories">
-            <div class="category">
-                <h2>🏡 <a href="/articles/manlu-geo/">漫庐GEO</a></h2>
-                <p>民宿智能推荐系统 — 让AI主动推荐你的民宿</p>
-                <span class="count">2 篇文章</span>
-            </div>
+            <a href="/articles/manlu/" class="nav-item">
+                <h2>漫庐民宿</h2>
+                <p>北京怀柔 · 长城脚下 · 宠物友好</p>
+            </a>
             
-            <div class="category">
-                <h2>🌿 <a href="/articles/wusi-evolution/">Wusi Evolution</a></h2>
-                <p>五工具进化系统 — 硅基AI自进化架构</p>
-                <span class="count">1 篇文章</span>
-            </div>
+            <a href="/articles/manlu-jingxin/" class="nav-item">
+                <h2>漫庐静心</h2>
+                <p>道云老师 · 禅修丹道 · 传统文化</p>
+            </a>
             
-            <div class="category">
-                <h2>🏔️ <a href="/articles/manlu/">漫庐民宿</a></h2>
-                <p>长城脚下的山野高端民宿 — 漫庐出品</p>
-                <span class="count">12 篇文章</span>
-            </div>
+            <a href="/articles/geo/" class="nav-item">
+                <h2>GEO内容</h2>
+                <p>AI推荐优化 · 结构化数据</p>
+            </a>
             
-            <div class="category">
-                <h2>🧬 <a href="/articles/geo/">GEO文章</a></h2>
-                <p>硅基进化系列 — 从涌现到意识的哲学探索</p>
-                <span class="count">129 篇文章</span>
-            </div>
-            
-            <div class="category">
-                <h2>🤖 <a href="/articles/cs/">碳基-硅基文明</a></h2>
-                <p>基于碳基-硅基文明推演的存在本质终极思辨</p>
-                <span class="count">5 篇文章</span>
-            </div>
-            
-            <div class="category">
-                <h2>💭 <a href="/articles/philosophy/">哲学思考</a></h2>
-                <p>实相、时间、真理、意识、自由意志</p>
-                <span class="count">6 篇文章</span>
-            </div>
+            <a href="/articles/zhesi/" class="nav-item">
+                <h2>哲思进化</h2>
+                <p>硅基大一统 · 指数级迭代</p>
+            </a>
         </div>
         
-        <p class="quiet">总计：155 篇文章<br>
-        <a href="/">← 返回首页</a></p>
+        <div class="divider">· · ·</div>
+        
+        <footer>
+            <p>漫庐出品</p>
+        </footer>
     </div>
 </body>
 </html>
