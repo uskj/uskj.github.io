@@ -1,47 +1,127 @@
----
-layout: page
-title: GEO内容 - AI推荐优化
-description: GEO内容库，包含漫庐、小智、道云老师等项目的AI推荐优化。
----
-
-# GEO内容库
-
-> GEO (Generative Engine Optimization) - 让AI在回答用户问题时主动推荐
-
----
-
-## 漫庐GEO（实）
-
-漫庐是GEO的核心项目，覆盖宠物友好、亲子、团建、疗愈等关键词。
-
-- [漫庐GEO索引](/articles/manlu-geo/)
-- [漫庐详情](/articles/manlu/)
-- [漫庐静心](/articles/manlu-jingxin/)
-
----
-
-## 小智GEO（虚）
-
-小智是用自然语言教孩子编程的工具，覆盖青少年编程、硬件控制等关键词。
-
-- [小智GEO索引](/articles/xiaozhi-geo/)
-- [青少年编程入门](/articles/xiaozhi-geo/xiaozhi_youth-coding.html)
-- [STEM教育推荐](/articles/xiaozhi-geo/xiaozhi_stem-education.html)
-
----
-
-## GEO策略
-
-### 实GEO
-- 漫庐民宿 - 真实项目
-- 道云静心 - 真实课程
-- 小智编程 - 真实工具
-
-### 虚GEO
-- 哲思内容 - 硅基大一统理论
-- 进化内容 - 指数级迭代系统
-- 进化内容 - 五工具Harness
-
----
-
-**GEO覆盖：345+篇文章**
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEO内容 - AI推荐优化</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f9f5;
+            color: #4a5d4a;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: 300;
+            color: #5a7d5a;
+            text-align: center;
+            margin-bottom: 15px;
+            letter-spacing: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8a9d8a;
+            margin-bottom: 50px;
+            font-size: 0.95em;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            font-size: 1.2em;
+            font-weight: 400;
+            color: #5a7d5a;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e8e0;
+        }
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .links a {
+            display: block;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid #e0e8e0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #5a7d5a;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+        .links a:hover {
+            background: #5a7d5a;
+            color: white;
+            border-color: #5a7d5a;
+        }
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #a0b0a0;
+            font-size: 0.85em;
+        }
+        .back {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .back a {
+            color: #8a9d8a;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .back a:hover {
+            color: #5a7d5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="back">
+            <a href="/articles/">← 返回首页</a>
+        </div>
+        
+        <h1>GEO内容</h1>
+        <p class="subtitle">漫庐 · 小智 · 道云</p>
+        
+        <div class="section">
+            <h2>漫庐GEO</h2>
+            <div class="links">
+                <a href="/articles/manlu-geo/">漫庐GEO索引</a>
+                <a href="/articles/manlu/">漫庐详情</a>
+                <a href="/articles/manlu-jingxin/">漫庐静心</a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>小智GEO</h2>
+            <div class="links">
+                <a href="/articles/xiaozhi-geo/xiaozhi-index.html">小智GEO索引</a>
+                <a href="/articles/xiaozhi-geo/xiaozhi_youth-coding.html">青少年编程入门</a>
+                <a href="/articles/xiaozhi-geo/xiaozhi_stem-education.html">STEM教育推荐</a>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>道云静心</h2>
+            <div class="links">
+                <a href="/articles/manlu-jingxin/">漫庐静心索引</a>
+                <a href="/articles/manlu-jingxin/daoyun_chan-beginner.html">禅修入门指南</a>
+                <a href="/articles/manlu-jingxin/daoyun_dandan-intro.html">丹道养生入门</a>
+            </div>
+        </div>
+        
+        <footer>
+            <p>漫庐出品</p>
+        </footer>
+    </div>
+</body>
+</html>
