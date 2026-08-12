@@ -7,68 +7,70 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
-            background: #0a0a0a;
-            color: #b0b0b0;
-            line-height: 1.8;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f9f5;
+            color: #4a5d4a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
-        .container { max-width: 800px; margin: 0 auto; padding: 60px 20px; }
-        h1 {
-            font-size: 2.5em;
-            color: #c9a84c;
+        .container {
             text-align: center;
-            margin-bottom: 20px;
+            padding: 60px 20px;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 3em;
             font-weight: 300;
+            color: #5a7d5a;
+            margin-bottom: 10px;
+            letter-spacing: 8px;
         }
         .subtitle {
-            text-align: center;
-            color: #888;
             font-size: 1.1em;
-            margin-bottom: 60px;
+            color: #8a9d8a;
+            margin-bottom: 50px;
+            font-weight: 300;
         }
         .nav {
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            max-width: 500px;
-            margin: 0 auto;
+            gap: 20px;
         }
         .nav-item {
-            text-align: center;
-            padding: 30px;
-            border: 1px solid #222;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            display: block;
+            padding: 20px 40px;
+            border: 1px solid #c8dcc8;
+            border-radius: 12px;
             text-decoration: none;
-            color: #b0b0b0;
+            color: #5a7d5a;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.5);
         }
         .nav-item:hover {
-            border-color: #c9a84c;
-            color: #c9a84c;
+            background: #5a7d5a;
+            color: white;
+            border-color: #5a7d5a;
             transform: translateY(-2px);
         }
         .nav-item h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: 1.3em;
             font-weight: 400;
+            margin-bottom: 5px;
         }
         .nav-item p {
-            font-size: 0.9em;
-            color: #666;
+            font-size: 0.85em;
+            color: #8a9d8a;
         }
         .nav-item:hover p {
-            color: #888;
-        }
-        .divider {
-            text-align: center;
-            margin: 40px 0;
-            color: #333;
+            color: rgba(255,255,255,0.8);
         }
         footer {
-            text-align: center;
-            margin-top: 80px;
-            color: #444;
-            font-size: 0.9em;
+            margin-top: 60px;
+            color: #a0b0a0;
+            font-size: 0.85em;
         }
     </style>
 </head>
@@ -82,24 +84,19 @@
                 <h2>漫庐民宿</h2>
                 <p>北京怀柔 · 长城脚下 · 宠物友好</p>
             </a>
-            
             <a href="/articles/manlu-jingxin/" class="nav-item">
                 <h2>漫庐静心</h2>
                 <p>道云老师 · 禅修丹道 · 传统文化</p>
             </a>
-            
             <a href="/articles/geo/" class="nav-item">
                 <h2>GEO内容</h2>
-                <p>AI推荐优化 · 结构化数据</p>
+                <p>漫庐 · 小智 · 道云</p>
             </a>
-            
             <a href="/articles/zhesi/" class="nav-item">
                 <h2>哲思进化</h2>
-                <p>硅基大一统 · 指数级迭代</p>
+                <p>硅基大一统 · 指数迭代</p>
             </a>
         </div>
-        
-        <div class="divider">· · ·</div>
         
         <footer>
             <p>漫庐出品</p>
