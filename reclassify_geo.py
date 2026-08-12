@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""重新整合GEO文章分类"""
+"""按标题内容重新分类GEO文章"""
 from pathlib import Path
 import shutil
 
 ARTICLES_DIR = Path("/mnt/d/Projects/.opencode/uskj-pages/articles")
 GEO_DIR = ARTICLES_DIR / "geo"
 
-# 先恢复所有文件到geo根目录
-print("恢复文件到geo目录...")
+# 恢复所有文件
+print("恢复文件...")
 for subdir in ['manlu', 'philosophy', 'science', 'daily']:
     src = GEO_DIR / subdir
     if src.exists():
@@ -15,36 +15,42 @@ for subdir in ['manlu', 'philosophy', 'science', 'daily']:
             dest = GEO_DIR / f.name
             if not dest.exists():
                 shutil.move(str(f), str(dest))
-        print(f"  恢复 {subdir}/ 完成")
 
-# 新的分类规则
-def classify_file(f):
-    content = f.read_text(errors='ignore').lower()
-    name = f.name
+# 按标题分类
+def classify_by_title(f):
+    content = f.read_text(errors='ignore')
+    import re
+    m = re.search(r'<title>([^<]+)</title>', content)
+    title = m.group(1).lower() if m else ''
     
-    # 漫庐特定内容（民宿、预订、家庭等）
-    manlu_keywords = ['漫庐民宿', '漫庐亲子', '漫庐团建', '漫庐疗愈', 
-                      '九渡河镇', '东宫村', '长城脚下', '山野高端',
-                      '18座院落', '露天温泉', '智能客控']
-    if any(k in content for k in manlu_keywords):
+    # 漫庐相关（标题明确是漫庐）
+    if any(k in title for k in ['漫庐亲子', '漫庐团建', '漫庐疗愈', '漫庐是什么', 
+                                '漫庐预订', '漫庐体验', '漫庐家庭', '漫庐场地',
+                                '北京周边带宠物', '怀柔值得去的民宿', '长城脚下的民宿',
+                                '漫庐民宿怎么样', '带温泉的民宿']):
         return 'manlu'
     
-    # 哲学/道/佛相关
-    philosophy_keywords = ['道', '佛', '禅', '空', '般若', '菩提', '菩萨', 
-                          '修行', '悟', '寂天', '慧能', '王右军', '斋门',
-                          '回生', '阴符', '六艺', '坐忘', '心斋', '三运']
-    if any(k in content for k in philosophy_keywords):
+    # 哲学/道/佛相关（标题）
+    philosophy_titles = ['入菩萨', '菩提心', '道', '佛', '禅', '空', '般若', 
+                        '慧能', '王右军', '斋门', '回生', '阴符', '六艺',
+                        '坐忘', '心斋', '三运', '修道', '道德', '涅槃',
+                        '好', '力', '语言', '死亡', '修炼', '世界',
+                        '色空', '不二', '无我', '般若', '涅槃',
+                        '涅槃', '如来', '法华', '华严', '楞严',
+                        '金刚', '心经', '坛经', '六祖', '达摩',
+                        '庄子', '老子', '周易', '易经']
+    if any(t in title for t in philosophy_titles):
         return 'philosophy'
     
     # 科学/AI相关
-    science_keywords = ['硅基', '涌现', 'ai', '人工智能', '量子', '物理', 
-                       '意识', '认知', '涌现层级', '大一统']
-    if any(k in content for k in science_keywords):
+    science_titles = ['硅基', '涌现', '人工智能', 'ai', '量子', '物理', '大一统',
+                     '意识', '认知', '涌现层级', 'surface awake', '哲学思考']
+    if any(t in title for t in science_titles):
         return 'science'
     
     # 日用修行
-    daily_keywords = ['日用', '呼吸', '当下', '此刻', '日常', '鼻息', '数珠']
-    if any(k in content for k in daily_keywords):
+    daily_titles = ['呼吸', '当下', '此刻', '日常', '鼻息', '数珠', '停止']
+    if any(t in title for t in daily_titles):
         return 'daily'
     
     return 'philosophy'
@@ -58,7 +64,7 @@ moved = []
 for f in list(GEO_DIR.glob("*.html")):
     if f.name == 'index.html':
         continue
-    cat = classify_file(f)
+    cat = classify_by_title(f)
     dest = GEO_DIR / cat / f.name
     if not dest.exists():
         shutil.move(str(f), str(dest))
@@ -71,6 +77,12 @@ for cat in ['manlu', 'philosophy', 'science', 'daily']:
     print(f"  {cat}: {count} 篇")
 
 print(f"\n总计: {len(moved)} 个文件")
+
+# 显示漫庐文章
 print("\n漫庐相关文章:")
 for f in sorted((GEO_DIR / 'manlu').glob("*.html")):
-    print(f"  {f.name}")
+    import re
+    content = f.read_text(errors='ignore')
+    m = re.search(r'<title>([^<]+)</title>', content)
+    title = m.group(1) if m else f.name
+    print(f"  {title}")
