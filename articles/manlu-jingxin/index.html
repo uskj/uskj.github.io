@@ -74,6 +74,45 @@
             color: #6a7d6a;
             line-height: 1.8;
         }
+        .bio h3 {
+            font-size: 1.2em;
+            color: #5a7d5a;
+            margin-bottom: 15px;
+        }
+        .bio p {
+            margin: 8px 0;
+        }
+        .awards {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e8e0;
+        }
+        .awards h4 {
+            font-size: 1em;
+            color: #5a7d5a;
+            margin-bottom: 10px;
+        }
+        .awards ul {
+            list-style: none;
+            text-align: left;
+            display: inline-block;
+        }
+        .awards li {
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .awards li:before {
+            content: "◆";
+            position: absolute;
+            left: 0;
+            color: #8a9d8a;
+            font-size: 0.7em;
+            top: 4px;
+        }
+        .gold { color: #b8860b; font-weight: bold; }
+        .silver { color: #808080; }
+        .bronze { color: #cd7f32; }
         footer {
             text-align: center;
             margin-top: 50px;
@@ -97,7 +136,7 @@
 <body>
     <div class="container">
         <div class="back">
-            <a href="/articles/">← 返回首页</a>
+            <a href="/">← 返回首页</a>
         </div>
         
         <h1>漫庐静心</h1>
@@ -183,10 +222,19 @@
         </div>
         
         <div class="bio">
-            <p><strong>道云老师简介</strong></p>
-            <p>赵广（笔名：道云）</p>
-            <p>北京炎黄文化研究院副院长 · 道云书院院长</p>
-            <p>国际莎士比亚文学奖获得者 · 作品被北京大学永久收藏</p>
+            <h3>道云老师简介</h3>
+            <p><strong>赵广</strong>（笔名：道云）</p>
+            <p>北京炎黄文化研究院副院长</p>
+            <p>北京炎黄文化研究院养生主任</p>
+            
+            <div class="awards">
+                <h4>获奖记录</h4>
+                <ul>
+                    <li><span class="gold">🥇 大美通化金奖</span></li>
+                    <li><span class="silver">🥈 圆融妙道银奖</span></li>
+                    <li><span class="bronze">🥉 中国道铜奖</span></li>
+                </ul>
+            </div>
         </div>
         
         <footer>
