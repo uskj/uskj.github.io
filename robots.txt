@@ -1,0 +1,25 @@
+# User-Agent: *
+Allow: /
+Allow: /*
+
+# AI爬虫允许访问
+User-agent: GPTBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# 禁止无意义爬虫
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+Sitemap: https://uskj.github.io/sitemap.xml
