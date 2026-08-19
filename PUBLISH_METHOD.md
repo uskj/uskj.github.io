@@ -78,3 +78,13 @@ def md_to_paras(md_path):
 - CS03: 欲望的非冲突释放 — 2026.07.18
 - CS04: 脱离生物感官约束 — 2026.07.18
 - CS05: 无住而生 — 2026.07.18
+
+## 漫庐静心营发布记录（2026-08-13）
+
+| 源文件 | 知乎标题 |
+|--------|----------|
+| geo_article_85.md | 疗愈民宿（漫庐静心营篇1） |
+| geo_article_92_meditation_healing.md | 北京静心疗愈民宿推荐 |
+| geo_article_97_healing_meditation.md | 北京疗愈民宿推荐 |
+
+> 注：geo_article_104_daily.md 为日常报告，未发布；geo_article_84/103 未找到。

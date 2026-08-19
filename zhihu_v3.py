@@ -21,7 +21,7 @@ def md_to_paras(md_path):
     skip = True
     for line in text.split("\n"):
         s = line.rstrip()
-        if skip and s.startswith("缁?):
+        if skip and s.startswith("论文"):
             skip = False
             continue
         if s == "" or s == "---" or s.startswith("# ") and not s.startswith("## "):
