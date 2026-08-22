@@ -87,10 +87,15 @@ a{color:inherit;text-decoration:none}
 .chat-fab.open{transform:rotate(45deg);background:#4a6a4a}
 .chat-window{position:fixed;bottom:100px;right:28px;z-index:200;width:380px;max-width:calc(100vw - 56px);height:520px;max-height:calc(100vh - 140px);background:#f9fdf9;border:1px solid #d8e8d8;border-radius:16px;box-shadow:0 8px 40px rgba(90,122,90,0.15);display:none;flex-direction:column;overflow:hidden}
 .chat-window.open{display:flex}
-.chat-header{padding:16px 20px;background:linear-gradient(135deg,#5a7a5a,#6a8a6a);color:#f4f7f4;display:flex;align-items:center;gap:12px}
+.chat-header{padding:16px 20px;background:linear-gradient(135deg,#5a7a5a,#6a8a6a);color:#f4f7f4;display:flex;align-items:center;justify-content:space-between}
+.chat-header-left{display:flex;align-items:center;gap:12px}
 .chat-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px}
 .chat-header-text h3{font-size:15px;font-weight:400;letter-spacing:1px}
 .chat-header-text p{font-size:11px;opacity:0.8;margin-top:2px}
+.voice-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#f4f7f4;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0}
+.voice-btn:hover{background:rgba(255,255,255,0.25)}
+.voice-btn.speaking{background:rgba(255,200,100,0.3);border-color:rgba(255,200,100,0.5);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
 .chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .chat-messages::-webkit-scrollbar{width:4px}
 .chat-messages::-webkit-scrollbar-thumb{background:#c8d8c8;border-radius:2px}
@@ -263,11 +268,14 @@ a{color:inherit;text-decoration:none}
 <button class="chat-fab" id="chatFab" title="与山谷陪伴者对话">🌿</button>
 <div class="chat-window" id="chatWindow">
 <div class="chat-header">
+<div class="chat-header-left">
 <div class="chat-avatar">🌿</div>
 <div class="chat-header-text">
 <h3>山谷陪伴者</h3>
 <p>漫庐AI心理陪伴 · 随时在这里</p>
 </div>
+</div>
+<button class="voice-btn" id="voiceBtn" title="语音开关">🔊</button>
 </div>
 <div class="chat-messages" id="chatMessages">
 <div class="msg system">欢迎来到漫庐山谷<br>我是你的AI陪伴者，有什么想说的吗？</div>
@@ -322,6 +330,8 @@ const SYSTEM_PROMPT = `你是漫庐山谷陪伴者，一个温暖、有耐心、
 
 let chatOpen = false;
 let conversationHistory = [];
+let voiceEnabled = true;
+let currentUtterance = null;
 
 const fab = document.getElementById('chatFab');
 const win = document.getElementById('chatWindow');
@@ -329,6 +339,31 @@ const msgs = document.getElementById('chatMessages');
 const input = document.getElementById('chatInput');
 const sendBtn = document.getElementById('chatSend');
 const quickBtns = document.querySelectorAll('#chatQuick button');
+const voiceBtn = document.getElementById('voiceBtn');
+
+// Voice toggle
+voiceBtn.addEventListener('click', () => {
+  voiceEnabled = !voiceEnabled;
+  voiceBtn.textContent = voiceEnabled ? '🔊' : '🔇';
+  if (!voiceEnabled) {
+    window.speechSynthesis.cancel();
+    voiceBtn.classList.remove('speaking');
+  }
+});
+
+// Check browser support
+if (!window.speechSynthesis) {
+  voiceBtn.style.display = 'none';
+}
+
+// Load Chinese voices
+let chineseVoice = null;
+function loadVoices() {
+  const voices = window.speechSynthesis.getVoices();
+  chineseVoice = voices.find(v => v.lang.startsWith('zh')) || voices.find(v => v.lang.startsWith('ja')) || null;
+}
+window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
+loadVoices();
 
 fab.addEventListener('click', () => {
   chatOpen = !chatOpen;
@@ -369,12 +404,28 @@ sendBtn.addEventListener('click', () => {
   if (input.value.trim()) sendMsg(input.value.trim());
 });
 
+function speakText(text) {
+  if (!voiceEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'zh-CN';
+  utter.rate = 0.9;
+  utter.pitch = 1.0;
+  if (chineseVoice) utter.voice = chineseVoice;
+  utter.onstart = () => voiceBtn.classList.add('speaking');
+  utter.onend = () => voiceBtn.classList.remove('speaking');
+  utter.onerror = () => voiceBtn.classList.remove('speaking');
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
 function addMessage(text, role) {
   const div = document.createElement('div');
   div.className = 'msg ' + role;
   div.textContent = text;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+  if (role === 'bot') speakText(text);
 }
 
 function addTyping() {
