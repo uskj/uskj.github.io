@@ -331,7 +331,10 @@ const SYSTEM_PROMPT = `你是漫庐山谷陪伴者，一个温暖、有耐心、
 let chatOpen = false;
 let conversationHistory = [];
 let voiceEnabled = true;
-let currentUtterance = null;
+let currentAudio = null;
+let ttsAbort = null;
+
+const TTS_API = 'http://127.0.0.1:18090/tts';
 
 const fab = document.getElementById('chatFab');
 const win = document.getElementById('chatWindow');
@@ -341,35 +344,45 @@ const sendBtn = document.getElementById('chatSend');
 const quickBtns = document.querySelectorAll('#chatQuick button');
 const voiceBtn = document.getElementById('voiceBtn');
 
-// Voice toggle
+// 检测 TTS 服务是否可用
+fetch(TTS_API.replace('/tts', '/health'), {mode:'no-cors'}).then(()=>{ttsAvailable=true}).catch(()=>{});
+
+// 语音开关
 voiceBtn.addEventListener('click', () => {
   voiceEnabled = !voiceEnabled;
   voiceBtn.textContent = voiceEnabled ? '🔊' : '🔇';
-  if (!voiceEnabled) {
-    window.speechSynthesis.cancel();
-    voiceBtn.classList.remove('speaking');
-  }
+  if (!voiceEnabled) stopTTS();
 });
 
-// Check browser support
-if (!window.speechSynthesis) {
-  voiceBtn.style.display = 'none';
+function stopTTS() {
+  if (ttsAbort) { try { ttsAbort.abort(); } catch(e) {} ttsAbort = null; }
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  voiceBtn.classList.remove('speaking');
 }
 
-// Load Chinese voices
-let chineseVoice = null;
-let femaleVoices = [];
-
-function loadVoices() {
-  const voices = window.speechSynthesis.getVoices();
-  // 优先选温柔女声： Xiaoxiao / Yunxi / Chinese female
-  femaleVoices = voices.filter(v =>
-    v.lang.startsWith('zh') && /female|xiaoxiao|yunxi|female/i.test(v.name)
-  );
-  chineseVoice = voices.find(v => v.lang.startsWith('zh'));
+function speakText(text) {
+  if (!voiceEnabled || !text.trim()) return;
+  stopTTS();
+  const clean = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9，。！？、；：""''（）《》「」、\s\n]/g, '').trim();
+  if (!clean) return;
+  if (ttsAvailable) {
+    ttsAbort = new AbortController();
+    voiceBtn.classList.add('speaking');
+    fetch(TTS_API, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({text: clean, session_id: ''}),
+      signal: ttsAbort.signal
+    }).then(r => r.json()).then(d => {
+      if (!d.ok) { stopTTS(); return; }
+      const audio = new Audio('data:audio/mp3;base64,' + d.data);
+      audio.onended = () => stopTTS();
+      audio.onerror = () => stopTTS();
+      currentAudio = audio;
+      audio.play().catch(() => stopTTS());
+    }).catch(() => stopTTS());
+  }
 }
-window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
-loadVoices();
 
 fab.addEventListener('click', () => {
   chatOpen = !chatOpen;
@@ -412,7 +425,6 @@ sendBtn.addEventListener('click', () => {
 
 // 按标点分句，自然停顿
 function chunkText(text) {
-  // 按 。！？ 分段
   return text.match(/[^。！？\n]+[。！？\n]?/g) || [text];
 }
 
@@ -423,24 +435,20 @@ function speakChunk(chunks, onSuccess) {
 
   const utter = new SpeechSynthesisUtterance(chunk);
   utter.lang = 'zh-CN';
-  utter.rate = 0.75;          // 放慢，更温柔
-  utter.pitch = 0.88;         // 略低，更柔和
-  if (femaleVoices.length > 0) utter.voice = femaleVoices[0];
-  else if (chineseVoice) utter.voice = chineseVoice;
+  utter.rate = 0.75;
+  utter.pitch = 0.88;
   utter.onstart = () => voiceBtn.classList.add('speaking');
   utter.onend = () => {
     voiceBtn.classList.remove('speaking');
-    // 句间停顿：标点越多停越久
     const pause = /[。！]/.test(chunk) ? 420 : /[！？]/.test(chunk) ? 280 : 180;
     setTimeout(() => speakChunk(chunks.slice(1), onSuccess), pause);
   };
   utter.onerror = () => { voiceBtn.classList.remove('speaking'); if (onSuccess) onSuccess(); };
-  currentUtterance = utter;
   window.speechSynthesis.speak(utter);
 }
 
-function speakText(text) {
-  if (!voiceEnabled || !window.speechSynthesis) return;
+function speakTextFallback(text) {
+  if (!voiceEnabled) return;
   window.speechSynthesis.cancel();
   voiceBtn.classList.remove('speaking');
   speakChunk(chunkText(text));
