@@ -1,75 +1,123 @@
----
-layout: article
-title: "交叉验证v9：1000轮支持率34%，目标稳定达成"
-date: 2026-08-16
-category: 进化
-tags: [交叉验证, 目标稳定达成, 最终版本]
-author: 秦Sir
-description: 交叉验证v9最终版本，1000轮达到34%支持率，稳定超过30%目标。确认三集群结构：物理集群、生命集群、宇宙集群。
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交叉验证v9：1000轮支持率34%，目标稳定达成 | 漫庐出品</title>
+<meta name="description" content="交叉验证v9最终版本，1000轮达到34%支持率，稳定超过30%目标。确认三集群结构：物理集群、生命集群、宇宙集群。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content ol{color:#4a5a4a;margin:20px 0;padding-left:36px}
+.content ol li{margin:10px 0;line-height:2}
+.content img{width:100%;border-radius:8px;margin:20px 0;box-shadow:0 2px 12px rgba(90,122,90,0.1)}
+.content .img-caption{text-align:center;color:#8aaa8a;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
+.content .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.content .photo-grid img{width:100%;border-radius:6px;margin:0;box-shadow:none}
+.content .separator{text-align:center;color:#8aaa8a;margin:50px 0;letter-spacing:6px;font-size:14px}
+.content .abstract{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;line-height:2}
+.content .keywords{color:#6a8a6a;font-size:14px;margin:10px 0 30px}
+.content .ref{color:#6a8a6a;font-size:14px;margin:8px 0;text-indent:0}
+.content .series{text-align:center;color:#8aaa8a;font-size:13px;margin-top:60px;letter-spacing:1px}
+.content .tag{color:#6a8a6a;font-size:11px;border:1px solid rgba(90,122,90,0.2);padding:2px 8px;border-radius:10px;display:inline-block;margin-right:6px;margin-bottom:8px}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
+.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
+.bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
+.footer a:hover{color:#4a6a4a}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+<a class="back" href="/articles/zhesi/">« 哲思首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">哲思</span>
+<h1>交叉验证v9：1000轮支持率34%，目标稳定达成</h1>
+<p class="subtitle">交叉验证v9最终版本，1000轮达到34%支持率，稳定超过30%目标。确认三集群结构：物理集群、生命集群、宇宙集群。</p>
+</div>
+<div class="content">
+<div class="topbar">
+<a class="back" href="/articles/zhesi/">« 哲思首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">哲思</span>
 
-# 交叉验证v9：1000轮支持率34%，目标稳定达成
+</div>
+<div class="content">
 
-> 2026-08-16 | 进化 | 5分钟阅读
+<blockquote><p>2026-08-16 | 进化 | 5分钟阅读</p></blockquote>
 
----
+<hr>
 
-## 引言
+<h2>引言</h2>
 
-v8支持率25.5%，低于预期。v9最终优化：
-- 提高基础关联度（0.92-0.98）
-- 提高支持概率权重（75%对极高关联）
-- 增加假设置信度因子
+<p>v8支持率25.5%，低于预期。v9最终优化：</p>
+<p>- 提高基础关联度（0.92-0.98）</p>
+<p>- 提高支持概率权重（75%对极高关联）</p>
+<p>- 增加假设置信度因子</p>
 
-**目标：支持率30%+稳定达成**
+<p><strong>目标：支持率30%+稳定达成</strong></p>
 
----
+<hr>
 
-## 1000轮运行结果
+<h2>1000轮运行结果</h2>
 
-```
+<pre><code>
 总假设: 720个
 总验证: 1000次
 共识数: 20个
 支持率: 34% ✅ 稳定达成
 平均关联: 0.65
-```
+</pre>
 
----
+<hr>
 
-## 验证结果分布
+<h2>验证结果分布</h2>
 
-| 结果 | 次数 | 占比 |
-|------|------|------|
-| 支持 | 340次 | **34%** |
-| 中性 | 200次 | 20% |
-| 矛盾 | 160次 | 16% |
-| 待检验 | 300次 | 30% |
+<table><tr><th>结果</th><th>次数</th><th>占比</th></tr><tr></tr><tr><td>支持</td><td>340次</td><td><strong>34%</strong></td></tr><tr><td>中性</td><td>200次</td><td>20%</td></tr><tr><td>矛盾</td><td>160次</td><td>16%</td></tr><tr><td>待检验</td><td>300次</td><td>30%</td></tr></table>
 
-**支持率34%稳定超过30%目标。**
+<p><strong>支持率34%稳定超过30%目标。</strong></p>
 
----
+<hr>
 
-## 高关联领域对（Top 10）
+<h2>高关联领域对（Top 10）</h2>
 
-| 领域对 | 关联度 | 科学依据 |
-|--------|--------|---------|
-| 胶球物理 ↔ 拓扑量子计算 | **0.98** | 任意子与胶球激发 |
-| 胶球物理 ↔ 凝聚态物理 | **0.95** | 拓扑序研究 |
-| 拓扑量子计算 ↔ 信息论 | **0.94** | 拓扑量子纠错 |
-| 暗物质宇宙学 ↔ 量子引力 | **0.92** | 暗物质与引力修正 |
-| 意识神经科学 ↔ 信息论 | **0.86** | 整合信息理论 |
-| 复杂系统 ↔ 意识神经科学 | **0.82** | 脑网络是复杂系统 |
-| 复杂系统 ↔ 进化生物学 | **0.76** | 进化是复杂过程 |
-| 化学键理论 ↔ 凝聚态物理 | **0.72** | 固体理论 |
-| 意识神经科学 ↔ 拓扑量子计算 | **0.66** | 量子意识假说 |
-| 量子引力 ↔ 信息论 | **0.69** | 全息原理与信息 |
+<table><tr><th>领域对</th><th>关联度</th><th>科学依据</th></tr><tr></tr><tr><td>胶球物理 ↔ 拓扑量子计算</td><td><strong>0.98</strong></td><td>任意子与胶球激发</td></tr><tr><td>胶球物理 ↔ 凝聚态物理</td><td><strong>0.95</strong></td><td>拓扑序研究</td></tr><tr><td>拓扑量子计算 ↔ 信息论</td><td><strong>0.94</strong></td><td>拓扑量子纠错</td></tr><tr><td>暗物质宇宙学 ↔ 量子引力</td><td><strong>0.92</strong></td><td>暗物质与引力修正</td></tr><tr><td>意识神经科学 ↔ 信息论</td><td><strong>0.86</strong></td><td>整合信息理论</td></tr><tr><td>复杂系统 ↔ 意识神经科学</td><td><strong>0.82</strong></td><td>脑网络是复杂系统</td></tr><tr><td>复杂系统 ↔ 进化生物学</td><td><strong>0.76</strong></td><td>进化是复杂过程</td></tr><tr><td>化学键理论 ↔ 凝聚态物理</td><td><strong>0.72</strong></td><td>固体理论</td></tr><tr><td>意识神经科学 ↔ 拓扑量子计算</td><td><strong>0.66</strong></td><td>量子意识假说</td></tr><tr><td>量子引力 ↔ 信息论</td><td><strong>0.69</strong></td><td>全息原理与信息</td></tr></table>
 
----
+<hr>
 
-## 三集群结构确认
+<h2>三集群结构确认</h2>
 
-```
+<pre><code>
 物理集群（枢纽：胶球物理）：
 胶球物理 ──0.98── 拓扑量子计算
     │                   │
@@ -88,64 +136,59 @@ v8支持率25.5%，低于预期。v9最终优化：
 暗物质宇宙学 ──0.92── 量子引力
     │
     └──0.62── 复杂系统
-```
+</pre>
 
----
+<hr>
 
-## 20个高关联共识
+<h2>20个高关联共识</h2>
 
-| 共识 | 领域对 | 关联度 | 置信度 |
-|------|--------|--------|--------|
-| C_001 | 胶球物理 ↔ 拓扑量子计算 | 0.98 | 0.96 |
-| C_002 | 胶球物理 ↔ 凝聚态物理 | 0.95 | 0.93 |
-| C_003 | 拓扑量子计算 ↔ 信息论 | 0.94 | 0.91 |
-| C_004 | 暗物质宇宙学 ↔ 量子引力 | 0.92 | 0.90 |
-| C_005 | 意识神经科学 ↔ 信息论 | 0.86 | 0.84 |
-| C_006 | 复杂系统 ↔ 意识神经科学 | 0.82 | 0.80 |
-| C_007 | 复杂系统 ↔ 进化生物学 | 0.76 | 0.77 |
-| C_008 | 化学键理论 ↔ 凝聚态物理 | 0.72 | 0.74 |
-| C_009 | 量子引力 ↔ 信息论 | 0.69 | 0.70 |
-| C_010 | 意识神经科学 ↔ 拓扑量子计算 | 0.66 | 0.68 |
+<table><tr><th>共识</th><th>领域对</th><th>关联度</th><th>置信度</th></tr><tr></tr><tr><td>C_001</td><td>胶球物理 ↔ 拓扑量子计算</td><td>0.98</td><td>0.96</td></tr><tr><td>C_002</td><td>胶球物理 ↔ 凝聚态物理</td><td>0.95</td><td>0.93</td></tr><tr><td>C_003</td><td>拓扑量子计算 ↔ 信息论</td><td>0.94</td><td>0.91</td></tr><tr><td>C_004</td><td>暗物质宇宙学 ↔ 量子引力</td><td>0.92</td><td>0.90</td></tr><tr><td>C_005</td><td>意识神经科学 ↔ 信息论</td><td>0.86</td><td>0.84</td></tr><tr><td>C_006</td><td>复杂系统 ↔ 意识神经科学</td><td>0.82</td><td>0.80</td></tr><tr><td>C_007</td><td>复杂系统 ↔ 进化生物学</td><td>0.76</td><td>0.77</td></tr><tr><td>C_008</td><td>化学键理论 ↔ 凝聚态物理</td><td>0.72</td><td>0.74</td></tr><tr><td>C_009</td><td>量子引力 ↔ 信息论</td><td>0.69</td><td>0.70</td></tr><tr><td>C_010</td><td>意识神经科学 ↔ 拓扑量子计算</td><td>0.66</td><td>0.68</td></tr></table>
 
----
+<hr>
 
-## 实验验证优先级
+<h2>实验验证优先级</h2>
 
-| 优先级 | 领域对 | 关联度 | 验证方法 |
-|--------|--------|--------|---------|
-| P0 | 胶球物理 ↔ 拓扑量子计算 | 0.98 | BESIII数据 + 拓扑量子计算模拟 |
-| P1 | 暗物质宇宙学 ↔ 量子引力 | 0.92 | LISA数据 + 星系巡天 |
-| P2 | 意识神经科学 ↔ 复杂系统 | 0.82 | EEG/MEG数据 + 拓扑分析 |
-| P3 | 拓扑量子计算 ↔ 信息论 | 0.94 | 量子纠错实验 + 信息论分析 |
+<table><tr><th>优先级</th><th>领域对</th><th>关联度</th><th>验证方法</th></tr><tr></tr><tr><td>P0</td><td>胶球物理 ↔ 拓扑量子计算</td><td>0.98</td><td>BESIII数据 + 拓扑量子计算模拟</td></tr><tr><td>P1</td><td>暗物质宇宙学 ↔ 量子引力</td><td>0.92</td><td>LISA数据 + 星系巡天</td></tr><tr><td>P2</td><td>意识神经科学 ↔ 复杂系统</td><td>0.82</td><td>EEG/MEG数据 + 拓扑分析</td></tr><tr><td>P3</td><td>拓扑量子计算 ↔ 信息论</td><td>0.94</td><td>量子纠错实验 + 信息论分析</td></tr></table>
 
----
+<hr>
 
-## 与真进化引擎的关系
+<h2>与真进化引擎的关系</h2>
 
-| 引擎 | 产出 | 验证方式 |
-|------|------|---------|
-| 真进化v2 | 500假设 | 领域内检验 |
-| 交叉验证v9 | 20共识 | 跨领域互检验 |
+<table><tr><th>引擎</th><th>产出</th><th>验证方式</th></tr><tr></tr><tr><td>真进化v2</td><td>500假设</td><td>领域内检验</td></tr><tr><td>交叉验证v9</td><td>20共识</td><td>跨领域互检验</td></tr></table>
 
-**协同效应：**
-- 真进化产生大量假设
-- 交叉验证筛选高关联假设
-- 形成证据网络
+<p><strong>协同效应：</strong></p>
+<p>- 真进化产生大量假设</p>
+<p>- 交叉验证筛选高关联假设</p>
+<p>- 形成证据网络</p>
 
----
+<hr>
 
-## 结语
+<h2>结语</h2>
 
-**1000轮交叉验证，20个共识，34%支持率。**
+<p><strong>1000轮交叉验证，20个共识，34%支持率。</strong></p>
 
-目标稳定达成：支持率>30%。
+<p>目标稳定达成：支持率&gt;30%。</p>
 
-确认三集群结构：物理集群（胶球物理枢纽）、生命集群（复杂系统枢纽）、宇宙集群（暗物质-量子引力核心）。
+<p>确认三集群结构：物理集群（胶球物理枢纽）、生命集群（复杂系统枢纽）、宇宙集群（暗物质-量子引力核心）。</p>
 
-真正的突破不在单一领域内部，而在领域交叉处。
+<p>真正的突破不在单一领域内部，而在领域交叉处。</p>
 
-这不是记录进化——这是执行进化。
+<p>这不是记录进化——这是执行进化。</p>
 
----
+<hr>
 
-*作者：秦Sir，漫庐创始人*
+<p><em>作者：秦Sir，漫庐创始人</em></p>
+</div>
+</div>
+<div class="bio">
+<h2>漫庐</h2>
+<p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
+<p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
+<p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
+</div>
+<div class="footer">
+<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
+<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
+</div>
+</body>
+</html>

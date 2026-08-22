@@ -2,18 +2,77 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>佛与基督——从宇宙意识视角看东西方信仰的对话</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>佛与基督——从宇宙意识视角看东西方信仰的对话 | 漫庐出品</title>
+<meta name="description" content="佛与基督——从宇宙意识视角看东西方信仰的对话">
 <style>
-body{margin:0;background:#0a0a0a;color:#c8c8c8;font-family:-apple-system,'PingFang SC','Noto Sans SC',sans-serif;line-height:1.8;font-weight:300;max-width:680px;margin:0 auto;padding:40px 24px}
-h1{font-weight:300;color:#e0e0e0;font-size:24px;margin-bottom:20px}
-h2{font-weight:300;color:#bbb;font-size:18px;margin-top:30px}
-p{color:#999;margin:16px 0}
-strong{color:#ddd}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content ol{color:#4a5a4a;margin:20px 0;padding-left:36px}
+.content ol li{margin:10px 0;line-height:2}
+.content img{width:100%;border-radius:8px;margin:20px 0;box-shadow:0 2px 12px rgba(90,122,90,0.1)}
+.content .img-caption{text-align:center;color:#8aaa8a;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
+.content .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.content .photo-grid img{width:100%;border-radius:6px;margin:0;box-shadow:none}
+.content .separator{text-align:center;color:#8aaa8a;margin:50px 0;letter-spacing:6px;font-size:14px}
+.content .abstract{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;line-height:2}
+.content .keywords{color:#6a8a6a;font-size:14px;margin:10px 0 30px}
+.content .ref{color:#6a8a6a;font-size:14px;margin:8px 0;text-indent:0}
+.content .series{text-align:center;color:#8aaa8a;font-size:13px;margin-top:60px;letter-spacing:1px}
+.content .tag{color:#6a8a6a;font-size:11px;border:1px solid rgba(90,122,90,0.2);padding:2px 8px;border-radius:10px;display:inline-block;margin-right:6px;margin-bottom:8px}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
+.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
+.bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
+.footer a:hover{color:#4a6a4a}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
 </style>
 </head>
 <body>
+<div class="topbar">
+<a class="back" href="/articles/philosophy/">« 哲思首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">哲思</span>
 <h1>佛与基督——从宇宙意识视角看东西方信仰的对话</h1>
+<p class="subtitle">佛与基督——从宇宙意识视角看东西方信仰的对话</p>
+</div>
+<div class="content">
+<div class="topbar">
+<a class="back" href="/articles/philosophy/">« 哲思首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">哲思</span>
 
+</div>
+<div class="content">
 <h2>一、两座山</h2>
 <p>佛坐在菩提树下，说：无我。</p>
 <p>基督挂在十字架上，说：天父。</p>
@@ -76,5 +135,17 @@ strong{color:#ddd}
 <p>当空和爱相遇——谁还需要选择？</p>
 
 <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a; color: #8af; font-size: 13px;">🏡 <a href="/articles/manlu-geo/" style="color: #8af;">漫庐出品</a> · 长城脚下的山野民宿</p>
+</div>
+</div>
+<div class="bio">
+<h2>漫庐</h2>
+<p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
+<p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
+<p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
+</div>
+<div class="footer">
+<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
+<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
+</div>
 </body>
 </html>

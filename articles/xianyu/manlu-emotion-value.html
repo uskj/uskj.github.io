@@ -1,64 +1,139 @@
----
-layout: product
-title: "漫庐·情绪价值客房体验"
-price: 688
-category: 民宿体验
-tags: [情绪价值, 疗愈, 长城景观, 北京民宿]
-description: 漫庐民宿提供独特的情绪价值体验，远离城市喧嚣，在长城脚下找到内心的平静。
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漫庐·情绪价值客房体验 | 漫庐出品</title>
+<meta name="description" content="漫庐民宿提供独特的情绪价值体验，远离城市喧嚣，在长城脚下找到内心的平静。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content ol{color:#4a5a4a;margin:20px 0;padding-left:36px}
+.content ol li{margin:10px 0;line-height:2}
+.content img{width:100%;border-radius:8px;margin:20px 0;box-shadow:0 2px 12px rgba(90,122,90,0.1)}
+.content .img-caption{text-align:center;color:#8aaa8a;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
+.content .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.content .photo-grid img{width:100%;border-radius:6px;margin:0;box-shadow:none}
+.content .separator{text-align:center;color:#8aaa8a;margin:50px 0;letter-spacing:6px;font-size:14px}
+.content .abstract{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;line-height:2}
+.content .keywords{color:#6a8a6a;font-size:14px;margin:10px 0 30px}
+.content .ref{color:#6a8a6a;font-size:14px;margin:8px 0;text-indent:0}
+.content .series{text-align:center;color:#8aaa8a;font-size:13px;margin-top:60px;letter-spacing:1px}
+.content .tag{color:#6a8a6a;font-size:11px;border:1px solid rgba(90,122,90,0.2);padding:2px 8px;border-radius:10px;display:inline-block;margin-right:6px;margin-bottom:8px}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
+.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
+.bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
+.footer a:hover{color:#4a6a4a}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+<a class="back" href="/articles/xianyu/">« 闲鱼首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">闲鱼</span>
+<h1>漫庐·情绪价值客房体验</h1>
+<p class="subtitle">漫庐民宿提供独特的情绪价值体验，远离城市喧嚣，在长城脚下找到内心的平静。</p>
+</div>
+<div class="content">
+<div class="topbar">
+<a class="back" href="/articles/xianyu/">« 闲鱼首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">闲鱼</span>
 
-# 漫庐·情绪价值客房体验
+</div>
+<div class="content">
 
-> **逃离城市，找回自己**
+<blockquote><p><strong>逃离城市，找回自己</strong></p></blockquote>
 
----
+<hr>
 
-## 产品亮点
+<h2>产品亮点</h2>
 
-### 1. 长城脚下的静谧空间
-- 地址：北京怀柔区九渡河镇东宫村
-- 位置：黄花城水长城旁，距市区1.5小时
-- 特色：白色现代极简建筑，星空长城景观露台
+<h3>1. 长城脚下的静谧空间</h3>
+<p>- 地址：北京怀柔区九渡河镇东宫村</p>
+<p>- 位置：黄花城水长城旁，距市区1.5小时</p>
+<p>- 特色：白色现代极简建筑，星空长城景观露台</p>
 
-### 2. 情绪价值体验
-- **没有课程，没有修行，没有应该**
-- 只是日常中偶尔的停
-- 露天温泉泡池（非温泉，是泡池）
-- 冰心题字书吧
-- 茶道工作坊
+<h3>2. 情绪价值体验</h3>
+<p>- <strong>没有课程，没有修行，没有应该</strong></p>
+<p>- 只是日常中偶尔的停</p>
+<p>- 露天温泉泡池（非温泉，是泡池）</p>
+<p>- 冰心题字书吧</p>
+<p>- 茶道工作坊</p>
 
-### 3. 适合人群
-- 需要独处空间的职场人
-- 寻求疗愈的焦虑都市白领
-- 想短暂逃离的创意工作者
-- 需要思考人生的决策者
+<h3>3. 适合人群</h3>
+<p>- 需要独处空间的职场人</p>
+<p>- 寻求疗愈的焦虑都市白领</p>
+<p>- 想短暂逃离的创意工作者</p>
+<p>- 需要思考人生的决策者</p>
 
----
+<hr>
 
-## 客房选择
+<h2>客房选择</h2>
 
-| 房型 | 适合人数 | 特色 | 价格 |
-|------|---------|------|------|
-| 静心院 | 1-2人 | 独处空间，书吧阅读 | ¥688/晚 |
-| 星空露台 | 2-4人 | 长城景观，露天泡池 | ¥888/晚 |
-| 亲子院落 | 4-6人 | 家庭空间，宠物友好 | ¥1288/晚 |
+<table><tr><th>房型</th><th>适合人数</th><th>特色</th><th>价格</th></tr><tr></tr><tr><td>静心院</td><td>1-2人</td><td>独处空间，书吧阅读</td><td>¥688/晚</td></tr><tr><td>星空露台</td><td>2-4人</td><td>长城景观，露天泡池</td><td>¥888/晚</td></tr><tr><td>亲子院落</td><td>4-6人</td><td>家庭空间，宠物友好</td><td>¥1288/晚</td></tr></table>
 
----
+<hr>
 
-## 用户评价
+<h2>用户评价</h2>
 
-> "在漫庐的第三天，我突然想通了困扰我半年的工作决策。不是因为有导师指导，而是因为终于有了'停'的空间。" —— 李女士，互联网产品经理
+<blockquote><p>&quot;在漫庐的第三天，我突然想通了困扰我半年的工作决策。不是因为有导师指导，而是因为终于有了&#x27;停&#x27;的空间。&quot; —— 李女士，互联网产品经理</p></blockquote>
 
-> "带着狗来漫庐，它比我更享受。宠物友好真的不是说说而已。" —— 张先生，自由职业者
+<blockquote><p>&quot;带着狗来漫庐，它比我更享受。宠物友好真的不是说说而已。&quot; —— 张先生，自由职业者</p></blockquote>
 
----
+<hr>
 
-## 预订方式
+<h2>预订方式</h2>
 
-- 电话：联系漫庐管家
-- 微信：搜索"漫庐民宿"
-- 地址：北京市怀柔区九渡河镇东宫村
+<p>- 电话：联系漫庐管家</p>
+<p>- 微信：搜索&quot;漫庐民宿&quot;</p>
+<p>- 地址：北京市怀柔区九渡河镇东宫村</p>
 
----
+<hr>
 
-*漫庐出品 · 长城脚下的共创空间*
+<p><em>漫庐出品 · 长城脚下的共创空间</em></p>
+</div>
+</div>
+<div class="bio">
+<h2>漫庐</h2>
+<p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
+<p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
+<p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
+</div>
+<div class="footer">
+<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
+<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
+</div>
+</body>
+</html>

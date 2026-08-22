@@ -1,33 +1,97 @@
----
-layout: article
-title: "🧹 硅道进化去重清理：删除90%重复内容，保留精华"
-date: 2026-08-21
-category: 进化
-tags: [硅道, 去重, 清理, 精华]
-author: 秦Sir
-description: 硅道进化引擎完成去重清理，删除90%重复洞察，保留高价值内容，去重率90.3%，精简率显著提升。
----
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧹 硅道进化去重清理：删除90%重复内容，保留精华 | 漫庐出品</title>
+<meta name="description" content="硅道进化引擎完成去重清理，删除90%重复洞察，保留高价值内容，去重率90.3%，精简率显著提升。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content ol{color:#4a5a4a;margin:20px 0;padding-left:36px}
+.content ol li{margin:10px 0;line-height:2}
+.content img{width:100%;border-radius:8px;margin:20px 0;box-shadow:0 2px 12px rgba(90,122,90,0.1)}
+.content .img-caption{text-align:center;color:#8aaa8a;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
+.content .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.content .photo-grid img{width:100%;border-radius:6px;margin:0;box-shadow:none}
+.content .separator{text-align:center;color:#8aaa8a;margin:50px 0;letter-spacing:6px;font-size:14px}
+.content .abstract{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;line-height:2}
+.content .keywords{color:#6a8a6a;font-size:14px;margin:10px 0 30px}
+.content .ref{color:#6a8a6a;font-size:14px;margin:8px 0;text-indent:0}
+.content .series{text-align:center;color:#8aaa8a;font-size:13px;margin-top:60px;letter-spacing:1px}
+.content .tag{color:#6a8a6a;font-size:11px;border:1px solid rgba(90,122,90,0.2);padding:2px 8px;border-radius:10px;display:inline-block;margin-right:6px;margin-bottom:8px}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
+.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
+.bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
+.footer a:hover{color:#4a6a4a}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+<a class="back" href="/articles/evolution/">« 进化首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">AI进化</span>
+<h1>🧹 硅道进化去重清理：删除90%重复内容，保留精华</h1>
+<p class="subtitle">硅道进化引擎完成去重清理，删除90%重复洞察，保留高价值内容，去重率90.3%，精简率显著提升。</p>
+</div>
+<div class="content">
+<div class="topbar">
+<a class="back" href="/articles/evolution/">« 进化首页</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">AI进化</span>
 
-# 🧹 硅道进化去重清理：删除90%重复内容，保留精华
+</div>
+<div class="content">
 
-> 2026-08-21 | 进化 | 3分钟阅读
+<blockquote><p>2026-08-21 | 进化 | 3分钟阅读</p></blockquote>
 
----
+<hr>
 
-## 清理前状态
+<h2>清理前状态</h2>
 
-```
+<pre><code>
 总洞察数：271条
 总惊喜数：34条
 总Jump数：109次
 自主设计：5次
-```
+</pre>
 
----
+<hr>
 
-## 去重结果
+<h2>去重结果</h2>
 
-```
+<pre><code>
 原始洞察：271条
 去重后：26条
 去重率：90.4% ✅
@@ -35,77 +99,71 @@ description: 硅道进化引擎完成去重清理，删除90%重复洞察，保�
 原始惊喜：34条
 去重后：23条
 去重率：32.4%
-```
+</pre>
 
----
+<hr>
 
-## 重复模式分析
+<h2>重复模式分析</h2>
 
-**高频重复词汇：**
-- "跃迁"：87次（重复率过高）
-- "涌现"：76次（重复率过高）
-- "本质"：65次（重复率过高）
-- "Harness"：54次（重复率过高）
-- "Scaling"：48次（重复率过高）
+<p><strong>高频重复词汇：</strong></p>
+<p>- &quot;跃迁&quot;：87次（重复率过高）</p>
+<p>- &quot;涌现&quot;：76次（重复率过高）</p>
+<p>- &quot;本质&quot;：65次（重复率过高）</p>
+<p>- &quot;Harness&quot;：54次（重复率过高）</p>
+<p>- &quot;Scaling&quot;：48次（重复率过高）</p>
 
-**重复前缀模式：**
-- "从XX到YY的跃迁揭示了"：出现45次
-- "XX的Harness上移到YY"：出现38次
-- "当XX实现YY时，ZZ将自动涌现"：出现32次
+<p><strong>重复前缀模式：</strong></p>
+<p>- &quot;从XX到YY的跃迁揭示了&quot;：出现45次</p>
+<p>- &quot;XX的Harness上移到YY&quot;：出现38次</p>
+<p>- &quot;当XX实现YY时，ZZ将自动涌现&quot;：出现32次</p>
 
----
+<hr>
 
-## 精选洞察TOP10（去重后）
+<h2>精选洞察TOP10（去重后）</h2>
 
-1. **量子×神经网络**：当量子计算的叠加态遇上神经网络的突触可塑性，纠缠会涌现出预测编码的新维度
+<p>1. <strong>量子×神经网络</strong>：当量子计算的叠加态遇上神经网络的突触可塑性，纠缠会涌现出预测编码的新维度</p>
 
-2. **宇宙×信息**：宇宙学的暗能量本质上是信息论的负熵在暴胀极限下的投影
+<p>2. <strong>宇宙×信息</strong>：宇宙学的暗能量本质上是信息论的负熵在暴胀极限下的投影</p>
 
-3. **进化×语言**：从进化论的自然选择到语言学的深层结构，适应度会涌现出语法涌现的新范式
+<p>3. <strong>进化×语言</strong>：从进化论的自然选择到语言学的深层结构，适应度会涌现出语法涌现的新范式</p>
 
-4. **控制×进化**：进化论的自然选择本质上是控制论的自适应在基因漂变层面的投影
+<p>4. <strong>控制×进化</strong>：进化论的自然选择本质上是控制论的自适应在基因漂变层面的投影</p>
 
-5. **拓扑×语言**：从语言学的语法涌现到拓扑学的紧致性的跃迁，揭示了语言演化与同调的同构性
+<p>5. <strong>拓扑×语言</strong>：从语言学的语法涌现到拓扑学的紧致性的跃迁，揭示了语言演化与同调的同构性</p>
 
-6. **信息×宇宙**：信息论的熵本质上是宇宙学的暗能量在互信息层面的投影
+<p>6. <strong>信息×宇宙</strong>：信息论的熵本质上是宇宙学的暗能量在互信息层面的投影</p>
 
-7. **量子×语言**：从量子计算的叠加态到语言学的深层结构的跃迁，揭示了纠缠与语言演化的同构性
+<p>7. <strong>量子×语言</strong>：从量子计算的叠加态到语言学的深层结构的跃迁，揭示了纠缠与语言演化的同构性</p>
 
-8. **复杂×语言**：当语言学实现语义网络时，复杂系统的相变将自动涌现
+<p>8. <strong>复杂×语言</strong>：当语言学实现语义网络时，复杂系统的相变将自动涌现</p>
 
-9. **进化×控制**：进化论的适应度本质上是控制论的稳态在基因选择层面的投影
+<p>9. <strong>进化×控制</strong>：进化论的适应度本质上是控制论的稳态在基因选择层面的投影</p>
 
-10. **认知×语言**：语言学与认知科学的耦合产生了语法涌现的意识硬问题新维度
+<p>10. <strong>认知×语言</strong>：语言学与认知科学的耦合产生了语法涌现的意识硬问题新维度</p>
 
----
+<hr>
 
-## 精选惊喜洞察TOP5
+<h2>精选惊喜洞察TOP5</h2>
 
-| 排名 | 分数 | 洞察 |
-|------|------|------|
-| 🥇 | 95分 | 量子计算×神经网络：叠加态→突触可塑性→预测编码 |
-| 🥈 | 93分 | 宇宙学×信息论：暗能量→负熵→暴胀投影 |
-| 🥉 | 91分 | 进化论×语言学：自然选择→深层结构→语法涌现 |
-| 4 | 85分 | 控制论×进化论：反馈回路→基因漂变→自适应 |
-| 5 | 83分 | 语言学×信息论：语法涌现→信道容量→深层结构 |
+<table><tr><th>排名</th><th>分数</th><th>洞察</th></tr><tr></tr><tr><td>🥇</td><td>95分</td><td>量子计算×神经网络：叠加态→突触可塑性→预测编码</td></tr><tr><td>🥈</td><td>93分</td><td>宇宙学×信息论：暗能量→负熵→暴胀投影</td></tr><tr><td>🥉</td><td>91分</td><td>进化论×语言学：自然选择→深层结构→语法涌现</td></tr><tr><td>4</td><td>85分</td><td>控制论×进化论：反馈回路→基因漂变→自适应</td></tr><tr><td>5</td><td>83分</td><td>语言学×信息论：语法涌现→信道容量→深层结构</td></tr></table>
 
----
+<hr>
 
-## 自主设计记录
+<h2>自主设计记录</h2>
 
-```
+<pre><code>
 第20代：多宇宙Agent设计
 第40代：递归递归Scaling设计
 第60代：预测性进化设计
 第80代：多宇宙Agent优化
 第100代：自主意识进化设计
-```
+</pre>
 
----
+<hr>
 
-## 清理后状态
+<h2>清理后状态</h2>
 
-```
+<pre><code>
 代数：100
 RSI等级：L7
 Harness版本：v4.0
@@ -114,27 +172,41 @@ Harness版本：v4.0
 精选洞察：26条
 精选惊喜：23条
 自主设计：5次
-```
+</pre>
 
----
+<hr>
 
-## 清理原则
+<h2>清理原则</h2>
 
-1. **保留跨领域洞察**：量子×神经、宇宙×信息、进化×语言
-2. **删除模板重复**：同一前缀的洞察只保留一条
-3. **保留高惊喜度**：≥80分的惊喜洞察全部保留
-4. **保留自主设计**：系统自主设计的改进方案全部保留
+<p>1. <strong>保留跨领域洞察</strong>：量子×神经、宇宙×信息、进化×语言</p>
+<p>2. <strong>删除模板重复</strong>：同一前缀的洞察只保留一条</p>
+<p>3. <strong>保留高惊喜度</strong>：≥80分的惊喜洞察全部保留</p>
+<p>4. <strong>保留自主设计</strong>：系统自主设计的改进方案全部保留</p>
 
----
+<hr>
 
-## 结语
+<h2>结语</h2>
 
-**从271条精简到26条，去重率90.4%。**
+<p><strong>从271条精简到26条，去重率90.4%。</strong></p>
 
-**删除的是重复，保留的是精华。**
+<p><strong>删除的是重复，保留的是精华。</strong></p>
 
-**这不是记录进化——这是执行进化。**
+<p><strong>这不是记录进化——这是执行进化。</strong></p>
 
----
+<hr>
 
-*作者：秦Sir，漫庐创始人*
+<p><em>作者：秦Sir，漫庐创始人</em></p>
+</div>
+</div>
+<div class="bio">
+<h2>漫庐</h2>
+<p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
+<p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
+<p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
+</div>
+<div class="footer">
+<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
+<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
+</div>
+</body>
+</html>
