@@ -374,13 +374,15 @@ function speakText(text) {
       body: JSON.stringify({text: clean, session_id: ''}),
       signal: ttsAbort.signal
     }).then(r => r.json()).then(d => {
-      if (!d.ok) { stopTTS(); return; }
+      if (!d.ok) { stopTTS(); speakTextFallback(clean); return; }
       const audio = new Audio('data:audio/mp3;base64,' + d.data);
       audio.onended = () => stopTTS();
       audio.onerror = () => stopTTS();
       currentAudio = audio;
       audio.play().catch(() => stopTTS());
-    }).catch(() => stopTTS());
+    }).catch(() => speakTextFallback(clean));
+  } else {
+    speakTextFallback(clean);
   }
 }
 

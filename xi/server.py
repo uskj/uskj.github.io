@@ -5,26 +5,22 @@
 #  模型调用封装在此：OPenCode_BASE_URL + OPenCode_KEY 只在服务端环境变量。
 # ════════════════════════════════════════════════════════════════════
 import json, os, time, base64, urllib.request, urllib.error, io, asyncio
-from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 from pathlib import Path
 
 # ── TTS（edge-tts，微软神经网络中文语音）──────────────────────
-_tts_loop = asyncio.new_event_loop()
-_tts_pool = ThreadPoolExecutor(max_workers=2)
-
-def _tts_async(text: str) -> bytes:
-    """同步调用异步 edge-tts，跑在新事件循环里"""
-    import edge_tts
+def _tts_gen(text: str) -> bytes:
+    """用 edge-tts 生成 MP3 字节"""
+    import asyncio as _asyncio, io as _io, edge_tts as _et
+    buf = _io.BytesIO()
     async def _gen():
-        comm = edge_tts.Communicate(text, "zh-TW-HsiaoChenNeural", rate="-20%", pitch="+10Hz")
-        buf = io.BytesIO()
+        comm = _et.Communicate(text, "zh-TW-HsiaoChenNeural", rate="-20%", pitch="+10Hz")
         async for chunk in comm.stream():
             if chunk["type"] == "audio":
                 buf.write(chunk["data"])
-        return buf.getvalue()
-    return asyncio.run_coroutine_threadsafe(_gen(), _tts_loop).result(timeout=15)
+    _asyncio.run(_gen())
+    return buf.getvalue()
 
 BASE = Path(__file__).resolve().parent
 PORT = int(os.environ.get("PORT", "8088"))
@@ -200,7 +196,7 @@ class Handler(BaseHTTPRequestHandler):
             if not text:
                 self._send({"ok":False,"msg":"text is required"}); return
             try:
-                mp3 = _tts_pool.submit(_tts_async, text).result(timeout=20)
+                mp3 = _tts_gen(text)
                 b64 = base64.b64encode(mp3).decode()
                 self._send({"ok":True,"data":b64})
             except Exception as e:
