@@ -15,7 +15,7 @@ def _tts_gen(text: str) -> bytes:
     import asyncio as _asyncio, io as _io, edge_tts as _et
     buf = _io.BytesIO()
     async def _gen():
-        comm = _et.Communicate(text, "zh-TW-HsiaoChenNeural", rate="-25%", pitch="+15Hz")
+        comm = _et.Communicate(text, "zh-TW-HsiaoChenNeural", rate="-20%", pitch="+0Hz")
         async for chunk in comm.stream():
             if chunk["type"] == "audio":
                 buf.write(chunk["data"])
@@ -168,7 +168,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send({"remain":remain,"member":member,"free_per_day":FREE_PER_DAY,
                         "roles":list(ROLES.values()),"voices":VOICES,"trial_codes":TRIAL_CODES})
         elif path == "/api/tts-health":
-            self._send({"ok": True, "voice": "zh-TW-HsiaoChenNeural", "rate": "-25%", "pitch": "+15Hz"})
+            self._send({"ok": True, "voice": "zh-TW-HsiaoChenNeural", "rate": "-20%", "pitch": "+0Hz"})
         else: self.send_error(404)
     def do_POST(self):
         path = urlparse(self.path).path
