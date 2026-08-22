@@ -358,9 +358,15 @@ if (!window.speechSynthesis) {
 
 // Load Chinese voices
 let chineseVoice = null;
+let femaleVoices = [];
+
 function loadVoices() {
   const voices = window.speechSynthesis.getVoices();
-  chineseVoice = voices.find(v => v.lang.startsWith('zh')) || voices.find(v => v.lang.startsWith('ja')) || null;
+  // 优先选温柔女声： Xiaoxiao / Yunxi / Chinese female
+  femaleVoices = voices.filter(v =>
+    v.lang.startsWith('zh') && /female|xiaoxiao|yunxi|female/i.test(v.name)
+  );
+  chineseVoice = voices.find(v => v.lang.startsWith('zh'));
 }
 window.speechSynthesis.addEventListener('voiceschanged', loadVoices);
 loadVoices();
@@ -404,19 +410,40 @@ sendBtn.addEventListener('click', () => {
   if (input.value.trim()) sendMsg(input.value.trim());
 });
 
+// 按标点分句，自然停顿
+function chunkText(text) {
+  // 按 。！？ 分段
+  return text.match(/[^。！？\n]+[。！？\n]?/g) || [text];
+}
+
+function speakChunk(chunks, onSuccess) {
+  if (!chunks.length) { if (onSuccess) onSuccess(); return; }
+  const chunk = chunks[0].trim();
+  if (!chunk) { speakChunk(chunks.slice(1), onSuccess); return; }
+
+  const utter = new SpeechSynthesisUtterance(chunk);
+  utter.lang = 'zh-CN';
+  utter.rate = 0.75;          // 放慢，更温柔
+  utter.pitch = 0.88;         // 略低，更柔和
+  if (femaleVoices.length > 0) utter.voice = femaleVoices[0];
+  else if (chineseVoice) utter.voice = chineseVoice;
+  utter.onstart = () => voiceBtn.classList.add('speaking');
+  utter.onend = () => {
+    voiceBtn.classList.remove('speaking');
+    // 句间停顿：标点越多停越久
+    const pause = /[。！]/.test(chunk) ? 420 : /[！？]/.test(chunk) ? 280 : 180;
+    setTimeout(() => speakChunk(chunks.slice(1), onSuccess), pause);
+  };
+  utter.onerror = () => { voiceBtn.classList.remove('speaking'); if (onSuccess) onSuccess(); };
+  currentUtterance = utter;
+  window.speechSynthesis.speak(utter);
+}
+
 function speakText(text) {
   if (!voiceEnabled || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'zh-CN';
-  utter.rate = 0.9;
-  utter.pitch = 1.0;
-  if (chineseVoice) utter.voice = chineseVoice;
-  utter.onstart = () => voiceBtn.classList.add('speaking');
-  utter.onend = () => voiceBtn.classList.remove('speaking');
-  utter.onerror = () => voiceBtn.classList.remove('speaking');
-  currentUtterance = utter;
-  window.speechSynthesis.speak(utter);
+  voiceBtn.classList.remove('speaking');
+  speakChunk(chunkText(text));
 }
 
 function addMessage(text, role) {
