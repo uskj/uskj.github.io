@@ -341,7 +341,8 @@ let isRecording = false;
 let recognition = null;
 let ttsAvailable = false;
 
-const TTS_API = '/api/tts';
+// TTS API - 请替换为 Render 服务地址
+const TTS_API = 'https://xi-backend.onrender.com/api/tts';
 
 const fab = document.getElementById('chatFab');
 const win = document.getElementById('chatWindow');
@@ -350,6 +351,8 @@ const input = document.getElementById('chatInput');
 const sendBtn = document.getElementById('chatSend');
 const quickBtns = document.querySelectorAll('#chatQuick button');
 const voiceBtn = document.getElementById('voiceBtn');
+
+let ttsAvailable = false;
 
 // 检测云端 TTS 服务是否可用
 fetch(TTS_API.replace('/tts', '/tts-health'), {mode:'no-cors'}).then(()=>{ttsAvailable=true}).catch(()=>{});
