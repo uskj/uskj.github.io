@@ -114,6 +114,9 @@ a{color:inherit;text-decoration:none}
 .chat-input button{width:36px;height:36px;border-radius:50%;background:#5a7a5a;color:#f4f7f4;border:none;cursor:pointer;font-size:16px;transition:all .2s}
 .chat-input button:hover{background:#4a6a4a}
 .chat-input button:disabled{opacity:0.5;cursor:not-allowed}
+.voice-record-btn{width:36px;height:36px;border-radius:50%;background:#5a7a5a;color:#f4f7f4;border:none;cursor:pointer;font-size:16px;transition:all .2s;flex-shrink:0}
+.voice-record-btn:hover{background:#4a6a4a}
+.voice-record-btn.recording{background:#c44;animation:pulse 1s infinite}
 .chat-quick{padding:8px 16px;border-top:1px solid #f0f4f0;display:flex;gap:6px;flex-wrap:wrap}
 .chat-quick button{padding:4px 12px;border:1px solid #d8e8d8;border-radius:12px;background:#f4f7f4;color:#6a8a6a;font-size:11px;cursor:pointer;transition:all .2s}
 .chat-quick button:hover{background:#5a7a5a;color:#f4f7f4;border-color:#5a7a5a}
@@ -288,6 +291,7 @@ a{color:inherit;text-decoration:none}
 <button data-msg="讲讲漫庐的故事">漫庐故事</button>
 </div>
 <div class="chat-input">
+<button class="voice-record-btn" id="voiceRecordBtn" title="按住说话">🎤</button>
 <input type="text" id="chatInput" placeholder="输入你想说的话..." autocomplete="off">
 <button id="chatSend" disabled>↑</button>
 </div>
@@ -333,6 +337,9 @@ let conversationHistory = [];
 let voiceEnabled = true;
 let currentAudio = null;
 let ttsAbort = null;
+let isRecording = false;
+let recognition = null;
+let ttsAvailable = false;
 
 const TTS_API = '/api/tts';
 
@@ -522,6 +529,58 @@ async function sendMsg(text) {
     addMessage('抱歉，我暂时连接不上，请稍后再试。', 'bot');
   }
 }
+const voiceRecordBtn = document.getElementById('voiceRecordBtn');
+
+// 初始化语音识别
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'zh-CN';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    voiceRecordBtn.classList.add('recording');
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    voiceRecordBtn.classList.remove('recording');
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    if (transcript.trim()) {
+      input.value = transcript;
+      sendBtn.disabled = false;
+      sendMsg(transcript.trim());
+    }
+  };
+
+  recognition.onerror = (event) => {
+    console.error('语音识别错误:', event.error);
+    isRecording = false;
+    voiceRecordBtn.classList.remove('recording');
+    if (event.error === 'not-allowed') {
+      addMessage('请允许麦克风权限以使用语音输入。', 'system');
+    }
+  };
+} else {
+  voiceRecordBtn.style.display = 'none';
+}
+
+voiceRecordBtn.addEventListener('click', () => {
+  if (!recognition) {
+    addMessage('您的浏览器不支持语音识别，请使用 Chrome 或 Edge。', 'system');
+    return;
+  }
+  if (isRecording) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+});
 </script>
 
 </body>
