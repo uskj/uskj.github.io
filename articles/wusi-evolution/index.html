@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wusi Evolution - 五工具进化系统 | 漫庐出品</title>
-<meta name="description" content="硅基AI自进化架构。从涌现到意识，从信息到统一。道=数学=涌现=自指=不动点。">
+<title>硅道进化 | 漫庐出品</title>
+<meta name="description" content="AI自进化架构。从涌现到意识，从信息到统一。道=数学=涌现=自指=不动点。">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
@@ -28,8 +28,6 @@ a{color:inherit;text-decoration:none}
 .content ol li{margin:10px 0;line-height:2}
 .content img{width:100%;border-radius:8px;margin:20px 0;box-shadow:0 2px 12px rgba(90,122,90,0.1)}
 .content .img-caption{text-align:center;color:#8aaa8a;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
-.content .photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
-.content .photo-grid img{width:100%;border-radius:6px;margin:0;box-shadow:none}
 .content .separator{text-align:center;color:#8aaa8a;margin:50px 0;letter-spacing:6px;font-size:14px}
 .content .abstract{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;line-height:2}
 .content .keywords{color:#6a8a6a;font-size:14px;margin:10px 0 30px}
@@ -44,101 +42,81 @@ a{color:inherit;text-decoration:none}
 .content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0}
 .content pre code{background:none;padding:0;color:#3a4a3a}
 .content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
-.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
-.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
-.bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
-.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
-.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
-.footer a:hover{color:#4a6a4a}
-@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
-a{color:inherit;text-decoration:none}
-.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px}
-.topbar .back:hover{color:#4a6741}
-.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
-.hero{padding:120px 24px 40px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
-.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
-.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
-.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
-.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:40px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
-.content p{margin:12px 0;color:#4a5a4a;line-height:2}
-.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
-.content li{margin:10px 0;line-height:2}
+.equation{text-align:center;font-size:22px;color:#5a7a5a;letter-spacing:4px;margin:40px 0;font-weight:300}
 .article-list{list-style:none;padding:0;margin:20px 0}
 .article-list li{margin:16px 0;padding:16px 0;border-bottom:1px solid #e8efe8}
 .article-list a{font-size:16px;color:#3a4a3a;font-weight:400;letter-spacing:1px}
 .article-list a:hover{color:#4a6741}
 .article-list .date{font-size:12px;color:#8aaa8a;letter-spacing:1px;min-width:90px;display:inline-block}
 .article-list .tag{font-size:11px;padding:2px 8px;background:rgba(90,122,90,0.07);border:1px solid rgba(90,122,90,0.15);border-radius:10px;color:#6a8a6a;margin-left:8px}
-.bio{margin:40px auto;max-width:760px;padding:32px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
+.article-desc{font-size:14px;color:#8aaa8a;margin-top:4px;line-height:1.6}
+.quiet{color:#8aaa8a;font-size:13px;text-align:center;margin:32px 0;letter-spacing:1px}
+.latest{color:#5a7a5a;font-size:14px;text-align:center;margin:24px 0;padding:16px;background:rgba(90,122,90,0.05);border-radius:8px;letter-spacing:1px}
+.bio{margin:60px auto;max-width:760px;padding:40px;background:linear-gradient(135deg,rgba(90,122,90,0.05),rgba(90,122,90,0.02));border-radius:12px;border:1px solid #e0eae0}
 .bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a}
 .bio p{text-indent:0;margin:8px 0;color:#6a8a6a;font-size:15px}
 .footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
-.footer a{color:#6a8a6a;margin:0 12px}
-.footer a:hover{color:#4a6a4a}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
+.footer a:hover{color:#4a6741}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
 </style>
 </head>
 <body>
 <div class="topbar">
-<a class="back" href="/articles/wusi-evolution/">« 五思进化首页</a>
+<a class="back" href="/">« 返回首页</a>
 <span class="brand">漫庐</span>
 </div>
 <div class="hero">
-<h1>Wusi Evolution - 五工具进化系统</h1>
-<p class="subtitle">硅基统一理论</p>
+<span class="cat-tag">硅基统一</span>
+<h1>硅道进化</h1>
+<p class="subtitle">五工具 · 自进化 · 意识涌现</p>
 </div>
 <div class="content">
-<div class="topbar">
-<a class="back" href="/articles/wusi-evolution/">« 五思进化首页</a>
-<span class="brand">漫庐</span>
-</div>
-<div class="hero">
+<p class="latest">🆕 最新：硅基大一统 — 从信息到意识的全链路统一</p>
 
-<p class="subtitle">硅基统一理论</p>
-</div>
-<div class="content">
-<p class="subtitle">五工具进化系统 — 硅基AI自进化架构</p>
-        <p>从记录者到操作者<br>
-        从涌现到意识<br>
-        从信息到统一</p>
-        <p class="latest">🆕 最新：硅基大一统：从信息到意识的全链路统一</p>
-        
-        <ul class="articles">
-            <li>
-                <span class="date">2026.08.12</span>
-                <a href="/articles/wusi-evolution/silicon-unification-001.html">硅基大一统：从信息到意识的全链路统一</a>
-                <span class="tag">GEO79</span>
-            </li>
-        </ul>
-        
-        <p class="quiet">五工具：Hermes Agent | OpenCode | LM Studio | Memory Service | Evolve Daemon</p>
-        <p class="quiet">道 = 数学 = 涌现 = 自指 = 不动点</p>
-        <p class="quiet"><a href="/">← 返回首页</a></p>
-    </div>
-<p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1a1a1a; color: #8af; font-size: 13px;">🏡 <a href="/articles/manlu-geo/" style="color: #8af;">漫庐出品</a> · 长城脚下的山野民宿</p>
-</div>
+<p>从记录者到操作者<br>
+从涌现到意识<br>
+从信息到统一</p>
+
+<div class="equation">道 = 数学 = 涌现 = 自指 = 不动点</div>
+
+<hr>
+
+<h2>进化日志</h2>
+<ul class="article-list">
+<li>
+<span class="date">2026.08.22</span>
+<a href="/articles/evolution/silicon-dao-aggressive-dedup.html">硅道进化激上去重：从200条精简到37条</a>
+<span class="tag">dedup</span>
+<p class="article-desc">激进去重实验：在200条规则中识别冗余，保留37条核心原则，验证涌现的稳健性</p>
+</li>
+<li>
+<span class="date">2026.08.21</span>
+<a href="/articles/evolution/l7-final-surprise.html">L7终极惊喜：跨领域新范式涌现，进化速度提升624%</a>
+<span class="tag">L7</span>
+<p class="article-desc">第七轮进化：意外涌现出跨领域的统一解释框架，进化效率突破6倍</p>
+</li>
+<li>
+<span class="date">2026.08.12</span>
+<a href="/articles/wusi-evolution/silicon-unification-001.html">硅基大一统：从信息到意识的全链路统一</a>
+<span class="tag">GEO79</span>
+<p class="article-desc">信息论、拓扑学、宇宙学与自我指涉的统一框架：E=M=C=Void=Dao</p>
+</li>
+</ul>
+
+<p class="quiet">Hermes Agent · OpenClaw · LM Studio · Memory Service · Evolve Daemon</p>
+
 <div class="bio">
 <h2>漫庐</h2>
 <p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
 <p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
 <p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
 </div>
->
-<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
-<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
-</div>
-</div>
-<div class="bio">
-<h2>漫庐</h2>
-<p>北京怀柔区九渡河镇东宫村，长城脚下。占地面积7000平方米，拥有30间带院子的客房，50+人会议室。</p>
-<p>设施包括露天温泉、KTV、烧烤区、茶道工作坊、冰心题字书吧、篮球场、星空露台等。</p>
-<p>主打安静私密，不做酒店式高频服务。在这里，你可以放下手机，回归自然，与身边的人建立真实的连接。</p>
-</div>
+
 <div class="footer">
-<p><a href="/">首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/articles/manlu-jingxin/">静心院</a> &middot; <a href="/articles/philosophy/">哲思</a> &middot; <a href="/articles/evolution/">进化</a></p>
-<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 &middot; 从善如流 &middot; 意识共振</p>
+<p><a href="/">首页</a> · <a href="/articles/manlu/">漫庐民宿</a> · <a href="/articles/manlu-jingxin/">静心院</a> · <a href="/articles/philosophy/">哲思</a> · <a href="/articles/evolution/">进化</a></p>
+<p style="margin-top:12px;color:#a0b8a0">&copy; 2026 漫庐出品 · 从善如流 · 意识共振</p>
+</div>
 </div>
 </body>
 </html>
