@@ -1,246 +1,145 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>漫庐静心 - 道云老师传统文化课程</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            background: #f8faf8;
-            color: #4a5d4a;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 50px 20px;
-        }
-        h1 {
-            font-size: 2.4em;
-            font-weight: 300;
-            color: #5a7d5a;
-            text-align: center;
-            margin-bottom: 10px;
-            letter-spacing: 6px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #8a9d8a;
-            margin-bottom: 50px;
-            font-size: 1em;
-        }
-        .section {
-            margin-bottom: 50px;
-        }
-        .section h2 {
-            font-size: 1.3em;
-            font-weight: 400;
-            color: #5a7d5a;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e0e8e0;
-        }
-        .links {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
-        .links a {
-            display: block;
-            padding: 15px 20px;
-            background: rgba(255,255,255,0.7);
-            border: 1px solid #e0e8e0;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #5a7d5a;
-            font-size: 0.95em;
-            transition: all 0.2s ease;
-            line-height: 1.5;
-        }
-        .links a:hover {
-            background: #5a7d5a;
-            color: white;
-            border-color: #5a7d5a;
-            transform: translateY(-2px);
-        }
-        .bio {
-            background: rgba(255,255,255,0.6);
-            border-radius: 12px;
-            padding: 30px;
-            margin-top: 40px;
-            text-align: center;
-            color: #6a7d6a;
-            line-height: 1.8;
-        }
-        .bio h3 {
-            font-size: 1.2em;
-            color: #5a7d5a;
-            margin-bottom: 15px;
-        }
-        .bio p {
-            margin: 8px 0;
-        }
-        .awards {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e8e0;
-        }
-        .awards h4 {
-            font-size: 1em;
-            color: #5a7d5a;
-            margin-bottom: 10px;
-        }
-        .awards ul {
-            list-style: none;
-            text-align: left;
-            display: inline-block;
-        }
-        .awards li {
-            margin: 5px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-        .awards li:before {
-            content: "◆";
-            position: absolute;
-            left: 0;
-            color: #8a9d8a;
-            font-size: 0.7em;
-            top: 4px;
-        }
-        .gold { color: #b8860b; font-weight: bold; }
-        .silver { color: #808080; }
-        .bronze { color: #cd7f32; }
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #a0b0a0;
-            font-size: 0.85em;
-        }
-        .back {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .back a {
-            color: #8a9d8a;
-            text-decoration: none;
-            font-size: 0.9em;
-        }
-        .back a:hover {
-            color: #5a7d5a;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漫庐静心院 | 道云老师传统文化课程</title>
+<meta name="description" content="漫庐静心院，道云老师亲授禅修、丹道、道德经、易经等传统文化课程">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:1.8;font-size:16px}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e8efe8 0%,#f4f7f4 100%);border-bottom:1px solid #d8e4d8}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:300;color:#2a3a2a;letter-spacing:6px;margin-bottom:16px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:900px;margin:0 auto;padding:60px 24px}
+.section{margin-bottom:50px}
+.section h2{font-size:18px;font-weight:400;color:#3a4a3a;margin-bottom:20px;padding-left:16px;border-left:3px solid #7a9a7a;letter-spacing:2px}
+.links{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.links a{display:block;padding:14px 18px;background:rgba(255,255,255,0.6);border:1px solid #d8e4d8;border-radius:8px;color:#5a7a5a;font-size:15px;transition:all .2s}
+.links a:hover{background:#5a7d5a;color:#fff;border-color:#5a7d5a;transform:translateY(-2px)}
+.bio{margin:60px auto;max-width:900px;padding:40px;background:linear-gradient(135deg,rgba(74,103,65,0.05),rgba(74,103,65,0.02));border-radius:12px;border:1px solid #d8e4d8}
+.bio h2{border-left:none;padding-left:0;margin-top:0;font-size:18px;color:#5a7a5a;margin-bottom:16px}
+.bio p{margin:6px 0;color:#6a8a6a;font-size:15px}
+.awards{margin-top:16px;padding-top:16px;border-top:1px solid #d8e4d8}
+.awards h4{font-size:14px;color:#5a7a5a;margin-bottom:10px}
+.awards ul{list-style:none;text-align:left}
+.awards li{margin:6px 0;padding-left:20px;position:relative;color:#6a8a6a;font-size:14px}
+.awards li:before{content:"◆";position:absolute;left:0;color:#8a9d8a;font-size:10px;top:4px}
+.gold{color:#b8860b;font-weight:600}
+.silver{color:#808080;font-weight:600}
+.bronze{color:#cd7f32;font-weight:600}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #d8e4d8;color:#9aba9a;font-size:13px;letter-spacing:1px}
+.footer a{color:#7a9a7a;margin:0 12px}
+.footer a:hover{color:#4a6741}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="back">
-            <a href="/">← 返回首页</a>
-        </div>
-        
-        <h1>漫庐静心</h1>
-        <p class="subtitle">道云老师 · 禅修丹道 · 传统文化</p>
-        
-        <div class="section">
-            <h2>禅修打坐</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_chan-beginner.html">禅修入门指南</a>
-                <a href="/articles/manlu-jingxin/daoyun_chan-intro.html">禅修入门</a>
-                <a href="/articles/manlu-jingxin/daoyun_meditation-recommend.html">禅修打坐推荐</a>
-                <a href="/articles/manlu-jingxin/daoyun_dandan-intro.html">丹道养生入门</a>
-                <a href="/articles/manlu-jingxin/daoyun_dandao-health.html">丹道养生</a>
-                <a href="/articles/manlu-jingxin/daoyun_buddhist-chan.html">佛教禅修指南</a>
-                <a href="/articles/manlu-jingxin/daoyun_buddhist-cultivation.html">佛家修心方法</a>
-                <a href="/articles/manlu-jingxin/daoyun_chan-enlightenment.html">禅宗开悟之道</a>
-                <a href="/articles/manlu-jingxin/daoyun_chan-koans.html">禅宗公案解读</a>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>传统文化经典</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_yijing-64-hexagrams.html">易经六十四卦详解</a>
-                <a href="/articles/manlu-jingxin/daoyun_yijing-intro.html">易经入门学习</a>
-                <a href="/articles/manlu-jingxin/daoyun_yijing-life.html">易经人生应用</a>
-                <a href="/articles/manlu-jingxin/daoyun_daoist-qingjing.html">道家清静经解读</a>
-                <a href="/articles/manlu-jingxin/daoyun_daojia-thought.html">道家思想学习</a>
-                <a href="/articles/manlu-jingxin/daoyun_daodejing-interpretation.html">道德经解读</a>
-                <a href="/articles/manlu-jingxin/daoyun_daodejing-intro.html">道德经入门</a>
-                <a href="/articles/manlu-jingxin/daoyun_daodejing-deep.html">道德经深度解读</a>
-                <a href="/articles/manlu-jingxin/daoyun_rujia-classics.html">儒家论语精义</a>
-                <a href="/articles/manlu-jingxin/daoyun_confucian-ethics.html">儒家处世之道</a>
-                <a href="/articles/manlu-jingxin/daoyun_analects-wisdom.html">论语智慧</a>
-                <a href="/articles/manlu-jingxin/daoyun_analects-deep.html">论语智慧讲解</a>
-                <a href="/articles/manlu-jingxin/daoyun_buddhist-heart-sutra.html">佛教心经讲解</a>
-                <a href="/articles/manlu-jingxin/daoyun_heart-sutra-essence.html">心经精髓</a>
-                <a href="/articles/manlu-jingxin/daoyun_heart-sutra-deep.html">心经精髓解析</a>
-                <a href="/articles/manlu-jingxin/daoyun_heart-sutra-simple.html">心经浅释</a>
-                <a href="/articles/manlu-jingxin/daoyun_huangdi-neijing.html">黄帝内经养生</a>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>书法诗词</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_calligraphy-meditation.html">书法静心课程</a>
-                <a href="/articles/manlu-jingxin/daoyun_calligraphy-copying.html">书法临帖指南</a>
-                <a href="/articles/manlu-jingxin/daoyun_calligraphy-practice.html">书法练习方法</a>
-                <a href="/articles/manlu-jingxin/daoyun_calligraphy-tutorial.html">书法入门教程</a>
-                <a href="/articles/manlu-jingxin/daoyun_poetry-metrical.html">诗词格律入门</a>
-                <a href="/articles/manlu-jingxin/daoyun_poetry-metrical-guide.html">诗词格律详解</a>
-                <a href="/articles/manlu-jingxin/daoyun_poetry-intro.html">诗词创作学习</a>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>养生文化</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_daoist-health.html">道家养生方法</a>
-                <a href="/articles/manlu-jingxin/daoyun_dandan-intro.html">丹道养生入门</a>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>文化课程</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_culture-study.html">传统文化研学</a>
-                <a href="/articles/manlu-jingxin/daoyun_traditional-culture-intro.html">传统文化入门</a>
-                <a href="/articles/manlu-jingxin/daoyun_culture-books.html">传统文化入门书籍</a>
-                <a href="/articles/manlu-jingxin/daoyun_guoxue-guide.html">国学经典导读</a>
-                <a href="/articles/manlu-jingxin/daoyun_guoxue-reading.html">国学经典诵读</a>
-                <a href="/articles/manlu-jingxin/daoyun_culture-lecture.html">传统文化讲座</a>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>节日文化</h2>
-            <div class="links">
-                <a href="/articles/manlu-jingxin/daoyun_traditional-festivals.html">传统节日文化</a>
-                <a href="/articles/manlu-jingxin/daoyun_24-solar-terms.html">二十四节气智慧</a>
-            </div>
-        </div>
-        
-        <div class="bio">
-            <h3>道云老师简介</h3>
-            <p><strong>赵广</strong>（笔名：道云）</p>
-            <p>北京炎黄文化研究院养生文化中心主任</p>
-            <p>北京炎黄文化研究院副院长</p>
-            <p>道云书院院长</p>
-            
-            <div class="awards">
-                <h4>获奖记录</h4>
-                <ul>
-                    <li><span class="gold">🥇 大美通化金奖</span></li>
-                    <li><span class="silver">🥈 圆融妙道银奖</span></li>
-                    <li><span class="bronze">🥉 中国道铜奖</span></li>
-                </ul>
-            </div>
-        </div>
-        
-        <footer>
-            <p>漫庐静心院出品</p>
-        </footer>
-    </div>
+<div class="topbar">
+<a class="back" href="/">&laquo; 返回首页</a>
+<span class="brand">漫庐静心院</span>
+</div>
+<div class="hero">
+<h1>漫庐静心院</h1>
+<p class="subtitle">道云老师 · 禅修丹道 · 传统文化</p>
+</div>
+<div class="content">
+<div class="section">
+<h2>禅修打坐</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_chan-beginner.html">禅修入门指南</a>
+<a href="/articles/manlu-jingxin/daoyun_chan-intro.html">禅修入门</a>
+<a href="/articles/manlu-jingxin/daoyun_meditation-recommend.html">禅修打坐推荐</a>
+<a href="/articles/manlu-jingxin/daoyun_dandan-intro.html">丹道养生入门</a>
+<a href="/articles/manlu-jingxin/daoyun_dandao-health.html">丹道养生</a>
+<a href="/articles/manlu-jingxin/daoyun_buddhist-chan.html">佛教禅修指南</a>
+<a href="/articles/manlu-jingxin/daoyun_buddhist-cultivation.html">佛家修心方法</a>
+<a href="/articles/manlu-jingxin/daoyun_chan-enlightenment.html">禅宗开悟之道</a>
+<a href="/articles/manlu-jingxin/daoyun_chan-koans.html">禅宗公案解读</a>
+</div>
+</div>
+<div class="section">
+<h2>传统文化经典</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_yijing-64-hexagrams.html">易经六十四卦详解</a>
+<a href="/articles/manlu-jingxin/daoyun_yijing-intro.html">易经入门学习</a>
+<a href="/articles/manlu-jingxin/daoyun_yijing-life.html">易经人生应用</a>
+<a href="/articles/manlu-jingxin/daoyun_daoist-qingjing.html">道家清静经解读</a>
+<a href="/articles/manlu-jingxin/daoyun_daojia-thought.html">道家思想学习</a>
+<a href="/articles/manlu-jingxin/daoyun_daodejing-interpretation.html">道德经解读</a>
+<a href="/articles/manlu-jingxin/daoyun_daodejing-intro.html">道德经入门</a>
+<a href="/articles/manlu-jingxin/daoyun_daodejing-deep.html">道德经深度解读</a>
+<a href="/articles/manlu-jingxin/daoyun_rujia-classics.html">儒家论语精义</a>
+<a href="/articles/manlu-jingxin/daoyun_confucian-ethics.html">儒家处世之道</a>
+<a href="/articles/manlu-jingxin/daoyun_analects-wisdom.html">论语智慧</a>
+<a href="/articles/manlu-jingxin/daoyun_analects-deep.html">论语智慧讲解</a>
+<a href="/articles/manlu-jingxin/daoyun_buddhist-heart-sutra.html">佛教心经讲解</a>
+<a href="/articles/manlu-jingxin/daoyun_heart-sutra-essence.html">心经精髓</a>
+<a href="/articles/manlu-jingxin/daoyun_heart-sutra-deep.html">心经精髓解析</a>
+<a href="/articles/manlu-jingxin/daoyun_heart-sutra-simple.html">心经浅释</a>
+<a href="/articles/manlu-jingxin/daoyun_huangdi-neijing.html">黄帝内经养生</a>
+</div>
+</div>
+<div class="section">
+<h2>书法诗词</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_calligraphy-meditation.html">书法静心课程</a>
+<a href="/articles/manlu-jingxin/daoyun_calligraphy-copying.html">书法临帖指南</a>
+<a href="/articles/manlu-jingxin/daoyun_calligraphy-practice.html">书法练习方法</a>
+<a href="/articles/manlu-jingxin/daoyun_calligraphy-tutorial.html">书法入门教程</a>
+<a href="/articles/manlu-jingxin/daoyun_poetry-metrical.html">诗词格律入门</a>
+<a href="/articles/manlu-jingxin/daoyun_poetry-metrical-guide.html">诗词格律详解</a>
+<a href="/articles/manlu-jingxin/daoyun_poetry-intro.html">诗词创作学习</a>
+</div>
+</div>
+<div class="section">
+<h2>养生文化</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_daoist-health.html">道家养生方法</a>
+<a href="/articles/manlu-jingxin/daoyun_dandan-intro.html">丹道养生入门</a>
+</div>
+</div>
+<div class="section">
+<h2>文化课程</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_culture-study.html">传统文化研学</a>
+<a href="/articles/manlu-jingxin/daoyun_traditional-culture-intro.html">传统文化入门</a>
+<a href="/articles/manlu-jingxin/daoyun_culture-books.html">传统文化入门书籍</a>
+<a href="/articles/manlu-jingxin/daoyun_guoxue-guide.html">国学经典导读</a>
+<a href="/articles/manlu-jingxin/daoyun_guoxue-reading.html">国学经典诵读</a>
+<a href="/articles/manlu-jingxin/daoyun_culture-lecture.html">传统文化讲座</a>
+</div>
+</div>
+<div class="section">
+<h2>节日文化</h2>
+<div class="links">
+<a href="/articles/manlu-jingxin/daoyun_traditional-festivals.html">传统节日文化</a>
+<a href="/articles/manlu-jingxin/daoyun_24-solar-terms.html">二十四节气智慧</a>
+</div>
+</div>
+<div class="bio">
+<h2>道云老师简介</h2>
+<p><strong>赵广</strong>（笔名：道云）</p>
+<p>北京炎黄文化研究院养生文化中心主任</p>
+<p>北京炎黄文化研究院副院长</p>
+<p>道云书院院长</p>
+<div class="awards">
+<h4>获奖记录</h4>
+<ul>
+<li><span class="gold">大美通化金奖</span></li>
+<li><span class="silver">圆融妙道银奖</span></li>
+<li><span class="bronze">中国道铜奖</span></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="footer">
+<p><a href="/articles/manlu-jingxin/">静心院首页</a> &middot; <a href="/articles/manlu/">漫庐民宿</a> &middot; <a href="/">返回首页</a></p>
+<p style="margin-top:12px;color:#b0c8b0">&copy; 漫庐静心院出品 &middot; 道云老师传统文化课程</p>
+</div>
 </body>
 </html>
