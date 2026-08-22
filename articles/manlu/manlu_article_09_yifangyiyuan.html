@@ -38,7 +38,10 @@ blockquote p{text-indent:0;margin:6px 0;color:#888;line-height:2}
 .hero-quote{border-left:3px solid #c9a84c;padding:20px 24px;margin:35px 0;background:linear-gradient(135deg,#0d0d0d,#111);border-radius:2px}
 .hero-quote p{text-indent:0;color:#aaa;font-size:16px;line-height:2;font-style:italic}
 .footer-link{margin-top:50px;padding-top:20px;border-top:1px solid #1a1a1a;color:#555;font-size:13px;text-align:center}
-.photo-hint{color:#555;font-size:13px;text-align:center;margin:20px 0;font-style:italic;letter-spacing:1px}
+.article-img{width:100%;border-radius:6px;margin:20px 0;box-shadow:0 2px 12px rgba(0,0,0,0.5)}
+.img-caption{text-align:center;color:#555;font-size:12px;margin-top:-12px;margin-bottom:20px;letter-spacing:1px}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}
+.photo-grid img{width:100%;border-radius:4px}
 </style>
 </head>
 <body>
@@ -60,7 +63,8 @@ blockquote p{text-indent:0;margin:6px 0;color:#888;line-height:2}
 
 <p>三十间客房及各类功能设施，一房一院，宠物友好，免费停车。</p>
 
-<p class="photo-hint">[俯瞰漫庐的航拍照片]</p>
+<img src="/articles/manlu/images/01_俯瞰.jpg" alt="俯瞰漫庐，白墙灰瓦隐于山谷" class="article-img" loading="lazy">
+<p class="img-caption">俯瞰漫庐，白墙灰瓦隐于山谷</p>
 
 <h2>二 结庐</h2>
 
@@ -70,7 +74,20 @@ blockquote p{text-indent:0;margin:6px 0;color:#888;line-height:2}
 
 <p>走进大自然，品茗时光，丽日浅浅。</p>
 
-<p class="photo-hint">[房型图 · 三居客厅和户外烧烤空间 · 大床房 · 双床标间 · 卫生间]</p>
+<div class="photo-grid">
+  <img src="/articles/manlu/images/04_房型图.jpg" alt="房型图" class="article-img" loading="lazy">
+  <img src="/articles/manlu/images/05_三居客厅烧烤.jpg" alt="三居客厅和户外烧烤空间" class="article-img" loading="lazy">
+</div>
+<p class="img-caption">房型图 · 三居客厅和户外烧烤空间</p>
+
+<div class="photo-grid">
+  <img src="/articles/manlu/images/06_大床房.jpg" alt="大床房" class="article-img" loading="lazy">
+  <img src="/articles/manlu/images/07_双床标间.jpg" alt="双床标间" class="article-img" loading="lazy">
+</div>
+<p class="img-caption">大床房 · 双床标间</p>
+
+<img src="/articles/manlu/images/08_卫生间.jpg" alt="干湿分离卫生间" class="article-img" loading="lazy">
+<p class="img-caption">干湿分离卫生间</p>
 
 <h2>三 漫时光</h2>
 
@@ -78,24 +95,32 @@ blockquote p{text-indent:0;margin:6px 0;color:#888;line-height:2}
 
 <p>适合家庭小聚、团建、婚庆、遛娃、遛毛孩子。</p>
 
-<ul class="features">
-<li><strong>咖啡厅</strong>：山景中的第一杯咖啡，醒来就喝</li>
-<li><strong>书吧</strong>：冰心题字，数百册藏书，随时翻读</li>
-<li><strong>泳池</strong>：十五乘四点一的恒温池，夏天戏水冬天泡</li>
-<li><strong>篮球场</strong>：大草坪旁边的半场球场，一场野球足够</li>
-<li><strong>烧烤区</strong>：炭火、铁网、孜然，夜晚的灵魂</li>
-<li><strong>儿童活动区</strong>：沙池、滑梯、秋千，孩子的整个下午</li>
-<li><strong>KTV + 会议室</strong>：团建、生日、求婚，都有地方</li>
-<li><strong>充电桩 + 免费停车</strong>：自驾友好，电车也能充</li>
-</ul>
+<div class="photo-grid">
+  <img src="/articles/manlu/images/09_餐厅一瞥.jpg" alt="餐厅一瞥" class="article-img" loading="lazy">
+  <img src="/articles/manlu/images/10_会议室KTV.jpg" alt="会议室、KTV" class="article-img" loading="lazy">
+</div>
+<p class="img-caption">餐厅一瞥 · 会议室、KTV</p>
 
-<p class="photo-hint">[餐厅一瞥 · 泳池 · 山外青山 · 咖啡厅 · 书吧 · 榻榻米活动区 · 烧烤区域 · 夜色中的漫庐]</p>
+<img src="/articles/manlu/images/11_泳池.jpg" alt="十五乘四点一米泳池" class="article-img" loading="lazy">
+<p class="img-caption">十五乘四点一米泳池</p>
+<img src="/articles/manlu/images/12_山外青山.jpg" alt="山外青山" class="article-img" loading="lazy">
+<p class="img-caption">山外青山</p>
+<img src="/articles/manlu/images/13_咖啡厅.jpg" alt="咖啡厅" class="article-img" loading="lazy">
+<p class="img-caption">咖啡厅</p>
+<img src="/articles/manlu/images/15_榻榻米活动区.jpg" alt="榻榻米活动区" class="article-img" loading="lazy">
+<p class="img-caption">榻榻米活动区</p>
+<img src="/articles/manlu/images/16_公区掠影.jpg" alt="公区掠影" class="article-img" loading="lazy">
+<p class="img-caption">公区掠影</p>
+
+<div class="photo-grid">
+  <img src="/articles/manlu/images/02_大草坪篮球场.jpg" alt="大草坪和篮球场" class="article-img" loading="lazy">
+  <img src="/articles/manlu/images/03_停车场.jpg" alt="停车场" class="article-img" loading="lazy">
+</div>
+<p class="img-caption">大草坪和篮球场 · 停车场</p>
 
 <h2>行车路线</h2>
 
 <p>从北京市区出发，一个多小时车程。穿过一道道山口，窗外从楼群变成农田，再变成山，最后只剩山。导航到"怀柔区九渡河镇东宫村漫庐酒店"。</p>
-
-<p class="photo-hint">[行车路线图]</p>
 
 <div class="separator">· · ·</div>
 
