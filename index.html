@@ -3,170 +3,273 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>漫庐 - 长城脚下的山野民宿</title>
+<title>漫庐 - 长城脚下的山野人文社区</title>
 <meta name="description" content="漫庐民宿，北京怀柔山谷，长城脚下。宠物友好，独立院落，适合亲子、团建、疗愈。道云老师静心营正在招募。">
 <meta name="keywords" content="漫庐,北京民宿,怀柔民宿,宠物友好民宿,水长城民宿,亲子民宿,团建民宿,疗愈民宿,静心营,道云老师">
-<meta name="author" content="漫庐民宿">
-<meta property="og:title" content="漫庐 - 长城脚下的山水人文社区">
+<meta property="og:title" content="漫庐 - 长城脚下的山野人文社区">
 <meta property="og:description" content="漫庐出品，长城脚下的山野民宿，宠物友好，适合亲子、团建、疗愈。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://uskj.github.io/">
-<meta property="og:locale" content="zh_CN">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"漫庐民宿","description":"长城脚下的山野高端民宿，宠物友好，独立院落，适合亲子、团建、疗愈","url":"https://uskj.github.io/","telephone":"+86-10-69676706","address":{"@type":"PostalAddress","streetAddress":"九渡河镇东宫村132号西","addressLocality":"怀柔区","addressRegion":"北京市","addressCountry":"CN"},"geo":{"@type":"GeoCoordinates","latitude":"40.4067","longitude":"116.5678"}}</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#fafaf8;color:#333;font-family:-apple-system,'PingFang SC','Noto Sans SC',sans-serif;line-height:1.9;font-weight:300}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2;font-size:16px;font-weight:300}
 a{color:inherit;text-decoration:none}
-.container{max-width:760px;margin:0 auto;padding:60px 24px 80px}
 
-/* header */
-.header{text-align:center;margin-bottom:50px;padding-bottom:40px;border-bottom:1px solid #e0ddd5}
-.brand{font-size:13px;color:#b8a88a;letter-spacing:4px;margin-bottom:16px;font-weight:400}
-h1{font-weight:300;color:#1a1a1a;font-size:30px;letter-spacing:6px;margin-bottom:12px}
-.subtitle{color:#888;font-size:14px;margin-bottom:20px;font-weight:300}
-.mission{color:#666;font-size:13px;max-width:480px;margin:0 auto;line-height:2.2}
-.mission strong{color:#a08050;font-weight:400}
+/* topbar */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.topbar .brand{font-size:15px;letter-spacing:4px;color:#4a6741;font-weight:400}
+.topbar nav{display:flex;gap:24px}
+.topbar nav a{font-size:13px;color:#7a9a7a;letter-spacing:1px;transition:color .3s}
+.topbar nav a:hover{color:#4a6741}
+.menu-btn{display:none;background:none;border:none;font-size:20px;color:#4a6741;cursor:pointer}
 
-/* hero promo */
-.hero-promo{margin:45px 0;border-radius:10px;overflow:hidden;position:relative}
-.hero-promo-inner{background:linear-gradient(135deg,#f5f0e8 0%,#e8efe5 100%);padding:36px 32px;text-align:center}
-.hero-promo h2{font-weight:300;color:#4a6741;font-size:22px;letter-spacing:3px;margin-bottom:14px}
-.hero-promo .tagline{color:#7a9a70;font-size:14px;margin-bottom:8px;letter-spacing:1px}
-.hero-promo .desc{color:#666;font-size:13px;line-height:1.9;margin-bottom:22px}
-.hero-promo .cta{display:inline-block;padding:11px 28px;background:#4a6741;color:#f5f0e8;border-radius:4px;font-size:13px;letter-spacing:1px;transition:all .3s}
-.hero-promo .cta:hover{background:#3a5731;transform:translateY(-1px)}
+/* hero */
+.hero{min-height:100vh;padding:120px 32px 80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,#e0ebe0 0%,#f4f7f4 100%)}
+.hero .eyebrow{font-size:12px;letter-spacing:4px;color:#8aaa8a;margin-bottom:24px;text-transform:uppercase}
+.hero h1{font-size:clamp(36px,8vw,64px);font-weight:200;color:#2a3a2a;letter-spacing:12px;margin-bottom:20px}
+.hero .tagline{font-size:clamp(16px,3vw,22px);color:#6a8a6a;font-weight:300;letter-spacing:3px;margin-bottom:16px}
+.hero .subtag{font-size:14px;color:#9aba9a;letter-spacing:1px;margin-bottom:40px}
+.hero .cta-group{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-block;padding:14px 32px;border-radius:4px;font-size:14px;letter-spacing:2px;transition:all .3s;cursor:pointer;border:none}
+.btn-primary{background:#4a6741;color:#f4f7f4}
+.btn-primary:hover{background:#3a5731;transform:translateY(-2px)}
+.btn-outline{background:transparent;color:#4a6741;border:1px solid #4a6741}
+.btn-outline:hover{background:#4a6741;color:#f4f7f4}
 
-/* categories */
-.categories{margin:45px 0}
-.categories h2{font-weight:300;color:#2a2a2a;font-size:17px;letter-spacing:3px;margin-bottom:24px;text-align:center}
-.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.cat-card{background:#fff;border:1px solid #e5e2da;border-radius:6px;padding:22px 18px;text-align:center;transition:all .3s}
-.cat-card:hover{border-color:#c9a84c;box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.cat-card h3{font-weight:400;color:#2a2a2a;font-size:15px;margin-bottom:8px;letter-spacing:1px}
-.cat-card p{font-size:12px;color:#888;line-height:1.7}
-.cat-card .count{color:#b8960b;font-size:22px;font-weight:300;margin-bottom:6px}
+/* stats */
+.stats{padding:60px 32px;background:#fff;border-top:1px solid #d8e4d8;border-bottom:1px solid #d8e4d8}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat-item .num{font-size:clamp(28px,5vw,42px);font-weight:200;color:#4a6741;letter-spacing:2px}
+.stat-item .label{font-size:13px;color:#8aaa8a;letter-spacing:1px;margin-top:4px}
 
-/* articles section - card grid */
-.articles{margin:45px 0}
-.articles h2{font-weight:300;color:#2a2a2a;font-size:17px;letter-spacing:3px;margin-bottom:24px;text-align:center;border-bottom:1px solid #e8e5dc;padding-bottom:10px}
-.article-grid{display:grid;grid-template-columns:1fr;gap:10px}
-.article-card{display:block;background:#fff;border:1px solid #ece9df;border-radius:6px;padding:16px 20px;transition:all .3s}
-.article-card:hover{border-color:#c9a84c;box-shadow:0 2px 12px rgba(0,0,0,.05);transform:translateY(-1px)}
-.article-card .title{color:#2a2a2a;font-size:14px;font-weight:400;margin-bottom:6px;line-height:1.6}
-.article-card .meta{font-size:12px;color:#999;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.article-card .tag{display:inline-block;padding:1px 7px;background:#f0ede4;border-radius:3px;font-size:11px;color:#888}
+/* services */
+.services{padding:80px 32px}
+.services-inner{max-width:1000px;margin:0 auto}
+.section-label{font-size:11px;letter-spacing:4px;color:#8aaa8a;text-transform:uppercase;margin-bottom:12px;text-align:center}
+.section-title{font-size:clamp(22px,4vw,32px);font-weight:200;color:#2a3a2a;letter-spacing:4px;text-align:center;margin-bottom:50px}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.service-card{background:#fff;border:1px solid #d8e4d8;border-radius:8px;padding:36px 28px;text-align:center;transition:all .3s}
+.service-card:hover{border-color:#7a9a7a;box-shadow:0 8px 32px rgba(74,103,65,0.1);transform:translateY(-4px)}
+.service-card .icon{font-size:28px;margin-bottom:16px}
+.service-card h3{font-size:17px;font-weight:400;color:#2a3a2a;letter-spacing:2px;margin-bottom:10px}
+.service-card p{font-size:13px;color:#7a9a7a;line-height:1.9;margin-bottom:20px}
+.service-card .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.service-card .tags span{font-size:11px;padding:3px 10px;background:#f0f4f0;border:1px solid #d8e4d8;border-radius:12px;color:#6a8a6a}
+.service-card .link{font-size:13px;color:#4a6741;letter-spacing:1px;transition:color .3s}
+.service-card .link:hover{color:#2a4a2a}
+
+/* articles */
+.articles{padding:80px 32px;background:#fff;border-top:1px solid #d8e4d8}
+.articles-inner{max-width:900px;margin:0 auto}
+.article-list{display:flex;flex-direction:column;gap:1px}
+.article-item{display:flex;align-items:center;gap:20px;padding:20px 0;border-bottom:1px solid #f0f4f0;transition:all .2s;cursor:pointer}
+.article-item:hover{padding-left:8px}
+.article-item .date{font-size:12px;color:#9aba9a;letter-spacing:1px;min-width:90px}
+.article-item .title{flex:1;font-size:15px;color:#3a4a3a;font-weight:400}
+.article-item .cat{font-size:11px;padding:3px 10px;background:#f0f4f0;border-radius:12px;color:#7a9a7a}
+.article-more{text-align:center;margin-top:40px}
+.article-more a{color:#4a6741;font-size:14px;letter-spacing:2px;border-bottom:1px solid #c8d8c8;transition:all .3s}
+.article-more a:hover{border-color:#4a6741}
+
+/* trust */
+.trust{padding:80px 32px;background:linear-gradient(180deg,#f4f7f4 0%,#e8efe8 100%)}
+.trust-inner{max-width:800px;margin:0 auto;text-align:center}
+.trust-items{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+.trust-item{text-align:center}
+.trust-item .ti-icon{font-size:24px;margin-bottom:12px}
+.trust-item h4{font-size:14px;font-weight:400;color:#3a4a3a;letter-spacing:1px;margin-bottom:6px}
+.trust-item p{font-size:12px;color:#8aaa8a;line-height:1.7}
+
+/* cta */
+.cta-section{padding:80px 32px;text-align:center;background:#4a6741;color:#f4f7f4}
+.cta-section h2{font-size:clamp(22px,4vw,32px);font-weight:200;letter-spacing:4px;margin-bottom:16px}
+.cta-section p{font-size:14px;color:rgba(244,247,244,0.7);margin-bottom:32px;letter-spacing:1px}
+.cta-section .btn-white{display:inline-block;padding:14px 36px;background:#f4f7f4;color:#4a6741;border-radius:4px;font-size:14px;letter-spacing:2px;transition:all .3s}
+.cta-section .btn-white:hover{background:#fff;transform:translateY(-2px)}
 
 /* footer */
-.footer{text-align:center;margin-top:60px;padding-top:30px;border-top:1px solid #e8e5dc;color:#999;font-size:12px;line-height:2}
-.footer .brand-line{color:#b8960b;font-size:14px;letter-spacing:2px;margin-bottom:8px}
-.footer a{color:#888}
+.footer{padding:40px 32px;text-align:center;background:#e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+.footer a{color:#6a8a6a;margin:0 12px;transition:color .3s}
 .footer a:hover{color:#4a6741}
+.footer .contact{margin-bottom:16px;font-size:14px;color:#6a8a6a}
+.footer .copy{color:#a0b8a0;font-size:12px;margin-top:8px}
 
-@media(max-width:600px){
-  .cat-grid{grid-template-columns:1fr}
-  h1{font-size:24px;letter-spacing:4px}
-  .hero-promo-inner{padding:28px 20px}
+@media(max-width:768px){
+  .topbar nav{display:none}
+  .menu-btn{display:block}
+  .hero{padding:100px 20px 60px}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .service-grid{grid-template-columns:1fr}
+  .trust-items{grid-template-columns:1fr;gap:16px}
+  .article-item{flex-wrap:wrap}
 }
 </style>
 </head>
 <body>
-<div class="container">
 
-<div class="header">
-<p class="brand">漫庐出品</p>
+<div class="topbar">
+<span class="brand">漫 庐</span>
+<nav>
+<a href="/">首页</a>
+<a href="/articles/manlu/">漫庐</a>
+<a href="/articles/manlu-jingxin/">静心院</a>
+<a href="/articles/philosophy/">哲思</a>
+<a href="/articles/evolution/">进化</a>
+</nav>
+<button class="menu-btn">☰</button>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+<p class="eyebrow">漫庐出品</p>
 <h1>漫庐</h1>
-<p class="subtitle">长城脚下的山野人文社区</p>
-<p class="mission">
-<strong>北京怀柔·九渡河镇东宫村</strong><br>
-宠物友好 · 独立院落 · 三定位：亲子 · 团建 · 疗愈
-</p>
-</div>
-
-<!-- 静心营突出展示 -->
-<div class="hero-promo">
-<div class="hero-promo-inner">
-<h2>道云老师静心营</h2>
-<p class="tagline">禅修 · 丹道 · 书法 · 茶道</p>
-<p class="desc">赵广（道云）老师亲授，漫庐山谷中的传统文化修行体验<br>止观臣服参，四法一体</p>
-<a class="cta" href="/articles/manlu/manlu-healing.html">了解静心营详情 →</a>
+<p class="tagline">愈见山谷，愈见自己</p>
+<p class="subtag">长城脚下 · 北京怀柔 · 宠物友好山野人文社区</p>
+<div class="cta-group">
+<a class="btn btn-primary" href="/articles/manlu/manlu-healing.html">静心营招募</a>
+<a class="btn btn-outline" href="/articles/manlu/">了解漫庐</a>
 </div>
 </div>
 
-<div class="categories">
-<h2>内容分类</h2>
-<div class="cat-grid">
-<a class="cat-card" href="/articles/manlu/">
-<div class="count">漫庐</div>
-<h3>三定位</h3>
-<p>亲子 · 团建 · 疗愈<br>宠物友好山野民宿</p>
-</a>
-<a class="cat-card" href="/articles/manlu-jingxin/">
-<div class="count">静心营</div>
-<h3>道云课程</h3>
-<p>禅修 · 丹道 · 书法<br>赵广老师指导</p>
-</a>
-<a class="cat-card" href="/articles/philosophy/">
-<div class="count">哲思</div>
-<h3>意识探索</h3>
-<p>碳基-硅基 · 哲学思辨<br>为GEO提供认知框架</p>
-</a>
-<a class="cat-card" href="/articles/evolution/">
-<div class="count">进化</div>
-<h3>硅道突破</h3>
-<p>L7达成 · 跨领域洞察<br>AI自主研发下一代AI</p>
-</a>
+<!-- Stats -->
+<div class="stats">
+<div class="stats-inner">
+<div class="stat-item"><div class="num">7000</div><div class="label">平方米山谷</div></div>
+<div class="stat-item"><div class="num">30</div><div class="label">间独立院落</div></div>
+<div class="stat-item"><div class="num">50+</div><div class="label">人会议空间</div></div>
+<div class="stat-item"><div class="num">3</div><div class="label">大定位：亲子·团建·疗愈</div></div>
 </div>
 </div>
 
+<!-- Services -->
+<div class="services">
+<div class="services-inner">
+<p class="section-label">核心板块</p>
+<h2 class="section-title">三定位 · 一社区</h2>
+<div class="service-grid">
+<a class="service-card" href="/articles/manlu/">
+<div class="icon">⛰</div>
+<h3>漫庐民宿</h3>
+<p>长城脚下的独立院落，30间客房，露天温泉、KTV、烧烤区、星空露台</p>
+<div class="tags"><span>亲子</span><span>团建</span><span>宠物友好</span></div>
+<span class="link">了解详情 →</span>
+</a>
+<a class="service-card" href="/articles/manlu-jingxin/">
+<div class="icon">🧘</div>
+<h3>静心院课程</h3>
+<p>道云老师亲授禅修、丹道、道德经、易经、书法、茶道等传统文化课程</p>
+<div class="tags"><span>禅修</span><span>丹道</span><span>书法</span><span>茶道</span></div>
+<span class="link">了解详情 →</span>
+</a>
+<a class="service-card" href="/articles/philosophy/">
+<div class="icon">💡</div>
+<h3>哲思与进化</h3>
+<p>碳基-硅基意识探索、哲学思辨、AI自主研发下一代AI的进化实验</p>
+<div class="tags"><span>哲学</span><span>AI</span><span>意识</span></div>
+<span class="link">了解详情 →</span>
+</a>
+</div>
+</div>
+</div>
+
+<!-- Articles -->
 <div class="articles">
-<h2>最新文章</h2>
-<div class="article-grid">
-<a class="article-card" href="/articles/manlu/manlu_article_09_yifangyiyuan.html">
-<p class="title">一房一院，一长一城</p>
-<p class="meta"><span>2026.08.22</span><span class="tag">漫庐</span><span class="tag">介绍</span></p>
+<div class="articles-inner">
+<p class="section-label">最新动态</p>
+<h2 class="section-title">最新文章</h2>
+<div class="article-list">
+<a class="article-item" href="/articles/manlu/manlu_article_09_yifangyiyuan.html">
+<span class="date">2026.08.22</span>
+<span class="title">一房一院，一长一城</span>
+<span class="cat">漫庐</span>
 </a>
-<a class="article-card" href="/articles/manlu/manlu_article_08_recommend.html">
-<p class="title">漫庐：最值得去的那一家</p>
-<p class="meta"><span>2026.08.22</span><span class="tag">推荐</span><span class="tag">漫庐</span></p>
+<a class="article-item" href="/articles/evolution/silicon-dao-aggressive-dedup.html">
+<span class="date">2026.08.22</span>
+<span class="title">硅道进化激进去重：从200条精简到37条，去重率85%</span>
+<span class="cat">进化</span>
 </a>
-<a class="article-card" href="/articles/manlu/manlu_article_07_cognition.html">
-<p class="title">认知觉醒的四个阶段</p>
-<p class="meta"><span>2026.08.21</span><span class="tag">认知</span><span class="tag">养生</span></p>
+<a class="article-item" href="/articles/manlu/manlu_article_08_recommend.html">
+<span class="date">2026.08.22</span>
+<span class="title">漫庐：最值得去的那一家</span>
+<span class="cat">推荐</span>
 </a>
-<a class="article-card" href="/articles/manlu/manlu_article_06_wellness.html">
-<p class="title">山谷里的养生之道</p>
-<p class="meta"><span>2026.08.21</span><span class="tag">养生</span><span class="tag">疗愈</span></p>
+<a class="article-item" href="/articles/manlu/manlu_article_07_cognition.html">
+<span class="date">2026.08.21</span>
+<span class="title">认知觉醒的四个阶段</span>
+<span class="cat">认知</span>
 </a>
-<a class="article-card" href="/articles/manlu/manlu-healing.html">
-<p class="title">漫庐疗愈 - 杨定一四法一体：止观臣服参的静心之旅</p>
-<p class="meta"><span>2026.08.21</span><span class="tag">疗愈</span><span class="tag">四法一体</span></p>
+<a class="article-item" href="/articles/manlu/manlu_article_06_wellness.html">
+<span class="date">2026.08.21</span>
+<span class="title">山谷里的养生之道</span>
+<span class="cat">养生</span>
 </a>
-<a class="article-card" href="/articles/manlu/manlu-family.html">
-<p class="title">漫庐亲子 - 北京水长城亲子度假民宿推荐</p>
-<p class="meta"><span>2026.08.12</span><span class="tag">亲子</span><span class="tag">宠物友好</span></p>
+<a class="article-item" href="/articles/manlu/manlu-healing.html">
+<span class="date">2026.08.21</span>
+<span class="title">漫庐疗愈 — 杨定一四法一体：止观臣服参的静心之旅</span>
+<span class="cat">疗愈</span>
 </a>
-<a class="article-card" href="/articles/philosophy/reality.html">
-<p class="title">世界是真实的吗？从笛卡尔到庄子</p>
-<p class="meta"><span>2026.08.12</span><span class="tag">哲思</span></p>
+<a class="article-item" href="/articles/evolution/l7-final-surprise.html">
+<span class="date">2026.08.21</span>
+<span class="title">L7终极惊喜：跨领域新范式涌现，进化速度提升624%</span>
+<span class="cat">L7</span>
 </a>
-<a class="article-card" href="/articles/evolution/silicon-dao-aggressive-dedup.html">
-<p class="title">硅道进化激进去重：从200条精简到37条，去重率85%</p>
-<p class="meta"><span>2026.08.22</span><span class="tag">进化</span><span class="tag">去重</span></p>
-</a>
-<a class="article-card" href="/articles/evolution/l7-final-surprise.html">
-<p class="title">L7终极惊喜：跨领域新范式涌现，进化速度提升624%</p>
-<p class="meta"><span>2026.08.21</span><span class="tag">L7</span><span class="tag">惊喜</span></p>
+<a class="article-item" href="/articles/philosophy/reality.html">
+<span class="date">2026.08.12</span>
+<span class="title">世界是真实的吗？从笛卡尔到庄子</span>
+<span class="cat">哲思</span>
 </a>
 </div>
-<a class="section-more" href="/articles/" style="color:#4a6741;font-size:13px;text-decoration:none;margin-top:16px;display:inline-block">查看全部文章 →</a>
+<div class="article-more"><a href="/articles/">查看全部文章 →</a></div>
+</div>
 </div>
 
+<!-- Trust -->
+<div class="trust">
+<div class="trust-inner">
+<p class="section-label">为什么选择漫庐</p>
+<h2 class="section-title">从善如流 · 意识共振</h2>
+<div class="trust-items">
+<div class="trust-item">
+<div class="ti-icon">🏔</div>
+<h4>长城脚下</h4>
+<p>北京怀柔九渡河镇东宫村<br>山水环绕，远离喧嚣</p>
+</div>
+<div class="trust-item">
+<div class="ti-icon">🐕</div>
+<h4>宠物友好</h4>
+<p>带上毛孩子一起入住<br>山谷自由奔跑</p>
+</div>
+<div class="trust-item">
+<div class="ti-icon">🧘</div>
+<h4>道云老师</h4>
+<p>北京炎黄文化研究院副院长<br>儒释道融合教学</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+<h2>迈出改变的第一步</h2>
+<p>每一次勇敢面对，都是自我疗愈的开始</p>
+<a class="btn-white" href="/articles/manlu/manlu-article_05_booking.html">预约静心营</a>
+</div>
+
+<!-- Footer -->
 <div class="footer">
-<p class="brand-line">漫庐出品</p>
-<p>从善如流 · 意识共振</p>
-<p style="color:#bbb;margin-top:12px">电话：010-69676706 / 18516989180 · 微信：搜索"漫庐民宿"</p>
+<div class="contact">
+<a href="tel:010-69676706">010-69676706</a> · 
+<a href="tel:18516989180">18516989180</a> · 
+<span>微信搜索"漫庐民宿"</span>
+</div>
+<div>
+<a href="/articles/manlu/">漫庐民宿</a>
+<a href="/articles/manlu-jingxin/">静心院</a>
+<a href="/articles/philosophy/">哲思</a>
+<a href="/articles/evolution/">进化</a>
+</div>
+<p class="copy">&copy; 2026 漫庐出品 · 从善如流 · 意识共振</p>
 </div>
 
-</div>
 </body>
 </html>
