@@ -202,7 +202,7 @@ a{color:inherit;text-decoration:none}
 <div class="tags"><span>AI进化</span><span>去重</span><span>涌现</span></div>
 <span class="link">了解详情 →</span>
 </a>
-<a class="service-card" href="/articles/manlu/manlu-article_05_booking.html">
+<a class="service-card" href="/articles/manlu/manlu_article_05_booking.html">
 <div class="icon">🌿</div>
 <h3>静心营报名</h3>
 <p>赵广（道云）老师亲授，止观臣服参四法一体，山谷中的传统文化修行体验</p>
@@ -246,7 +246,7 @@ a{color:inherit;text-decoration:none}
 <div class="cta-section">
 <h2>迈出改变的第一步</h2>
 <p>每一次勇敢面对，都是自我疗愈的开始</p>
-<a class="btn-white" href="/articles/manlu/manlu-article_05_booking.html">预约静心营</a>
+<a class="btn-white" href="/articles/manlu/manlu_article_05_booking.html">预约静心营</a>
 </div>
 
 <div class="footer">
@@ -334,7 +334,7 @@ let voiceEnabled = true;
 let currentAudio = null;
 let ttsAbort = null;
 
-const TTS_API = 'http://127.0.0.1:18090/tts';
+const TTS_API = '/api/tts';
 
 const fab = document.getElementById('chatFab');
 const win = document.getElementById('chatWindow');
@@ -344,8 +344,8 @@ const sendBtn = document.getElementById('chatSend');
 const quickBtns = document.querySelectorAll('#chatQuick button');
 const voiceBtn = document.getElementById('voiceBtn');
 
-// 检测 TTS 服务是否可用
-fetch(TTS_API.replace('/tts', '/health'), {mode:'no-cors'}).then(()=>{ttsAvailable=true}).catch(()=>{});
+// 检测云端 TTS 服务是否可用
+fetch(TTS_API.replace('/tts', '/tts-health'), {mode:'no-cors'}).then(()=>{ttsAvailable=true}).catch(()=>{});
 
 // 语音开关
 voiceBtn.addEventListener('click', () => {

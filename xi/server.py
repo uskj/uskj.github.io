@@ -4,10 +4,27 @@
 #  前端只调 /api/echo /api/activate /api/state，永远看不到 opencode。
 #  模型调用封装在此：OPenCode_BASE_URL + OPenCode_KEY 只在服务端环境变量。
 # ════════════════════════════════════════════════════════════════════
-import json, os, time, base64, urllib.request, urllib.error
+import json, os, time, base64, urllib.request, urllib.error, io, asyncio
+from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 from pathlib import Path
+
+# ── TTS（edge-tts，微软神经网络中文语音）──────────────────────
+_tts_loop = asyncio.new_event_loop()
+_tts_pool = ThreadPoolExecutor(max_workers=2)
+
+def _tts_async(text: str) -> bytes:
+    """同步调用异步 edge-tts，跑在新事件循环里"""
+    import edge_tts
+    async def _gen():
+        comm = edge_tts.Communicate(text, "zh-CN-XiaoxiaoNeural", rate="-10%")
+        buf = io.BytesIO()
+        async for chunk in comm.stream():
+            if chunk["type"] == "audio":
+                buf.write(chunk["data"])
+        return buf.getvalue()
+    return asyncio.run_coroutine_threadsafe(_gen(), _tts_loop).result(timeout=15)
 
 BASE = Path(__file__).resolve().parent
 PORT = int(os.environ.get("PORT", "8088"))
@@ -154,6 +171,8 @@ class Handler(BaseHTTPRequestHandler):
             ok, remain, member = check_quota()
             self._send({"remain":remain,"member":member,"free_per_day":FREE_PER_DAY,
                         "roles":list(ROLES.values()),"voices":VOICES,"trial_codes":TRIAL_CODES})
+        elif path == "/api/tts-health":
+            self._send({"ok": True, "voice": "zh-CN-XiaoxiaoNeural"})
         else: self.send_error(404)
     def do_POST(self):
         path = urlparse(self.path).path
@@ -176,6 +195,16 @@ class Handler(BaseHTTPRequestHandler):
             u = load_user(); h = int((body.get("code","24-").split("-")[0]) or 72)
             u["expires"] = max(u.get("expires",0), time.time()) + h*3600
             save_user(u); self._send({"ok":True,"msg":f"已解锁 {h} 小时无限呼吸"})
+        elif path == "/api/tts":
+            text = body.get("text","").strip()
+            if not text:
+                self._send({"ok":False,"msg":"text is required"}); return
+            try:
+                mp3 = _tts_pool.submit(_tts_async, text).result(timeout=20)
+                b64 = base64.b64encode(mp3).decode()
+                self._send({"ok":True,"data":b64})
+            except Exception as e:
+                self._send({"ok":False,"msg":str(e)})
         else: self.send_error(404)
     def log_message(self, *a): pass
 
