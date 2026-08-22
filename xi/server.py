@@ -18,7 +18,7 @@ def _tts_async(text: str) -> bytes:
     """同步调用异步 edge-tts，跑在新事件循环里"""
     import edge_tts
     async def _gen():
-        comm = edge_tts.Communicate(text, "zh-CN-XiaoxiaoNeural", rate="-10%")
+        comm = edge_tts.Communicate(text, "zh-CN-XiaoxiaoNeural", rate="-20%", pitch="+5Hz")
         buf = io.BytesIO()
         async for chunk in comm.stream():
             if chunk["type"] == "audio":
@@ -172,7 +172,7 @@ class Handler(BaseHTTPRequestHandler):
             self._send({"remain":remain,"member":member,"free_per_day":FREE_PER_DAY,
                         "roles":list(ROLES.values()),"voices":VOICES,"trial_codes":TRIAL_CODES})
         elif path == "/api/tts-health":
-            self._send({"ok": True, "voice": "zh-CN-XiaoxiaoNeural"})
+            self._send({"ok": True, "voice": "zh-CN-XiaoxiaoNeural", "rate": "-20%", "pitch": "+5Hz"})
         else: self.send_error(404)
     def do_POST(self):
         path = urlparse(self.path).path
