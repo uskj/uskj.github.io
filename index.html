@@ -339,8 +339,6 @@ let currentAudio = null;
 let ttsAbort = null;
 let isRecording = false;
 let recognition = null;
-let ttsAvailable = false;
-
 // TTS API - 本地服务（Render已下线）
 const TTS_API = 'http://127.0.0.1:8088/api/tts';
 
@@ -500,11 +498,14 @@ async function sendMsg(text) {
   conversationHistory.push({ role: 'user', content: text });
   
   try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000);
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + API_KEY
+        'Authorization': 'Bearer ' + API_KEY,
+        'Origin': 'https://uskj.github.io'
       },
       body: JSON.stringify({
         model: 'agnes-2.0-flash',
@@ -514,22 +515,27 @@ async function sendMsg(text) {
         ],
         max_tokens: 300,
         temperature: 0.8
-      })
+      }),
+      signal: controller.signal
     });
+    clearTimeout(timeout);
     
     removeTyping();
     
     if (!res.ok) throw new Error('API error');
     
     const data = await res.json();
-    const reply = data.choices[0].message.content.trim();
+    console.log('API response:', JSON.stringify(data).slice(0, 200));
+    const reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) ? data.choices[0].message.content.trim() : '（无回复）';
     
     addMessage(reply, 'bot');
     conversationHistory.push({ role: 'assistant', content: reply });
     
   } catch (e) {
+    console.error('Chat API error:', e);
     removeTyping();
-    addMessage('抱歉，我暂时连接不上，请稍后再试。', 'bot');
+    const errMsg = e.name === 'AbortError' ? '回复超时，请稍后再试。' : '抱歉，服务暂时不可用，请稍后再试。';
+    addMessage(errMsg, 'bot');
   }
 }
 const voiceRecordBtn = document.getElementById('voiceRecordBtn');
