@@ -341,8 +341,8 @@ let isRecording = false;
 let recognition = null;
 let ttsAvailable = false;
 
-// TTS API - 请替换为 Render 服务地址
-const TTS_API = 'https://xi-backend.onrender.com/api/tts';
+// TTS API - 本地服务（Render已下线）
+const TTS_API = 'http://127.0.0.1:8088/api/tts';
 
 const fab = document.getElementById('chatFab');
 const win = document.getElementById('chatWindow');
