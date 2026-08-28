@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>催眠入眠频率发生器 | 助眠冥想</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a14;
+  color: #c8c8d8;
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: background 3s ease;
+}
+body.sleeping { background: #050508; }
+.star {
+  position: fixed;
+  width: 2px; height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: twinkle var(--dur) ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: var(--max); }
+}
+.container {
+  text-align: center;
+  z-index: 10;
+  max-width: 500px;
+  padding: 40px 30px;
+}
+h1 {
+  font-size: 1.8em;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  margin-bottom: 10px;
+  color: #e0e0f0;
+  text-shadow: 0 0 30px rgba(100,120,255,0.3);
+}
+.subtitle {
+  font-size: 0.85em;
+  color: #666;
+  letter-spacing: 0.2em;
+  margin-bottom: 50px;
+}
+/* 圆形脉冲动画 */
+.pulse-ring {
+  width: 200px; height: 200px;
+  margin: 0 auto 50px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pulse-ring .ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(100,120,255,0.2);
+  animation: pulse var(--speed) ease-out infinite;
+}
+.pulse-ring .ring:nth-child(1) { animation-delay: 0s; }
+.pulse-ring .ring:nth-child(2) { animation-delay: 0.5s; }
+.pulse-ring .ring:nth-child(3) { animation-delay: 1s; }
+.pulse-ring .ring:nth-child(4) { animation-delay: 1.5s; }
+@keyframes pulse {
+  0% { width: 60px; height: 60px; opacity: 0.8; border-color: rgba(100,120,255,0.6); }
+  100% { width: 200px; height: 200px; opacity: 0; border-color: rgba(100,120,255,0); }
+}
+.core {
+  width: 40px; height: 40px;
+  background: radial-gradient(circle, rgba(100,120,255,0.8), rgba(60,60,120,0.4));
+  border-radius: 50%;
+  box-shadow: 0 0 40px rgba(100,120,255,0.5);
+  animation: breathe var(--speed) ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(100,120,255,0.5); }
+  50% { transform: scale(1.3); box-shadow: 0 0 60px rgba(100,120,255,0.8); }
+}
+/* 频率显示 */
+.freq-display {
+  margin-bottom: 40px;
+}
+.freq-value {
+  font-size: 3.5em;
+  font-weight: 100;
+  color: #fff;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 20px rgba(100,120,255,0.5);
+}
+.freq-unit {
+  font-size: 0.9em;
+  color: #556;
+  letter-spacing: 0.2em;
+  margin-left: 5px;
+}
+.wave-type {
+  font-size: 0.8em;
+  color: #445;
+  margin-top: 8px;
+  letter-spacing: 0.15em;
+}
+/* 控制按钮 */
+.controls {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+.btn {
+  background: none;
+  border: 1px solid rgba(100,120,255,0.3);
+  color: #889;
+  padding: 12px 32px;
+  font-size: 0.9em;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.5s ease;
+  font-family: inherit;
+}
+.btn:hover, .btn.active {
+  border-color: rgba(100,120,255,0.8);
+  color: #c8d0ff;
+  box-shadow: 0 0 20px rgba(100,120,255,0.2);
+}
+.btn-play {
+  border-color: rgba(100,200,255,0.5);
+  color: #8ab8ff;
+  min-width: 100px;
+}
+.btn-play.playing {
+  border-color: rgba(255,100,100,0.5);
+  color: #ff8a8a;
+}
+/* 滑动条 */
+.slider-group {
+  margin-bottom: 30px;
+  text-align: left;
+}
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75em;
+  color: #445;
+  margin-bottom: 10px;
+  letter-spacing: 0.1em;
+}
+.slider-label span:last-child { color: #667; }
+input[type="range"] {
+  width: 100%;
+  height: 2px;
+  background: rgba(100,120,255,0.15);
+  outline: none;
+  -webkit-appearance: none;
+  border-radius: 1px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  background: rgba(100,120,255,0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(100,120,255,0.4);
+}
+/* 模式选择 */
+.modes {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 35px;
+}
+.mode-btn {
+  background: rgba(100,120,255,0.05);
+  border: 1px solid rgba(100,120,255,0.15);
+  color: #556;
+  padding: 8px 18px;
+  font-size: 0.75em;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  letter-spacing: 0.1em;
+}
+.mode-btn.active {
+  border-color: rgba(100,120,255,0.6);
+  color: #a0b0ff;
+  background: rgba(100,120,255,0.1);
+}
+/* 提示文字 */
+.tip {
+  font-size: 0.7em;
+  color: #334;
+  letter-spacing: 0.15em;
+  margin-top: 20px;
+  line-height: 1.8;
+}
+/* 进度条 */
+.progress-bar {
+  width: 100%;
+  height: 1px;
+  background: rgba(100,120,255,0.1);
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: rgba(100,120,255,0.4);
+  width: 0%;
+  transition: width 1s linear;
+}
+/* 阶段指示 */
+.phase-indicator {
+  font-size: 0.7em;
+  color: #334;
+  letter-spacing: 0.2em;
+  margin-bottom: 20px;
+}
+.phase-indicator .active-phase {
+  color: #6678aa;
+}
+</style>
+</head>
+<body>
+<!-- 星星背景 -->
+<div id="stars"></div>
+
+<div class="container">
+  <h1>入 眠 频 率</h1>
+  <div class="subtitle">HYPODNAMIC SLEEP THERAPY</div>
+
+  <div class="pulse-ring" id="pulseRing">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="core"></div>
+  </div>
+
+  <div class="freq-display">
+    <span class="freq-value" id="freqValue">4.0</span>
+    <span class="freq-unit">Hz Theta</span>
+    <div class="wave-type" id="waveType">双耳节拍 · Delta渐入</div>
+  </div>
+
+  <div class="phase-indicator" id="phaseIndicator">
+    阶段: <span class="active-phase" id="phaseText">准备入睡</span>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="modes">
+    <button class="mode-btn active" data-mode="theta" onclick="setMode('theta')">Theta放松</button>
+    <button class="mode-btn" data-mode="delta" onclick="setMode('delta')">Delta深睡</button>
+    <button class="mode-btn" data-mode="auto" onclick="setMode('auto')">自动渐入</button>
+  </div>
+
+  <div class="slider-group">
+    <div class="slider-label"><span>基础频率</span><span id="baseFreqVal">400 Hz</span></div>
+    <input type="range" id="baseFreq" min="300" max="600" value="400" step="10" oninput="updateBaseFreq(this.value)">
+  </div>
+
+  <div class="slider-group">
+    <div class="slider-label"><span>音量</span><span id="volumeVal">50%</span></div>
+    <input type="range" id="volume" min="0" max="100" value="50" step="5" oninput="updateVolume(this.value)">
+  </div>
+
+  <div class="slider-group" id="timerGroup">
+    <div class="slider-label"><span>定时关闭</span><span id="timerVal">60 分钟</span></div>
+    <input type="range" id="timer" min="0" max="180" value="60" step="15" oninput="updateTimer(this.value)">
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-play" id="playBtn" onclick="togglePlay()">▶ 开始</button>
+    <button class="btn" onclick="resetAll()">↺ 重置</button>
+  </div>
+
+  <div class="tip">
+    建议使用耳机 · 调暗灯光 · 深呼吸三次<br>
+    频率将引导你从清醒 → 放松 → 深睡
+  </div>
+</div>
+
+<script>
+// ========== 音频引擎 ==========
+class SleepTherapy {
+  constructor() {
+    this.ctx = null;
+    this.isPlaying = false;
+    this.baseFreq = 400;
+    this.currentFreq = 4.0;
+    this.targetFreq = 4.0;
+    this.volume = 0.5;
+    this.mode = 'auto'; // theta, delta, auto
+    this.startTime = null;
+    this.timerDuration = 60 * 60 * 1000;
+    this.timerId = null;
+    this.oscillators = [];
+    this.gainNodes = [];
+    this.lfo = null;
+    this.animFrame = null;
+  }
+
+  init() {
+    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  start() {
+    if (!this.ctx) this.init();
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    this.isPlaying = true;
+    this.startTime = Date.now();
+    this.createOscillators();
+    this.startLFO();
+    this.startAnimation();
+    if (this.timerDuration > 0) this.startTimer();
+  }
+
+  stop() {
+    this.isPlaying = false;
+    this.stopOscillators();
+    if (this.timerId) clearTimeout(this.timerId);
+    if (this.animFrame) cancelAnimationFrame(this.animFrame);
+  }
+
+  createOscillators() {
+    this.stopOscillators();
+    // 左耳
+    const left = this.ctx.createOscillator();
+    const leftGain = this.ctx.createGain();
+    const leftFilter = this.ctx.createBiquadFilter();
+    left.type = 'sine';
+    left.frequency.value = this.baseFreq;
+    leftFilter.type = 'lowpass';
+    leftFilter.frequency.value = 800;
+    leftGain.gain.value = this.volume * 0.5;
+    left.connect(leftFilter);
+    leftFilter.connect(leftGain);
+    leftGain.connect(this.ctx.destination);
+    left.start();
+    this.oscillators.push(left);
+    this.gainNodes.push(leftGain);
+
+    // 右耳 - 差频产生节拍
+    const right = this.ctx.createOscillator();
+    const rightGain = this.ctx.createGain();
+    const rightFilter = this.ctx.createBiquadFilter();
+    right.type = 'sine';
+    right.frequency.value = this.baseFreq + this.currentFreq;
+    rightFilter.type = 'lowpass';
+    rightFilter.frequency.value = 800;
+    rightGain.gain.value = this.volume * 0.5;
+    right.connect(rightFilter);
+    rightFilter.connect(rightGain);
+    rightGain.connect(this.ctx.destination);
+    right.start();
+    this.oscillators.push(right);
+    this.gainNodes.push(rightGain);
+  }
+
+  startLFO() {
+    // LFO控制频率渐变
+    const lfo = this.ctx.createOscillator();
+    const lfoGain = this.ctx.createGain();
+    lfo.type = 'sine';
+    lfo.frequency.value = 0.01; // 很慢，模拟呼吸
+    lfoGain.gain.value = 0.5;
+    lfo.connect(lfoGain);
+    lfoGain.connect(this.oscillators[1].frequency);
+    lfo.start();
+    this.lfo = lfo;
+  }
+
+  startAnimation() {
+    const step = () => {
+      if (!this.isPlaying) return;
+      this.updateFrequency();
+      this.updatePhase();
+      this.animFrame = requestAnimationFrame(step);
+    };
+    step();
+  }
+
+  updateFrequency() {
+    const elapsed = Date.now() - this.startTime;
+    let target;
+
+    if (this.mode === 'theta') {
+      target = 6.0;
+    } else if (this.mode === 'delta') {
+      target = 2.0;
+    } else { // auto - 渐入深睡
+      // 0-5min: Theta(6Hz) → 5-15min: Theta-Delta过渡(4Hz) → 15-30min: Delta(2Hz)
+      if (elapsed < 5 * 60 * 1000) {
+        target = 6.0 - (elapsed / (5 * 60 * 1000)) * 2;
+      } else if (elapsed < 15 * 60 * 1000) {
+        target = 4.0 - ((elapsed - 5*60*1000) / (10*60*1000)) * 2;
+      } else {
+        target = 2.0;
+      }
+    }
+
+    this.targetFreq = target;
+    // 平滑过渡
+    this.currentFreq += (target - this.currentFreq) * 0.001;
+
+    if (this.oscillators[1]) {
+      this.oscillators[1].frequency.value = this.baseFreq + this.currentFreq;
+    }
+
+    // 更新UI
+    document.getElementById('freqValue').textContent = this.currentFreq.toFixed(1);
+    document.getElementById('progressFill').style.width =
+      Math.min(100, (elapsed / (30 * 60 * 1000)) * 100) + '%';
+  }
+
+  updatePhase() {
+    const elapsed = Date.now() - this.startTime;
+    const phaseText = document.getElementById('phaseText');
+    const waveType = document.getElementById('waveType');
+
+    if (elapsed < 5 * 60 * 1000) {
+      phaseText.textContent = '准备入睡';
+      waveType.textContent = '双耳节拍 · Theta波引导';
+    } else if (elapsed < 15 * 60 * 1000) {
+      phaseText.textContent = '浅睡过渡';
+      waveType.textContent = '双耳节拍 · Theta→Delta过渡';
+    } else if (elapsed < 30 * 60 * 1000) {
+      phaseText.textContent = '进入深睡';
+      waveType.textContent = '双耳节拍 · Delta深睡波';
+    } else {
+      phaseText.textContent = '深度睡眠';
+      waveType.textContent = 'Delta波维持';
+    }
+  }
+
+  setMode(mode) {
+    this.mode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+  }
+
+  setBaseFreq(freq) {
+    this.baseFreq = parseInt(freq);
+    if (this.oscillators[0]) this.oscillators[0].frequency.value = this.baseFreq;
+    if (this.oscillators[1]) this.oscillators[1].frequency.value = this.baseFreq + this.currentFreq;
+  }
+
+  setVolume(vol) {
+    this.volume = parseInt(vol) / 100;
+    this.gainNodes.forEach(g => g.gain.value = this.volume * 0.5);
+  }
+
+  setTimer(mins) {
+    this.timerDuration = mins * 60 * 1000;
+  }
+
+  stopOscillators() {
+    this.oscillators.forEach(o => { try { o.stop(); } catch(e) {} });
+    this.oscillators = [];
+    this.gainNodes = [];
+    if (this.lfo) { try { this.lfo.stop(); } catch(e) {} this.lfo = null; }
+  }
+
+  startTimer() {
+    this.timerId = setTimeout(() => {
+      this.fadeOut();
+      setTimeout(() => this.stop(), 30000);
+    }, this.timerDuration);
+  }
+
+  fadeOut() {
+    const fade = () => {
+      if (this.volume > 0.01 && this.isPlaying) {
+        this.volume *= 0.98;
+        this.gainNodes.forEach(g => g.gain.value = this.volume * 0.5);
+        requestAnimationFrame(fade);
+      }
+    };
+    fade();
+  }
+
+  reset() {
+    this.stop();
+    this.currentFreq = 4.0;
+    this.startTime = null;
+    document.getElementById('freqValue').textContent = '4.0';
+    document.getElementById('phaseText').textContent = '准备入睡';
+    document.getElementById('progressFill').style.width = '0%';
+  }
+}
+
+const therapy = new SleepTherapy();
+let isPlaying = false;
+
+function togglePlay() {
+  const btn = document.getElementById('playBtn');
+  if (!isPlaying) {
+    therapy.start();
+    btn.textContent = '⏸ 暂停';
+    btn.classList.add('playing');
+    isPlaying = true;
+    document.body.classList.add('sleeping');
+  } else {
+    therapy.stop();
+    btn.textContent = '▶ 开始';
+    btn.classList.remove('playing');
+    isPlaying = false;
+    document.body.classList.remove('sleeping');
+  }
+}
+
+function resetAll() {
+  therapy.reset();
+  const btn = document.getElementById('playBtn');
+  btn.textContent = '▶ 开始';
+  btn.classList.remove('playing');
+  isPlaying = false;
+  document.body.classList.remove('sleeping');
+}
+
+function setMode(mode) { therapy.setMode(mode); }
+function updateBaseFreq(v) { therapy.setBaseFreq(v); document.getElementById('baseFreqVal').textContent = v + ' Hz'; }
+function updateVolume(v) { therapy.setVolume(v); document.getElementById('volumeVal').textContent = v + '%'; }
+function updateTimer(v) { therapy.setTimer(v); document.getElementById('timerVal').textContent = v + ' 分钟'; }
+
+// 生成星星背景
+function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+    star.style.setProperty('--max', (0.2 + Math.random() * 0.5).toString());
+    star.style.animationDelay = Math.random() * 4 + 's';
+    container.appendChild(star);
+  }
+}
+createStars();
+</script>
+</body>
+</html>
