@@ -6,72 +6,66 @@
 <title>催眠入眠</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#050510;color:#a0a0c0;font-family:'PingFang SC',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:background 5s}
-body.sleeping{background:#020205}
+body{background:#050510;color:#a0a0c0;font-family:'PingFang SC',system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+body.sleeping{background:#020208}
 .stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d) ease-in-out infinite}
-@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:var(--m)}}
-.wrap{position:relative;z-index:10;text-align:center;width:90%;max-width:420px}
-h1{font-size:1.4em;font-weight:300;letter-spacing:.3em;color:#e0e0f0;margin-bottom:8px;text-shadow:0 0 20px rgba(100,120,255,.4)}
-.subtitle{font-size:.65em;color:#445;letter-spacing:.2em;margin-bottom:25px}
-/* 圆形脉冲 */
-.pulse{width:140px;height:140px;margin:0 auto 20px;position:relative;display:flex;align-items:center;justify-content:center}
-.ring{position:absolute;border-radius:50%;border:1px solid rgba(100,120,255,.15);animation:ring var(--s) ease-out infinite}
-.ring:nth-child(1){--s:3s;animation-delay:0s}
-.ring:nth-child(2){--s:3s;animation-delay:.75s}
-.ring:nth-child(3){--s:3s;animation-delay:1.5s}
-.ring:nth-child(4){--s:3s;animation-delay:2.25s}
-@keyframes ring{0%{width:50px;height:50px;opacity:.7;border-color:rgba(100,120,255,.5)}100%{width:140px;height:140px;opacity:0;border-color:rgba(100,120,255,0)}}
-.core{width:30px;height:30px;background:radial-gradient(circle,rgba(100,120,255,.7),rgba(40,40,100,.3));border-radius:50%;box-shadow:0 0 30px rgba(100,120,255,.5);animation:breathe var(--s) ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes twinkle{0%,100%{opacity:.08}50%{opacity:var(--m)}}
+.wrap{position:relative;z-index:10;text-align:center;width:90%;max-width:400px}
+h1{font-size:1.3em;font-weight:300;letter-spacing:.3em;color:#d0d0e8;margin-bottom:6px}
+.subtitle{font-size:.6em;color:#334;letter-spacing:.2em;margin-bottom:20px}
+/* 脉冲环 */
+.pulse-wrap{width:130px;height:130px;margin:0 auto 18px;position:relative;display:flex;align-items:center;justify-content:center}
+.ring{position:absolute;border-radius:50%;border:1.5px solid rgba(100,140,255,.25);animation:ring var(--spd) linear infinite}
+.ring:nth-child(1){--spd:2.5s;animation-delay:0s;width:40px;height:40px}
+.ring:nth-child(2){--spd:2.5s;animation-delay:.6s;width:40px;height:40px}
+.ring:nth-child(3){--spd:2.5s;animation-delay:1.2s;width:40px;height:40px}
+.ring:nth-child(4){--spd:2.5s;animation-delay:1.8s;width:40px;height:40px}
+@keyframes ring{0%{width:40px;height:40px;opacity:.8;border-color:rgba(100,140,255,.7)}100%{width:130px;height:130px;opacity:0;border-color:rgba(100,140,255,0)}}
+/* 核心圆点 - 随频率跳动 */
+.core{width:28px;height:28px;background:radial-gradient(circle at 35% 35%,rgba(140,170,255,.9),rgba(50,60,150,.6));border-radius:50%;box-shadow:0 0 25px rgba(100,130,255,.6),0 0 50px rgba(80,100,255,.2);transition:transform .05s linear}
 /* 频率显示 */
-.freq{margin-bottom:15px}
-.freq-val{font-size:2.8em;font-weight:100;color:#fff;letter-spacing:.05em;text-shadow:0 0 15px rgba(100,120,255,.4)}
-.freq-unit{font-size:.7em;color:#445;margin-left:4px}
-.wave-tag{font-size:.6em;color:#334;margin-top:4px}
+.freq{margin-bottom:12px}
+.freq-val{font-size:2.6em;font-weight:100;color:#fff;letter-spacing:.05em;text-shadow:0 0 12px rgba(100,130,255,.5)}
+.freq-unit{font-size:.65em;color:#334;margin-left:3px}
+.wave-tag{font-size:.55em;color:#2a2a40;margin-top:3px}
 /* 阶段 */
-.phase{font-size:.65em;color:#334;margin-bottom:12px;letter-spacing:.1em}
-.phase span{color:#6678aa}
+.phase{font-size:.6em;color:#2a2a40;margin-bottom:12px;letter-spacing:.1em}
+.phase span{color:#5566aa}
 /* 模式按钮 */
-.modes{display:flex;gap:10px;justify-content:center;margin-bottom:18px}
-.mbtn{background:rgba(100,120,255,.05);border:1px solid rgba(100,120,255,.2);color:#556;padding:6px 16px;font-size:.7em;cursor:pointer;border-radius:20px;transition:all .3s;font-family:inherit;letter-spacing:.1em}
-.mbtn.active{border-color:rgba(100,120,255,.6);color:#a0b0ff;background:rgba(100,120,255,.1)}
+.modes{display:flex;gap:8px;justify-content:center;margin-bottom:15px}
+.mbtn{background:rgba(80,100,200,.06);border:1px solid rgba(80,100,200,.2);color:#445;padding:5px 14px;font-size:.65em;cursor:pointer;border-radius:15px;transition:all .3s;font-family:inherit;letter-spacing:.08em}
+.mbtn.active{border-color:rgba(100,140,255,.6);color:#90a8ff;background:rgba(80,100,200,.12)}
 /* 滑块 */
-.sliders{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
-.srow{display:flex;align-items:center;justify-content:space-between;font-size:.65em;color:#445}
-.srow span:last-child{color:#556}
-input[type=range]{flex:1;margin:0 10px;height:2px;background:rgba(100,120,255,.15);-webkit-appearance:none;border-radius:1px;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;background:rgba(100,120,255,.5);border-radius:50%;cursor:pointer}
+.sliders{display:flex;flex-direction:column;gap:8px;margin-bottom:15px}
+.srow{display:flex;align-items:center;justify-content:space-between;font-size:.6em;color:#334}
+.srow span:last-child{color:#445;min-width:40px}
+input[type=range]{flex:1;margin:0 8px;height:2px;background:rgba(80,100,200,.15);-webkit-appearance:none;border-radius:1px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:rgba(100,140,255,.5);border-radius:50%;cursor:pointer}
 /* 按钮 */
-.btns{display:flex;gap:15px;justify-content:center}
-.btn{background:none;border:1px solid rgba(100,120,255,.3);color:#667;padding:10px 28px;font-size:.8em;cursor:pointer;border-radius:25px;transition:all .3s;font-family:inherit;letter-spacing:.1em}
-.btn:hover{border-color:rgba(100,120,255,.6);color:#a0b0ff}
-.btn-play{border-color:rgba(100,180,255,.4);color:#7ab0ff;min-width:90px}
-.btn-play.playing{border-color:rgba(255,100,100,.4);color:#ff7a7a}
-/* 提示 */
-.tip{font-size:.55em;color:#223;margin-top:15px;line-height:1.6}
-/* 静音提示 */
-.mute-hint{position:fixed;top:15px;right:15px;font-size:.55em;color:#334;z-index:100;opacity:0;transition:opacity .3s}
-.mute-hint.show{opacity:1}
+.btns{display:flex;gap:12px;justify-content:center}
+.btn{background:none;border:1px solid rgba(80,100,200,.25);color:#556;padding:8px 24px;font-size:.75em;cursor:pointer;border-radius:20px;transition:all .3s;font-family:inherit;letter-spacing:.1em}
+.btn:hover{border-color:rgba(100,140,255,.5);color:#8899cc}
+.btn-play{border-color:rgba(80,140,255,.4);color:#6699ff;min-width:80px}
+.btn-play.playing{border-color:rgba(255,80,80,.4);color:#ff6666}
+.tip{font-size:.5em;color:#1a1a2a;margin-top:12px;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="stars" id="stars"></div>
-<div class="mute-hint" id="muteHint">点击屏幕唤醒音频</div>
-
 <div class="wrap">
   <h1>入 眠</h1>
   <div class="subtitle">BINAURAL SLEEP THERAPY</div>
 
-  <div class="pulse" id="pulse">
+  <div class="pulse-wrap">
     <div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div>
-    <div class="core"></div>
+    <div class="core" id="core"></div>
   </div>
 
   <div class="freq">
     <span class="freq-val" id="freqVal">4.0</span>
-    <span class="freq-unit">Hz Theta</span>
-    <div class="wave-tag" id="waveTag">双耳节拍 · 渐入深睡</div>
+    <span class="freq-unit">Hz</span>
+    <div class="wave-tag" id="waveTag">Theta · 浅睡引导</div>
   </div>
 
   <div class="phase">阶段：<span id="phaseText">准备入睡</span></div>
@@ -84,8 +78,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
 
   <div class="sliders">
     <div class="srow"><span>基础音</span><input type="range" id="baseFreq" min="300" max="500" value="400" step="25"><span id="baseVal">400Hz</span></div>
-    <div class="srow"><span>音量</span><input type="range" id="volume" min="0" max="100" value="40" step="5"><span id="volVal">40%</span></div>
-    <div class="srow"><span>定时</span><input type="range" id="timer" min="0" max="120" value="60" step="15"><span id="timerVal">60分钟</span></div>
+    <div class="srow"><span>音量</span><input type="range" id="volume" min="0" max="100" value="35" step="5"><span id="volVal">35%</span></div>
+    <div class="srow"><span>定时</span><input type="range" id="timer" min="0" max="120" value="60" step="15"><span id="timerVal">60分</span></div>
   </div>
 
   <div class="btns">
@@ -93,187 +87,147 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;heigh
     <button class="btn" onclick="resetAll()">↺</button>
   </div>
 
-  <div class="tip">戴耳机 · 调暗灯光 · 深呼吸<br>后台播放需保持网页打开</div>
+  <div class="tip">戴耳机 · 调暗灯光<br>圆点跳动频率 = 脑波频率</div>
 </div>
 
 <script>
-// ========== 背景星星 ==========
-document.getElementById('stars').innerHTML = Array.from({length:60},(_,i)=>
-  `<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*3}s;--m:${.2+Math.random()*.4}"></div>`
+// 星星背景
+document.getElementById('stars').innerHTML=Array.from({length:50},(_,i)=>
+  `<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--m:${.15+Math.random()*.35}"></div>`
 ).join('');
 
-// ========== 音频引擎 ==========
-class SleepAudio {
+class SleepAudio{
   constructor(){
-    this.ctx=null; this.on=false; this.baseFreq=400;
-    this.curFreq=4; this.targetFreq=4; this.vol=0.4;
-    this.mode='theta'; this.startTime=null;
-    this.timerId=null; this.oscs=[]; this.gains=[];
-    this.lfo=null; this.raf=null; this.bgTimer=null;
+    this.ctx=null;this.on=false;this.baseFreq=400;
+    this.curFreq=4;this.targetFreq=4;this.vol=0.35;
+    this.mode='theta';this.startTime=null;
+    this.timerId=null;this.oscs=[];this.gains=[];
+    this.lfo=null;this.raf=null;
+    this.lastBeat=0;this.beatCount=0;
   }
-
   init(){
-    if(!this.ctx) this.ctx=new(window.AudioContext||window.webkitAudioContext)();
-    if(this.ctx.state==='suspended') this.ctx.resume();
+    if(!this.ctx)this.ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(this.ctx.state==='suspended')this.ctx.resume();
   }
-
   start(){
-    this.init();
-    this.on=true; this.startTime=Date.now();
-    this.createOsc();
-    this.startLFO();
-    this.loop();
-    if(this.timerId) clearTimeout(this.timerId);
+    this.init();this.on=true;this.startTime=Date.now();
+    this.createOsc();this.startLFO();this.loop();
+    if(this.timerId)clearTimeout(this.timerId);
     const mins=parseInt(document.getElementById('timer').value);
-    if(mins>0) this.timerId=setTimeout(()=>this.fadeOut(),mins*60*1000);
+    if(mins>0)this.timerId=setTimeout(()=>this.fadeOut(),mins*60*1000);
   }
-
   stop(){
     this.on=false;
     this.oscs.forEach(o=>{try{o.stop();}catch(e){}});
     this.oscs=[];this.gains=[];
     if(this.lfo){try{this.lfo.stop();}catch(e){}this.lfo=null;}
     if(this.raf)cancelAnimationFrame(this.raf);
-    if(this.bgTimer)clearInterval(this.bgTimer);
     if(this.timerId)clearTimeout(this.timerId);
   }
-
   createOsc(){
-    this.oscs.forEach(o=>{try{o.stop();}catch(e){}});
-    this.oscs=[];this.gains=[];
-    // 左耳
-    const lo=this.ctx.createOscillator();
-    const lg=this.ctx.createGain();
+    this.oscs.forEach(o=>{try{o.stop();}catch(e){}});this.oscs=[];this.gains=[];
+    // 左耳 400Hz
+    const lo=this.ctx.createOscillator();const lg=this.ctx.createGain();
     lo.type='sine';lo.frequency.value=this.baseFreq;
-    lg.gain.value=this.vol*0.3;
-    lo.connect(lg);lg.connect(this.ctx.destination);
-    lo.start();this.oscs.push(lo);this.gains.push(lg);
-    // 右耳
-    const ro=this.ctx.createOscillator();
-    const rg=this.ctx.createGain();
+    lg.gain.value=this.vol*0.25;
+    lo.connect(lg);lg.connect(this.ctx.destination);lo.start();
+    this.oscs.push(lo);this.gains.push(lg);
+    // 右耳 400+freq Hz
+    const ro=this.ctx.createOscillator();const rg=this.ctx.createGain();
     ro.type='sine';ro.frequency.value=this.baseFreq+this.curFreq;
-    rg.gain.value=this.vol*0.3;
-    ro.connect(rg);rg.connect(this.ctx.destination);
-    ro.start();this.oscs.push(ro);this.gains.push(rg);
+    rg.gain.value=this.vol*0.25;
+    ro.connect(rg);rg.connect(this.ctx.destination);ro.start();
+    this.oscs.push(ro);this.gains.push(rg);
   }
-
   startLFO(){
-    const lfo=this.ctx.createOscillator();
-    const lg=this.ctx.createGain();
-    lfo.type='sine';lfo.frequency.value=0.005;
-    lg.gain.value=0.5;
-    lfo.connect(lg);lg.connect(this.oscs[1].frequency);
-    lfo.start();this.lfo=lfo;
+    const lfo=this.ctx.createOscillator();const lg=this.ctx.createGain();
+    lfo.type='sine';lfo.frequency.value=0.008;lg.gain.value=0.4;
+    lfo.connect(lg);lg.connect(this.oscs[1].frequency);lfo.start();
+    this.lfo=lfo;
   }
-
   loop(){
     if(!this.on)return;
-    this.update();
+    this.update();this.renderBeat();
     this.raf=requestAnimationFrame(()=>this.loop());
   }
-
   update(){
     const el=Date.now()-this.startTime;
     let tgt;
     if(this.mode==='theta')tgt=6;
     else if(this.mode==='delta')tgt=2;
     else{
-      if(el<5*60*1000)tgt=6-el/(5*60*1000)*2;
-      else if(el<15*60*1000)tgt=4-(el-5*60*1000)/(10*60*1000)*2;
+      if(el<5*60e3)tgt=6-el/(5*60e3)*2;
+      else if(el<15*60e3)tgt=4-(el-5*60e3)/(10*60e3)*2;
       else tgt=2;
     }
     this.targetFreq=tgt;
     this.curFreq+=(tgt-this.curFreq)*0.002;
     if(this.oscs[1])this.oscs[1].frequency.value=this.baseFreq+this.curFreq;
     document.getElementById('freqVal').textContent=this.curFreq.toFixed(1);
-    // 阶段
-    const pt=document.getElementById('phaseText');
-    const wt=document.getElementById('waveTag');
-    if(el<5*60*1000){pt.textContent='准备入睡';wt.textContent='Theta波引导';}
-    else if(el<15*60*1000){pt.textContent='浅睡过渡';wt.textContent='Theta→Delta';}
-    else if(el<30*60*1000){pt.textContent='进入深睡';wt.textContent='Delta深睡波';}
+    // 阶段文字
+    const pt=document.getElementById('phaseText'),wt=document.getElementById('waveTag');
+    if(el<5*60e3){pt.textContent='准备入睡';wt.textContent='Theta波 · 放松引导';}
+    else if(el<15*60e3){pt.textContent='浅睡过渡';wt.textContent='Theta→Delta';}
+    else if(el<30*60e3){pt.textContent='进入深睡';wt.textContent='Delta深睡波';}
     else{pt.textContent='深度睡眠';wt.textContent='Delta维持';}
   }
-
+  renderBeat(){
+    // 核心圆点随频率跳动
+    const now=Date.now();
+    const period=1000/this.curFreq; // 每周期毫秒
+    const beatPhase=(now%period)/period; // 0~1 在一个周期中的位置
+    // 用一个脉冲函数：在周期开始时放大，然后快速衰减
+    const pulse=Math.exp(-beatPhase*6); // 快速衰减指数
+    const scale=1+pulse*0.5; // 最大放大1.5倍
+    const glow=25+pulse*35; // 阴影强度
+    const core=document.getElementById('core');
+    core.style.transform=`scale(${scale})`;
+    core.style.boxShadow=`0 0 ${glow}px rgba(100,140,255,${.5+pulse*.4}),0 0 ${glow*2}px rgba(80,100,255,${.15+pulse*.2})`;
+  }
   setMode(m){
     this.mode=m;
     document.querySelectorAll('.mbtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
   }
-
   setBaseFreq(v){
     this.baseFreq=parseInt(v);
     if(this.oscs[0])this.oscs[0].frequency.value=this.baseFreq;
     if(this.oscs[1])this.oscs[1].frequency.value=this.baseFreq+this.curFreq;
     document.getElementById('baseVal').textContent=v+'Hz';
   }
-
   setVol(v){
     this.vol=parseInt(v)/100;
-    this.gains.forEach(g=>g.gain.value=this.vol*0.3);
+    this.gains.forEach(g=>g.gain.value=this.vol*0.25);
     document.getElementById('volVal').textContent=v+'%';
   }
-
   fadeOut(){
-    const f=()=>{
-      if(this.vol>0.01&&this.on){
-        this.vol*=0.985;
-        this.gains.forEach(g=>g.gain.value=this.vol*0.3);
-        requestAnimationFrame(f);
-      }
-    };f();
+    const f=()=>{if(this.vol>0.01&&this.on){this.vol*=0.985;this.gains.forEach(g=>g.gain.value=this.vol*0.25);requestAnimationFrame(f);}};f();
   }
-
   reset(){
     this.stop();this.curFreq=4;this.startTime=null;
     document.getElementById('freqVal').textContent='4.0';
     document.getElementById('phaseText').textContent='准备入睡';
-    document.getElementById('waveTag').textContent='双耳节拍 · 渐入深睡';
+    document.getElementById('waveTag').textContent='Theta波 · 放松引导';
+    const core=document.getElementById('core');
+    core.style.transform='scale(1)';
+    core.style.boxShadow='0 0 25px rgba(100,140,255,.6)';
   }
 }
 
-const audio=new SleepAudio();
-let playing=false;
+const audio=new SleepAudio();let playing=false;
 
 function togglePlay(){
   const btn=document.getElementById('playBtn');
-  if(!playing){
-    audio.start();btn.textContent='⏸';btn.classList.add('playing');
-    document.body.classList.add('sleeping');playing=true;
-    // 后台播放保持
-    startBackgroundKeepAlive();
-  }else{
-    audio.stop();btn.textContent='▶ 开始';btn.classList.remove('playing');
-    document.body.classList.remove('sleeping');playing=false;
-  }
+  if(!playing){audio.start();btn.textContent='⏸';btn.classList.add('playing');document.body.classList.add('sleeping');playing=true;}
+  else{audio.stop();btn.textContent='▶ 开始';btn.classList.remove('playing');document.body.classList.remove('sleeping');playing=false;}
 }
-
 function resetAll(){audio.reset();const b=document.getElementById('playBtn');b.textContent='▶ 开始';b.classList.remove('playing');document.body.classList.remove('sleeping');playing=false;}
 function setMode(m){audio.setMode(m);}
 document.getElementById('baseFreq').addEventListener('input',e=>audio.setBaseFreq(e.target.value));
 document.getElementById('volume').addEventListener('input',e=>audio.setVol(e.target.value));
-document.getElementById('timer').addEventListener('input',e=>{document.getElementById('timerVal').textContent=e.target.value+'分钟';});
+document.getElementById('timer').addEventListener('input',e=>{document.getElementById('timerVal').textContent=e.target.value+'分';});
 
-// ========== 后台播放保持 ==========
-// 使用 Page Visibility API + requestAnimationFrame 保持 AudioContext 活跃
-function startBackgroundKeepAlive(){
-  // 每5秒唤醒一次，防止浏览器休眠
-  const keepAlive=setInterval(()=>{
-    if(audio.ctx&&audio.ctx.state==='suspended'){
-      audio.ctx.resume().catch(()=>{});
-    }
-  },5000);
-  // 页面可见性变化时尝试恢复
-  document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden&&audio.on){
-      audio.ctx?.resume().catch(()=>{});
-    }
-  });
-}
-
-// 点击页面任何地方尝试恢复音频
-document.addEventListener('click',()=>{
-  if(audio.ctx&&audio.ctx.state==='suspended')audio.ctx.resume().catch(()=>{});
-},{once:true});
+// 页面可见性恢复音频
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&audio.on)audio.ctx?.resume();});
 </script>
 </body>
 </html>
