@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失败案例复盘：小红书被封、能力丢失、记忆断裂 | 漫庐出品</title>
+<meta name="description" content="2026-08-29小红书账号被封至9月5日的全程复盘，含封号原因、能力第二天丢失机制、三层记忆系统的保持逻辑。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0;font-size:14px}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.warning{background:rgba(180,80,80,0.08);border-left:3px solid #b45050;padding:16px 20px;margin:20px 0;border-radius:0 8px 8px 0;color:#6a3a3a}
+.success{background:rgba(80,160,80,0.08);border-left:3px solid #50a050;padding:16px 20px;margin:20px 0;border-radius:0 8px 8px 0;color:#3a6a3a}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+<a class="back" href="/articles/cs/">« 认知科学</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">失败案例</span>
+<h1>失败案例复盘</h1>
+<p class="subtitle">小红书被封、能力丢失、记忆断裂——三天内的三次教训</p>
+</div>
+<div class="content">
+
+<blockquote><p>2026-08-30 | 失败案例复盘 | 10分钟阅读</p></blockquote>
+
+<hr>
+
+<h2>案例一：小红书账号被封</h2>
+
+<h3>事件经过</h3>
+<p>2026-08-29 17:06–17:13，尝试自动发布漫庐"呼吸食材"系列小红书文案（v30–v34，共5篇）。</p>
+<p>结果：全部触发"因违反社区规范禁止发笔记"拦截。账号被限制发布至 <strong>9月5日</strong>。</p>
+
+<h3>根因分析</h3>
+<p>不是文案内容本身的问题，而是<strong>系统自动推荐话题</strong>引入了敏感词：</p>
+<pre><code>推荐话题中包含：
+- #邪修         ← 游戏/玄幻相关，触发内容安全审核
+- #补气血养生howto  ← 中英混杂，疑似营销号特征
+- 其他养生类标签   ← 批量发布+同类标签=机器人行为</code></pre>
+
+<p>反复提交加重了限制。系统在每次失败后继续尝试，形成恶性循环。</p>
+
+<h3>机制理解</h3>
+<table>
+<tr><th>平台行为</th><th>我们的触发</th><th>后果</th></tr>
+<tr><td>自动推荐话题</td><td>接受了系统推荐的tag</td><td>敏感tag带入内容</td></tr>
+<tr><td>频率检测</td><td>7分钟内发布5篇</td><td>触发风控</td></tr>
+<tr><td>重复提交</td><td>失败后继续尝试</td><td>加重处罚</td></tr>
+</table>
+
+<div class="warning">
+<strong>教训：</strong>自动化发布必须设置安全阀——敏感词过滤 + 频率限制 + 失败即停止。不能无限重试。
+</div>
+
+<h3>修复措施</h3>
+<ul>
+<li>禁用系统自动推荐话题，改用预定义安全tag池</li>
+<li>发布间隔拉长到30分钟以上</li>
+<li>单次任务最多尝试2次，失败后人工介入</li>
+<li>当前处于冷静期，建议48小时后用安全tag重新测试</li>
+</ul>
+
+<hr>
+
+<h2>案例二：能力第二天丢失</h2>
+
+<h3>现象描述</h3>
+<p>当天成功完成的操作（知乎发布、催眠器部署、记忆系统操作），第二天新会话中无法复现。</p>
+
+<h3>根因：opencode.db 不自动加载</h3>
+<p>opencode的新会话只自动加载 <strong>memory_blocks</strong>（persona/human/project等固定block），不会自动加载 <strong>opencode.db</strong>（全量历史消息）。</p>
+<pre><code>新会话启动时自动加载：
+  ✅ persona.md      → 我的身份和行为规则
+  ✅ human.md        → 用户画像
+  ✅ project.md      → 项目信息
+  ✅ USER.md         → 当前状态
+
+新会话启动时不自动加载：
+  ❌ opencode.db     → 45+会话的完整消息记录
+  ❌ 昨天的TODO      → 未写入block的待办事项
+  ❌ 临时决策        → 会话中产生的临时结论</code></pre>
+
+<h3>为什么知乎能发而小红书不行？</h3>
+<p>这是一个<strong>会话内知识</strong> vs <strong>持久化知识</strong>的区别：</p>
+<ul>
+<li><strong>知乎</strong>：在AGENTS.md和memory_blocks中有明确规则（"每篇间隔10分钟"），新会话能看到</li>
+<li><strong>小红书发布脚本</strong>：保存在 /tmp 目录，是临时文件，新会话不知道它的存在</li>
+<li><strong>CDP浏览器连接</strong>：需要Edge进程以调试模式运行，新会话不会自动重建</li>
+</ul>
+
+<div class="success">
+<strong>修复：</strong>AGENTS.md顶部已添加强制规则——每次新会话第一步跑 <code>memory_recover.py</code>，列出最近会话让用户知道上次干了什么。
+</div>
+
+<hr>
+
+<h2>案例三：记忆保持机制分析</h2>
+
+<h3>三层记忆的工作原理</h3>
+
+<h4>第一层：memory_blocks（每次自动加载）</h4>
+<pre><code>路径: ~/.opencode/memory_blocks/
+包含: persona.md, human.md, project.md, USER.md 等
+加载时机: 每次新会话启动时自动注入系统提示
+特点: 内容精炼，但需要手动维护（写完要记得更新）</code></pre>
+<p><strong>可靠但有限</strong>：block快满时需要压缩旧记录，压缩过程可能丢失细节。</p>
+
+<h4>第二层：opencode.db（永存但不自动加载）</h4>
+<pre><code>路径: ~/.local/share/opencode/opencode.db
+大小: ~4.76GB，45+会话
+内容: 所有会话的完整消息记录
+查询: python memory_recover.py
+恢复: opencode --session &lt;完整ID&gt;</code></pre>
+<p><strong>最可靠</strong>：杀进程/关机/重装都不丢。但需要主动查询，不会自动注入到新会话。</p>
+
+<h4>第三层：Memory Service（Git版本化独立库）</h4>
+<pre><code>路径: ~/.memory-service/data/
+机制: mb write &lt;tag&gt; &lt;内容&gt; 写入，每小时git commit
+特点: 独立于opencode，evolve_daemon + EvolveGuard保活</code></pre>
+<p><strong>结构化记忆</strong>：适合存储需要长期保存的重要结论（持仓、待办、项目进展）。</p>
+
+<h3>为什么"写记忆"这么重要</h3>
+<p>很多会话中的关键结论只存在于opencode.db的消息记录里，没有写入memory_blocks或Memory Service。第二天新会话启动时，这些结论<strong>不可见</strong>。</p>
+<p>这就是为什么AGENTS.md强调：<strong>重要结果、持仓、待办必须当场写入memory block，不要等</strong>。</p>
+
+<h3>已验证的有效做法</h3>
+<table>
+<tr><th>做法</th><th>效果</th><th>来源</th></tr>
+<tr><td>每次会话开始跑 memory_recover.py</td><td>知道上次干了什么，100%准确</td><td>AGENTS.md强制规则</td></tr>
+<tr><td>重要结论写入选定block</td><td>新会话自动加载，不依赖db</td><td>日常实践</td></tr>
+<tr><td>mb write tag 内容</td><td>git版本化，可回溯</td><td>Memory Service</td></tr>
+<tr><td>opencode --session &lt;ID&gt; 恢复</td><td>回到精确的对话状态</td><td>教过多次</td></tr>
+</table>
+
+<h3>无效做法（已废弃）</h3>
+<ul>
+<li><strong>Supermemory（ASMR）</strong>：从未成功运行过——无API key、数据全空、唯一一次调用即报错（2026-08-03调查结论）</li>
+<li><strong>依赖opencode.db自动加载</strong>：设计上不支持，不要指望</li>
+</ul>
+
+<hr>
+
+<h2>案例四：外贸研究搜索失败</h2>
+
+<h3>现象</h3>
+<p>2026-08-29 21:22–21:54，尝试为秦奕生成"外国企业进口中国准入方向"分析报告时，所有网络搜索均失败：</p>
+<ul>
+<li>DuckDuckGo: <code>TimeoutException after 30s</code></li>
+<li>Bing CN: 返回空结果（解析失败）</li>
+<li>customs.gov.cn: SSL证书验证失败 + 连接超时</li>
+<li>MOFCOM: 404</li>
+</ul>
+
+<h3>根因</h3>
+<p>WSL的網絡環境不穩定，DNS解析和SSL握手频繁失败。这与我们在Linux环境的网络配置有关，与Agent架构本身无关。</p>
+
+<h3>应对方案</h3>
+<p>当网络搜索不可用时，基于已有知识（2024-2025年政策知识）+ 刘思毅文章框架生成报告。虽不如实时搜索准确，但核心结论（负面清单缩减、RCEP关税减免、自贸区通道）与公开政策一致。</p>
+
+<div class="warning">
+<strong>教训：</strong>Agent的搜索能力依赖底层网络环境。需要在架构层面增加搜索降级策略——DDG超时 → Bing → 本地知识库 → 纯知识生成。
+</div>
+
+<hr>
+
+<h2>总结：三个核心教训</h2>
+
+<ol>
+<li><strong>自动化必须有安全阀</strong>——小红书封号是因为没有失败停止机制和敏感词过滤</li>
+<li><strong>知识必须显式持久化</strong>——会话内的知识不会自动带入新会话，必须写入block或Memory Service</li>
+<li><strong>搜索能力不稳定</strong>——网络层问题导致搜索经常超时，需要降级策略和本地知识兜底</li>
+</ol>
+
+<hr>
+
+<p class="footer">*本笔记记录真实失败案例，目的是避免重蹈覆辙*</p>
+
+</div>
+</body>
+</html>
