@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent架构复盘：Hermes + opencode 单网关多会话设计 | 漫庐出品</title>
+<meta name="description" content="Hermes Gateway单网关转发到opencode多会话的架构设计，含关键配置、踩坑记录和记忆保持机制。">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f4f7f4;color:#3a4a3a;font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",Georgia,serif;line-height:2.1;font-size:17px;font-weight:300}
+a{color:inherit;text-decoration:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(244,247,244,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #d8e4d8;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar .back{color:#7a9a7a;font-size:14px;letter-spacing:1px;transition:color .3s}
+.topbar .back:hover{color:#4a6741}
+.topbar .brand{font-size:13px;color:#a0b8a0;letter-spacing:3px}
+.hero{padding:120px 24px 60px;text-align:center;background:linear-gradient(180deg,#e4efe4 0%,#f4f7f4 100%);border-bottom:1px solid #e8efe8}
+.hero .cat-tag{display:inline-block;padding:4px 14px;background:rgba(90,122,90,0.08);border:1px solid rgba(90,122,90,0.2);border-radius:20px;font-size:12px;color:#6a8a6a;letter-spacing:2px;margin-bottom:20px}
+.hero h1{font-size:clamp(28px,5vw,42px);font-weight:200;color:#2a3a2a;letter-spacing:6px;margin-bottom:12px}
+.hero .subtitle{color:#8aaa8a;font-size:14px;letter-spacing:2px}
+.content{max-width:760px;margin:0 auto;padding:60px 24px 40px}
+.content p{margin:20px 0;text-indent:2em;color:#4a5a4a}
+.content blockquote{margin:28px 0;padding:20px 28px;background:rgba(90,122,90,0.05);border-left:3px solid #8aaa8a;border-radius:0 8px 8px 0;color:#5a7a5a;font-style:italic;line-height:2}
+.content h2{font-size:20px;font-weight:400;color:#3a4a3a;margin:48px 0 20px;padding-left:16px;border-left:3px solid #8aaa8a;letter-spacing:2px}
+.content h3{font-size:17px;font-weight:400;color:#3a4a3a;margin:36px 0 14px;letter-spacing:1px}
+.content ul{color:#4a5a4a;margin:20px 0;padding-left:28px}
+.content li{margin:10px 0;line-height:2}
+.content table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px}
+.content table th,.content table td{padding:10px 14px;border:1px solid #d8e4d8;text-align:left}
+.content table th{background:rgba(90,122,90,0.08);font-weight:400;color:#3a4a3a}
+.content table tr:nth-child(even){background:rgba(90,122,90,0.03)}
+.content code{background:rgba(90,122,90,0.07);padding:2px 6px;border-radius:3px;font-size:14px;color:#4a6a4a}
+.content pre{background:#f0f4f0;border:1px solid #d8e4d8;border-radius:8px;padding:20px;overflow-x:auto;margin:20px 0;font-size:14px}
+.content pre code{background:none;padding:0;color:#3a4a3a}
+.content hr{border:none;border-top:1px solid #d8e4d8;margin:40px 0}
+.content .tag{color:#6a8a6a;font-size:11px;border:1px solid rgba(90,122,90,0.2);padding:2px 8px;border-radius:10px;display:inline-block;margin-right:6px;margin-bottom:8px}
+.footer{text-align:center;padding:40px 24px;border-top:1px solid #e8efe8;color:#8aaa8a;font-size:13px;letter-spacing:1px}
+@media(max-width:600px){.content table{font-size:13px}.content table th,.content table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+<a class="back" href="/articles/cs/">« 认知科学</a>
+<span class="brand">漫庐</span>
+</div>
+<div class="hero">
+<span class="cat-tag">Agent架构</span>
+<h1>Agent架构复盘：Hermes + opencode</h1>
+<p class="subtitle">单网关多会话转发设计，含踩坑记录与记忆保持机制</p>
+</div>
+<div class="content">
+
+<blockquote><p>2026-08-30 | Agent架构复盘 | 8分钟阅读</p></blockquote>
+
+<hr>
+
+<h2>架构总览</h2>
+
+<p>当前系统由两层构成：Hermes Gateway（WSL内运行）作为消息路由层，opencode（Windows原生）作为实际执行层。</p>
+
+<pre><code>飞书用户
+    ↓
+Hermes Gateway (:18789)        ← WSL，处理平台接入
+    ↓ opencode-bridge插件
+opencode session               ← Windows，实际执行AI任务
+    ↓
+Agnes AI API (apihub.agnes-ai.cn)
+    └── agnes-2.5-flash (200k上下文)
+    └── agnes-2.0-flash (128k，备用)</code></pre>
+
+<p>关键设计决策：<strong>网关与执行分离</strong>。Hermes负责飞书WebSocket连接和消息路由，opencode负责LLM调用和工具执行。两者通过 <code>opencode-bridge</code> 插件通信，HTTP 204无内容转发。</p>
+
+<hr>
+
+<h2>核心组件</h2>
+
+<h3>1. Hermes Gateway</h3>
+<p>运行在WSL（Ubuntu）内，监听 <code>:18789</code>。核心职责：</p>
+<ul>
+<li>飞书平台WebSocket长连接（reconnect_interval: 30s）</li>
+<li>消息路由：按 chat_id 分发到对应opencode session</li>
+<li>Agent缓存管理：idle-TTL超时后驱逐（约60分钟）</li>
+<li>压缩代理：超过阈值时自动压缩历史消息</li>
+</ul>
+
+<p>日志中的关键模式（2026-08-29实测）：</p>
+<pre><code># 正常转发
+opencode-bridge: forwarded to session ses_fdb3a6c3bffev4gD8anHRtv0gu (HTTP 204)
+
+# 缓存驱逐
+Agent cache idle-TTL evict: session=agent:main:feishu:dm:... (idle=3737s)
+
+# 压缩触发（420条消息，~121k tokens → 压缩到304条，~69k tokens）
+Session hygiene: 420 messages, ~120,920 tokens — auto-compressing
+Session hygiene: compressed 420 → 304 msgs, ~120,920 → ~68,987 tokens</code></pre>
+
+<h3>2. opencode 执行层</h3>
+<p>运行在Windows原生环境，实际执行LLM调用和工具。配置要点：</p>
+<pre><code>{
+  "model": {"default": "agnes-2.5-flash", "provider": "agnes"},
+  "mcp": {"codebase-memory-mcp": {
+    "command": ["/root/.local/bin/codebase-memory-mcp"],
+    "type": "local"
+  }},
+  "compression": {
+    "enabled": true,
+    "threshold": 0.5,
+    "target_ratio": 0.2,
+    "protect_last_n": 20
+  }
+}</code></pre>
+
+<p>关键参数：</p>
+<ul>
+<li><code>compaction.enabled</code>：已设为 <code>false</code>（2026-08-20修复死循环问题）</li>
+<li><code>compression.threshold</code>：50%上下文时触发</li>
+<li><code>compression.protect_last_n</code>：最后20条消息不压缩</li>
+</ul>
+
+<h3>3. 三层记忆系统</h3>
+
+<table>
+<tr><th>层级</th><th>路径</th><th>自动加载</th><th>可靠性</th><th>说明</th></tr>
+<tr>
+  <td>1. memory_blocks</td>
+  <td>~/.opencode/memory_blocks/</td>
+  <td>✅ 每次新会话</td>
+  <td>高</td>
+  <td>persona/human/project等block，自动注入</td>
+</tr>
+<tr>
+  <td>2. opencode.db</td>
+  <td>~/.local/share/opencode/opencode.db</td>
+  <td>❌ 不自动加载</td>
+  <td>极高（永存）</td>
+  <td>全量原始消息，杀进程/关机不丢</td>
+</tr>
+<tr>
+  <td>3. Memory Service</td>
+  <td>~/.memory-service/data/</td>
+  <td>❌ 需手动mb</td>
+  <td>高（git版本化）</td>
+  <td>独立git库，evolve_daemon每小时提交</td>
+</tr>
+</table>
+
+<p><strong>关键教训</strong>：新会话只自动加载memory_blocks，不自动加载opencode.db。AGENTS.md顶部的强制规则——每次新会话第一步跑 <code>memory_recover.py</code>——就是为了弥合这个gap。</p>
+
+<hr>
+
+<h2>踩坑记录</h2>
+
+<h3>坑1：compaction死循环（2026-08-20）</h3>
+<p>现象：build agent和opencode内置compaction相互触发，形成 <code>build → compaction → build → ...</code> 无限循环。</p>
+<p>误判：以为是OMO(oh-my-openagent)插件导致，其实OMO已在前一天禁用。</p>
+<p>根因：两个compaction机制都没有可靠的终止条件。</p>
+<p>修复：<code>compaction.enabled = false</code>，唯一需要的修复。</p>
+<p>预防：监控日志大小，发现异常增长立即终止进程。</p>
+
+<h3>坑2：FTS写入延迟导致上下文不一致</h3>
+<p>日志警告：<code>Persisted transcript lagged live cached history (disk=375, memory=377)</code></p>
+<p>含义：磁盘持久化的消息数落后于内存缓存，系统选择保留内存中的live context。长期运行可能积累不一致。</p>
+<p>当前影响：无明显故障，但需关注。建议定期重启gateway清理状态。</p>
+
+<h3>坑3：Feishu网络不可达</h3>
+<p>错误：<code>HTTPSConnectionPool(host='open.feishu.cn', port=443): Network is unreachable</code></p>
+<p>根因：WSL的网络栈与Windows宿主隔离，某些网络变更后WSL DNS失效。</p>
+<p>修复：重启WSL（<code>wsl --terminate</code> + 重新启动）。</p>
+<p>预防：gateway配置了 <code>reconnect_interval: 30</code>，但DNS问题需要手动干预。</p>
+
+<h3>坑4：浏览器CDP断连</h3>
+<p>现象：Edge进程存在，但端口9222未监听，CDP连接失败。</p>
+<p>根因：Edge重启后调试端口不自动启用。</p>
+<p>修复：需手动重启Edge并添加 <code>--remote-debugging-port=9222</code> 参数。</p>
+
+<hr>
+
+<h2>设计选择与权衡</h2>
+
+<table>
+<tr><th>选择</th><th>方案A</th><th>方案B</th><th>为什么选B</th></tr>
+<tr>
+  <td>网关位置</td>
+  <td>Windows原生运行</td>
+  <td>WSL运行</td>
+  <td>WSL有完整的Unix工具链，Python环境更干净，与Hermes官方文档一致</td>
+</tr>
+<tr>
+  <td>记忆持久化</td>
+  <td>只靠memory_blocks</td>
+  <td>三层架构</td>
+  <td>单靠blocks不够（内容有限），单靠db不够（不自动加载），三层互补</td>
+</tr>
+<tr>
+  <td>压缩策略</td>
+  <td>关闭压缩</td>
+  <td>50%阈值+保护最后20条</td>
+  <td>关闭会导致OOM，保护最后20条确保关键对话不丢失</td>
+</tr>
+<tr>
+  <td>多Agent隔离</td>
+  <td>共享同一workspace</td>
+  <td>每个Agent独立workspace</td>
+  <td>记忆和技能完全隔离，避免污染</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>运维清单</h2>
+
+<ul>
+<li><strong>每日检查</strong>：gateway.log确认飞书连接正常（无Network is unreachable）</li>
+<li><strong>每周检查</strong>：opencode.db大小，发现异常增长立即处理</li>
+<li><strong>每次新会话</strong>：先跑 <code>memory_recover.py</code> 恢复上下文</li>
+<li><strong>每月检查</strong>：Memory Service git log确认evolve_daemon正常提交</li>
+<li><strong>浏览器更新后</strong>：验证CDP端口9222是否重新监听</li>
+</ul>
+
+<hr>
+
+<p class="footer">*本笔记记录真实架构决策和踩坑经历，供团队参考*</p>
+
+</div>
+</body>
+</html>
