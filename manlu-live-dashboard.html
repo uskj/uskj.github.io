@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漫庐AI直播 · 弹幕互动引擎</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#4ade80;--accent2:#22d3ee;--gold:#f59e0b;--red:#ef4444;--pink:#ec4899}
+body{background:var(--bg);color:var(--text);font-family:"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh}
+.app{display:grid;grid-template-columns:280px 1fr 300px;grid-template-rows:56px 1fr 60px;height:100vh;gap:1px;background:var(--border)}
+
+/* Topbar */
+.topbar{grid-column:1/-1;background:var(--surface);display:flex;align-items:center;padding:0 20px;gap:16px}
+.topbar .logo{font-size:14px;letter-spacing:3px;color:var(--accent)}
+.topbar .live-badge{background:var(--red);color:#fff;padding:2px 10px;border-radius:10px;font-size:11px;animation:pulse 2s infinite}
+.topbar .live-badge.off{background:var(--muted);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.topbar .clock{margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.topbar .stats-bar{display:flex;gap:20px;font-size:12px;color:var(--muted)}
+.topbar .stats-bar span{color:var(--accent)}
+
+/* Left panel - Controls */
+.panel-left{background:var(--surface);padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.panel-title{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.ctrl-group{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:12px}
+.ctrl-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px}
+.ctrl-row label{color:var(--muted)}
+.btn{padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:500}
+.btn-primary:hover{background:#22c55e}
+.btn-danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-danger:hover{background:#dc2626}
+.btn-full{width:100%;margin-top:8px}
+.select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;padding:4px 8px;font-size:12px}
+
+/* Center - Preview */
+.preview-area{background:#000;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.preview-area .scene-display{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.scene-display .scene-title{font-size:28px;font-weight:200;letter-spacing:6px;margin-bottom:16px;color:#fff}
+.scene-display .scene-desc{font-size:14px;color:rgba(255,255,255,.6);max-width:500px;line-height:1.8}
+.scene-display .scene-tag{display:inline-block;padding:4px 16px;background:rgba(255,255,255,.1);border-radius:20px;font-size:11px;color:var(--accent);margin-top:20px;letter-spacing:2px}
+.scene-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity 1s}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.3),rgba(0,0,0,.7))}
+.timer-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.1)}
+.timer-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1s linear}
+.danmu-layer{position:absolute;bottom:80px;left:20px;right:20px;pointer-events:none;overflow:hidden}
+.danmu{position:absolute;white-space:nowrap;font-size:16px;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,.8);animation:scroll-left 8s linear forwards}
+@keyframes scroll-left{from{transform:translateX(100%)}to{transform:translateX(-200%)}}
+.danmu.hit{color:var(--gold);font-weight:600}
+
+/* Right panel - Danmu */
+.panel-right{background:var(--surface);display:flex;flex-direction:column}
+.danmu-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.danmu-feed{flex:1;overflow-y:auto;padding:8px}
+.danmu-item{padding:8px 12px;margin-bottom:4px;border-radius:6px;font-size:13px;background:rgba(255,255,255,.03);animation:fadeIn .3s}
+.danmu-item .user{color:var(--muted);font-size:11px}
+.danmu-item .text{color:var(--text);margin-top:2px}
+.danmu-item.triggered{border-left:3px solid var(--accent);background:rgba(74,222,128,.05)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.danmu-input-area{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px}
+.danmu-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-size:13px;outline:none}
+.danmu-input:focus{border-color:var(--accent)}
+
+/* Bottom bar */
+.bottom-bar{grid-column:1/-1;background:var(--surface);display:flex;align-items:center;padding:0 20px;gap:24px}
+.step-indicator{display:flex;gap:0;flex:1}
+.step{flex:1;text-align:center;padding:8px 4px;font-size:11px;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .2s}
+.step.active{color:var(--accent);border-bottom-color:var(--accent)}
+.step.done{color:var(--muted);border-bottom-color:var(--border)}
+.step-num{font-size:16px;font-weight:200;display:block;margin-bottom:2px}
+.progress-info{font-size:12px;color:var(--muted);min-width:120px;text-align:right}
+.progress-info .elapsed{color:var(--text);font-size:14px}
+
+/* Scene queue */
+.scene-queue{max-height:120px;overflow-y:auto}
+.scene-queue-item{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;border-bottom:1px solid var(--border)}
+.scene-queue-item .sq-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.scene-queue-item .sq-dot.next{background:var(--gold)}
+.scene-queue-item .sq-dot.playing{background:var(--red);animation:pulse 1s infinite}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="logo">漫 庐</span>
+    <span class="live-badge off" id="liveBadge">● 离线</span>
+    <div class="stats-bar">
+      <div>观众 <span id="statViewers">0</span></div>
+      <div>弹幕 <span id="statDanmu">0</span></div>
+      <div>场景切换 <span id="statSwitch">0</span></div>
+    </div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+
+  <!-- Left Panel -->
+  <div class="panel-left">
+    <div class="ctrl-group">
+      <div class="panel-title">推流控制</div>
+      <button class="btn btn-primary btn-full" id="btnStream" onclick="toggleStream()">▶ 开始推流</button>
+      <button class="btn btn-full" style="margin-top:8px" onclick="previewScene()">🎬 预览下一场景</button>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="panel-title">当前场景</div>
+      <div id="currentSceneInfo" style="font-size:13px;line-height:1.8">
+        <div>场景：<span id="curSceneName">待机</span></div>
+        <div>类型：<span id="curSceneType">-</span></div>
+        <div>来源：<span id="curSceneSource">手动</span></div>
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="panel-title">场景队列</div>
+      <div class="scene-queue" id="sceneQueue"></div>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="panel-title">NLP关键词</div>
+      <div id="keywordStats" style="font-size:12px;line-height:2;color:var(--muted)">
+        禅/静/坐 → 0次<br>
+        书/墨/字 → 0次<br>
+        雨/竹/山 → 0次<br>
+        茶/气/息 → 0次<br>
+        诗/词/吟 → 0次
+      </div>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="panel-title">B站弹幕接入</div>
+      <input class="danmu-input" id="bilibiliRoomId" placeholder="房间号 (如 123456)" style="width:100%;margin-bottom:8px">
+      <button class="btn btn-full" onclick="connectBilibili()">🔗 连接弹幕</button>
+    </div>
+
+    <div class="ctrl-group">
+      <div class="panel-title">场景切换</div>
+      <select class="select btn-full" id="manualSceneSelect" onchange="switchScene(this.value)">
+        <option value="">-- 选择场景 --</option>
+        <option value="meditation">禅房静坐</option>
+        <option value="calligraphy">雨夜写字</option>
+        <option value="nature">漫庐山居</option>
+        <option value="tea">茶道养生</option>
+        <option value="poetry">吟诗抒怀</option>
+        <option value="bamboo">竹林听风</option>
+        <option value="rain">山雨欲来</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Center Preview -->
+  <div class="preview-area" id="previewArea">
+    <div class="scene-bg" id="sceneBg" style="background:linear-gradient(135deg,#1a2a1a,#0d1117)"></div>
+    <div class="scene-overlay"></div>
+    <div class="scene-display" id="sceneDisplay">
+      <div class="scene-title">漫庐AI直播</div>
+      <div class="scene-desc">长城脚下的山野人文社区<br>弹幕互动 · AI实时生成 · 传统与现代的交汇处</div>
+      <div class="scene-tag">ONLINE · 等待开播</div>
+    </div>
+    <div class="danmu-layer" id="danmuLayer"></div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="panel-right">
+    <div class="danmu-header">
+      <span>💬 弹幕流</span>
+      <span id="danmuCount">0 条</span>
+    </div>
+    <div class="danmu-feed" id="danmuFeed"></div>
+    <div class="danmu-input-area">
+      <input class="danmu-input" id="testDanmu" placeholder="输入测试弹幕...">
+      <button class="btn" onclick="sendTestDanmu()">发送</button>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <div class="step-indicator" id="stepIndicator">
+      <div class="step active" data-step="1"><span class="step-num">1</span>开场钩子</div>
+      <div class="step" data-step="2"><span class="step-num">2</span>核心解读</div>
+      <div class="step" data-step="3"><span class="step-num">3</span>系统状态</div>
+      <div class="step" data-step="4"><span class="step-num">4</span>深度解析</div>
+      <div class="step" data-step="5"><span class="step-num">5</span>互动环节</div>
+      <div class="step" data-step="6"><span class="step-num">6</span>演示+结尾</div>
+    </div>
+    <div class="progress-info">
+      <div>已播 <span class="elapsed" id="elapsedTime">00:00</span></div>
+      <div style="margin-top:4px">进度 <span id="progressPct">0%</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== State =====
+let isLive = false;
+let liveStart = null;
+let currentStep = 1;
+let danmuTotal = 0;
+let sceneSwitches = 0;
+let keywordCounts = { zen: 0, calligraphy: 0, nature: 0, tea: 0, poetry: 0 };
+let danmuQueue = [];
+let sceneHistory = [];
+const TOTAL_DURATION = 3600; // 60 minutes in seconds
+
+// ===== Scene Database =====
+const SCENES = {
+  meditation: {
+    title: "禅房静坐",
+    type: "禅修",
+    desc: "清晨禅房，晨光透过竹帘，香炉青烟袅袅，蒲团木凳，鸟鸣山更幽",
+    bg: "linear-gradient(135deg,#2d4a2d,#1a2a1a,#0d1a0d)",
+    keyword: "禅"
+  },
+  calligraphy: {
+    title: "雨夜写字",
+    type: "书法",
+    desc: "雨夜中式书房，油灯下毛笔在宣纸上书写，墨香氤氲，窗外雨声潺潺",
+    bg: "linear-gradient(135deg,#1a1a2e,#0d0d1a,#1a1a1a)",
+    keyword: "书"
+  },
+  nature: {
+    title: "漫庐山居",
+    type: "自然",
+    desc: "漫庐隐于山林，白墙黑瓦，竹林环绕，晨雾升腾，石径蜿蜒",
+    bg: "linear-gradient(135deg,#1a3a2a,#0d2a1a,#1a2a2a)",
+    keyword: "山"
+  },
+  tea: {
+    title: "茶道养生",
+    type: "养生",
+    desc: "漫庐茶室，茶具整齐，热气袅袅，窗外的山景与茶香交融",
+    bg: "linear-gradient(135deg,#2a1a0a,#1a1008,#2a2010)",
+    keyword: "茶"
+  },
+  poetry: {
+    title: "吟诗抒怀",
+    type: "诗词",
+    desc: "穿汉服的女子站在窗前吟诗，窗外细雨，柔和忧郁的光线",
+    bg: "linear-gradient(135deg,#2a1a2a,#1a0d1a,#2a1a1a)",
+    keyword: "诗"
+  },
+  bamboo: {
+    title: "竹林听风",
+    type: "自然",
+    desc: "走在竹林小径，阳光透过茂密树冠，斑驳光影在石阶上",
+    bg: "linear-gradient(135deg,#1a3a1a,#0d2a0d,#1a2a1a)",
+    keyword: "竹"
+  },
+  rain: {
+    title: "山雨欲来",
+    type: "自然",
+    desc: "山谷乌云密布，雨落在石屋顶，雾穿过竹林，戏剧性光线",
+    bg: "linear-gradient(135deg,#1a1a1a,#2a2a2a,#0d0d0d)",
+    keyword: "雨"
+  }
+};
+
+// Keyword mapping
+const KEYWORD_MAP = {
+  "禅": "meditation", "坐": "meditation", "静": "meditation", "冥想": "meditation", "丹道": "meditation",
+  "书": "calligraphy", "墨": "calligraphy", "字": "calligraphy", "书法": "calligraphy", "写": "calligraphy",
+  "山": "nature", "雨": "nature", "竹": "nature", "林": "nature", "谷": "nature",
+  "茶": "tea", "气": "tea", "息": "tea", "养生": "tea", "道": "tea",
+  "诗": "poetry", "词": "poetry", "吟": "poetry", "李白": "poetry", "杜甫": "poetry"
+};
+
+function matchKeyword(text) {
+  for (let kw of text) {
+    if (KEYWORD_MAP[kw]) return KEYWORD_MAP[kw];
+  }
+  return null;
+}
+
+// ===== Timer =====
+function startClock() {
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('zh-CN');
+    if (isLive && liveStart) {
+      const elapsed = Math.floor((now - liveStart) / 1000);
+      const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const secs = (elapsed % 60).toString().padStart(2, '0');
+      document.getElementById('elapsedTime').textContent = `${mins}:${secs}`;
+      const pct = Math.min(100, Math.round(elapsed / TOTAL_DURATION * 100));
+      document.getElementById('progressPct').textContent = pct + '%';
+      document.getElementById('timerFill').style.width = pct + '%';
+      // Auto advance steps
+      const stepDuration = TOTAL_DURATION / 6;
+      const newStep = Math.min(6, Math.floor(elapsed / stepDuration) + 1);
+      if (newStep !== currentStep) {
+        currentStep = newStep;
+        updateStepIndicator();
+        autoSwitchScene();
+      }
+    }
+  }, 1000);
+}
+
+function updateStepIndicator() {
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i + 1 < currentStep) el.classList.add('done');
+    if (i + 1 === currentStep) el.classList.add('active');
+  });
+}
+
+// ===== Stream Control =====
+function toggleStream() {
+  isLive = !isLive;
+  const badge = document.getElementById('liveBadge');
+  const btn = document.getElementById('btnStream');
+  if (isLive) {
+    liveStart = Date.now();
+    badge.textContent = '● 直播中';
+    badge.classList.remove('off');
+    btn.textContent = '⏹ 结束推流';
+    btn.className = 'btn btn-danger btn-full';
+    addDanmu('system', '', '直播已开始！发送弹幕互动吧~');
+  } else {
+    badge.textContent = '● 离线';
+    badge.classList.add('off');
+    btn.textContent = '▶ 开始推流';
+    btn.className = 'btn btn-primary btn-full';
+  }
+}
+
+// ===== Scene Switch =====
+function switchScene(sceneKey) {
+  if (!SCENES[sceneKey]) return;
+  const scene = SCENES[sceneKey];
+  sceneSwitches++;
+  document.getElementById('statSwitch').textContent = sceneSwitches;
+  document.getElementById('curSceneName').textContent = scene.title;
+  document.getElementById('curSceneType').textContent = scene.type;
+  document.getElementById('curSceneSource').textContent = '手动切换';
+  document.getElementById('sceneBg').style.background = scene.bg;
+  document.getElementById('sceneDisplay').innerHTML = `
+    <div class="scene-title">${scene.title}</div>
+    <div class="scene-desc">${scene.desc.replace(/\n/g, '<br>')}</div>
+    <div class="scene-tag">${scene.type} · 场景 ${sceneSwitches}</div>
+  `;
+  sceneHistory.push({ key: sceneKey, time: new Date().toLocaleTimeString(), source: 'manual' });
+  updateSceneQueue();
+}
+
+function autoSwitchScene() {
+  const autoScenes = ['nature', 'meditation', 'bamboo', 'tea', 'calligraphy', 'poetry'];
+  const next = autoScenes[Math.min(currentStep - 1, autoScenes.length - 1)];
+  switchScene(next);
+  document.getElementById('curSceneSource').textContent = '自动流程';
+}
+
+function previewScene() {
+  const sel = document.getElementById('manualSceneSelect').value;
+  if (sel) switchScene(sel);
+}
+
+function updateSceneQueue() {
+  const el = document.getElementById('sceneQueue');
+  el.innerHTML = sceneHistory.slice(-8).reverse().map((s, i) => `
+    <div class="scene-queue-item">
+      <span class="sq-dot ${i === 0 ? 'playing' : i === 1 ? 'next' : ''}"></span>
+      <span>${s.time} ${s.key} (${s.source})</span>
+    </div>
+  `).join('');
+}
+
+// ===== Danmu =====
+function addDanmu(user, text, isTrigger = false) {
+  danmuTotal++;
+  document.getElementById('statDanmu').textContent = danmuTotal;
+  document.getElementById('danmuCount').textContent = danmuTotal + ' 条';
+
+  // Add to feed
+  const feed = document.getElementById('danmuFeed');
+  const item = document.createElement('div');
+  item.className = 'danmu-item' + (isTrigger ? ' triggered' : '');
+  item.innerHTML = `<div class="user">${user}</div><div class="text">${text}</div>`;
+  feed.insertBefore(item, feed.firstChild);
+  if (feed.children.length > 50) feed.removeChild(feed.lastChild);
+
+  // Animate on screen
+  if (text) {
+    const layer = document.getElementById('danmuLayer');
+    const d = document.createElement('div');
+    d.className = 'danmu' + (isTrigger ? ' hit' : '');
+    d.textContent = text;
+    d.style.top = Math.random() * 60 + '%';
+    layer.appendChild(d);
+    setTimeout(() => d.remove(), 8000);
+  }
+
+  // Process keyword
+  if (isTrigger) {
+    const scene = matchKeyword(text);
+    if (scene && SCENES[scene]) {
+      switchScene(scene);
+      document.getElementById('curSceneSource').textContent = '弹幕触发';
+      keywordCounts[scene] = (keywordCounts[scene] || 0) + 1;
+      updateKeywordStats();
+    }
+  }
+}
+
+function sendTestDanmu() {
+  const input = document.getElementById('testDanmu');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  // Simulate danmu matching
+  let matched = false;
+  for (let kw of Object.keys(KEYWORD_MAP)) {
+    if (text.includes(kw)) {
+      addDanmu('测试用户', text, true);
+      matched = true;
+      break;
+    }
+  }
+  if (!matched) addDanmu('测试用户', text, false);
+}
+
+function updateKeywordStats() {
+  const el = document.getElementById('keywordStats');
+  el.innerHTML = `
+    禅/静/坐 → ${keywordCounts.meditation || 0}次<br>
+    书/墨/字 → ${keywordCounts.calligraphy || 0}次<br>
+    雨/竹/山 → ${keywordCounts.nature || 0}次<br>
+    茶/气/息 → ${keywordCounts.tea || 0}次<br>
+    诗/词/吟 → ${keywordCounts.poetry || 0}次
+  `;
+}
+
+function connectBilibili() {
+  const roomId = document.getElementById('bilibiliRoomId').value.trim();
+  if (!roomId) { alert('请输入B站房间号'); return; }
+  alert(`已配置B站房间号: ${roomId}\n\n请注意：\n1. 需要安装B站弹幕拦截工具（如bilibili-live-tools）\n2. 或通过Web端弹幕API接入\n3. 直播姬已支持B站RTMP推流`);
+}
+
+// ===== Clock init =====
+startClock();
+
+// ===== Keyboard shortcuts =====
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === ' ') { e.preventDefault(); toggleStream(); }
+  if (e.key === '1') switchScene('meditation');
+  if (e.key === '2') switchScene('calligraphy');
+  if (e.key === '3') switchScene('nature');
+  if (e.key === '4') switchScene('tea');
+  if (e.key === '5') switchScene('poetry');
+  if (e.key === '6') switchScene('bamboo');
+  if (e.key === '7') switchScene('rain');
+});
+</script>
+</body>
+</html>
