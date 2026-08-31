@@ -51,6 +51,94 @@ h1 {
   letter-spacing: 0.2em;
   margin-bottom: 50px;
 }
+/* 呼吸导引 */
+.breath-guide {
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid rgba(100,120,255,0.1);
+  border-radius: 12px;
+  background: rgba(100,120,255,0.03);
+  display: none;
+}
+.breath-guide.active { display: block; }
+.breath-text {
+  font-size: 1.1em;
+  color: #8899cc;
+  letter-spacing: 0.3em;
+  min-height: 1.6em;
+  transition: all 0.5s ease;
+}
+.breath-hint {
+  font-size: 0.7em;
+  color: #445;
+  margin-top: 8px;
+  letter-spacing: 0.15em;
+}
+.breath-visual {
+  width: 80px; height: 80px;
+  margin: 15px auto;
+  border-radius: 50%;
+  border: 2px solid rgba(100,120,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 4s ease-in-out;
+}
+.breath-visual.inhale {
+  width: 120px; height: 120px;
+  border-color: rgba(100,180,255,0.6);
+  box-shadow: 0 0 30px rgba(100,150,255,0.3);
+}
+.breath-visual.exhale {
+  width: 60px; height: 60px;
+  border-color: rgba(100,120,255,0.2);
+  box-shadow: none;
+}
+/* 身体导引图 */
+.body-guide {
+  position: relative;
+  width: 30px;
+  margin: 20px auto;
+  height: 160px;
+}
+.body-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: rgba(100,120,255,0.15);
+  border-radius: 1px;
+}
+.breath-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px; height: 8px;
+  background: rgba(100,180,255,0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(100,180,255,0.6);
+  transition: top 4s ease-in-out;
+}
+.body-label {
+  position: absolute;
+  right: -40px;
+  font-size: 0.55em;
+  color: #334;
+  white-space: nowrap;
+  letter-spacing: 0.1em;
+}
+.body-label.top { top: 5%; }
+.body-label.mid { top: 45%; }
+.body-label.bot { top: 90%; }
+/* 切换呼吸按钮 */
+.btn-breath {
+  border-color: rgba(100,200,180,0.3);
+  color: #88ccbb;
+}
+.btn-breath.active {
+  border-color: rgba(100,200,180,0.8);
+  color: #aaffee;
+  background: rgba(100,200,180,0.08);
+}
 /* 圆形脉冲动画 */
 .pulse-ring {
   width: 200px; height: 200px;
@@ -264,6 +352,23 @@ input[type="range"]::-webkit-slider-thumb {
     <button class="mode-btn" data-mode="auto" onclick="setMode('auto')">自动渐入</button>
   </div>
 
+  <!-- 呼吸导引控制 -->
+  <button class="btn btn-breath" id="breathBtn" onclick="toggleBreathGuide()">🌬 呼吸导引</button>
+
+  <!-- 呼吸导引面板 -->
+  <div class="breath-guide" id="breathGuide">
+    <div class="breath-visual" id="breathCircle"></div>
+    <div class="body-guide">
+      <div class="body-line"></div>
+      <div class="breath-dot" id="breathDot" style="top: 5%"></div>
+      <span class="body-label top">口/鼻</span>
+      <span class="body-label mid">丹田</span>
+      <span class="body-label bot">脚踵</span>
+    </div>
+    <div class="breath-text" id="breathText">一吸到踵，一呼出窍</div>
+    <div class="breath-hint" id="breathHint">吸气4秒 → 屏息2秒 → 呼气6秒</div>
+  </div>
+
   <div class="slider-group">
     <div class="slider-label"><span>基础频率</span><span id="baseFreqVal">400 Hz</span></div>
     <input type="range" id="baseFreq" min="300" max="600" value="400" step="10" oninput="updateBaseFreq(this.value)">
@@ -308,6 +413,7 @@ class SleepTherapy {
     this.gainNodes = [];
     this.lfo = null;
     this.animFrame = null;
+    this.buffers = []; // 存储 AudioBuffer 引用
   }
 
   init() {
@@ -316,13 +422,27 @@ class SleepTherapy {
 
   start() {
     if (!this.ctx) this.init();
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    // 确保 AudioContext 处于运行状态
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(e => console.log('Resume failed:', e));
+    }
     this.isPlaying = true;
     this.startTime = Date.now();
     this.createOscillators();
     this.startLFO();
     this.startAnimation();
     if (this.timerDuration > 0) this.startTimer();
+    
+    // 设置页面可见性变化监听，防止切页后音频停止
+    this.setupVisibilityListener();
+  }
+  
+  setupVisibilityListener() {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume().catch(e => console.log('Resume on visible:', e));
+      }
+    });
   }
 
   stop() {
@@ -334,37 +454,47 @@ class SleepTherapy {
 
   createOscillators() {
     this.stopOscillators();
-    // 左耳
-    const left = this.ctx.createOscillator();
-    const leftGain = this.ctx.createGain();
-    const leftFilter = this.ctx.createBiquadFilter();
-    left.type = 'sine';
-    left.frequency.value = this.baseFreq;
-    leftFilter.type = 'lowpass';
-    leftFilter.frequency.value = 800;
-    leftGain.gain.value = this.volume * 0.5;
-    left.connect(leftFilter);
-    leftFilter.connect(leftGain);
-    leftGain.connect(this.ctx.destination);
-    left.start();
-    this.oscillators.push(left);
-    this.gainNodes.push(leftGain);
-
-    // 右耳 - 差频产生节拍
-    const right = this.ctx.createOscillator();
-    const rightGain = this.ctx.createGain();
-    const rightFilter = this.ctx.createBiquadFilter();
-    right.type = 'sine';
-    right.frequency.value = this.baseFreq + this.currentFreq;
-    rightFilter.type = 'lowpass';
-    rightFilter.frequency.value = 800;
-    rightGain.gain.value = this.volume * 0.5;
-    right.connect(rightFilter);
-    rightFilter.connect(rightGain);
-    rightGain.connect(this.ctx.destination);
-    right.start();
-    this.oscillators.push(right);
-    this.gainNodes.push(rightGain);
+    
+    // 使用 AudioBuffer + AudioBufferSourceNode 来创建持续音
+    // 这样可以避免浏览器在后台标签页时停止音频
+    const sampleRate = this.ctx.sampleRate;
+    const duration = 2; // 2秒循环
+    const buffer = this.ctx.createBuffer(2, sampleRate * duration, sampleRate);
+    
+    // 填充左声道和右声道
+    for (let channel = 0; channel < 2; channel++) {
+      const data = buffer.getChannelData(channel);
+      const freq = channel === 0 ? this.baseFreq : this.baseFreq + this.currentFreq;
+      for (let i = 0; i < data.length; i++) {
+        data[i] = Math.sin(2 * Math.PI * freq * i / sampleRate) * 0.3;
+      }
+    }
+    
+    // 创建循环播放源
+    const source = this.ctx.createBufferSource();
+    source.buffer = buffer;
+    source.loop = true;
+    
+    // 创建增益节点控制音量
+    const gain = this.ctx.createGain();
+    gain.gain.value = this.volume * 0.3;
+    
+    // 创建低通滤波器
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 800;
+    
+    // 连接节点
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    source.start();
+    this.oscillators.push(source);
+    this.gainNodes.push(gain);
+    
+    // 同时保留振荡器方法用于频率调整
+    this.buffers.push(buffer);
   }
 
   startLFO() {
@@ -457,7 +587,7 @@ class SleepTherapy {
 
   setVolume(vol) {
     this.volume = parseInt(vol) / 100;
-    this.gainNodes.forEach(g => g.gain.value = this.volume * 0.5);
+    this.gainNodes.forEach(g => g.gain.value = this.volume * 0.3);
   }
 
   setTimer(mins) {
@@ -468,6 +598,7 @@ class SleepTherapy {
     this.oscillators.forEach(o => { try { o.stop(); } catch(e) {} });
     this.oscillators = [];
     this.gainNodes = [];
+    this.buffers = [];
     if (this.lfo) { try { this.lfo.stop(); } catch(e) {} this.lfo = null; }
   }
 
@@ -482,7 +613,7 @@ class SleepTherapy {
     const fade = () => {
       if (this.volume > 0.01 && this.isPlaying) {
         this.volume *= 0.98;
-        this.gainNodes.forEach(g => g.gain.value = this.volume * 0.5);
+        this.gainNodes.forEach(g => g.gain.value = this.volume * 0.3);
         requestAnimationFrame(fade);
       }
     };
@@ -501,6 +632,118 @@ class SleepTherapy {
 
 const therapy = new SleepTherapy();
 let isPlaying = false;
+
+// ========== 呼吸导引系统 ==========
+class BreathGuide {
+  constructor() {
+    this.active = false;
+    this.phase = 'inhale'; // inhale, hold, exhale
+    this.cycle = 0;
+    this.timer = null;
+  }
+
+  toggle() {
+    this.active = !this.active;
+    const guide = document.getElementById('breathGuide');
+    const btn = document.getElementById('breathBtn');
+    if (this.active) {
+      guide.classList.add('active');
+      btn.classList.add('active');
+      btn.textContent = '🌬 呼吸导引 ✓';
+      this.startCycle();
+    } else {
+      guide.classList.remove('active');
+      btn.classList.remove('active');
+      btn.textContent = '🌬 呼吸导引';
+      this.stop();
+    }
+  }
+
+  startCycle() {
+    this.runInhale();
+  }
+
+  runInhale() {
+    if (!this.active) return;
+    this.phase = 'inhale';
+    this.cycle++;
+    
+    const circle = document.getElementById('breathCircle');
+    const dot = document.getElementById('breathDot');
+    const text = document.getElementById('breathText');
+    const hint = document.getElementById('breathHint');
+    
+    circle.className = 'breath-visual inhale';
+    dot.style.top = '90%'; // 气沉丹田/脚踵
+    text.textContent = '一吸到踵...';
+    hint.textContent = '吸气4秒 · 气沉丹田';
+    
+    setTimeout(() => {
+      if (!this.active) return;
+      this.runHold();
+    }, 4000);
+  }
+
+  runHold() {
+    if (!this.active) return;
+    this.phase = 'hold';
+    
+    const text = document.getElementById('breathText');
+    const hint = document.getElementById('breathHint');
+    
+    text.textContent = '息住胎元...';
+    hint.textContent = '屏息2秒 · 神气相抱';
+    
+    setTimeout(() => {
+      if (!this.active) return;
+      this.runExhale();
+    }, 2000);
+  }
+
+  runExhale() {
+    if (!this.active) return;
+    this.phase = 'exhale';
+    
+    const circle = document.getElementById('breathCircle');
+    const dot = document.getElementById('breathDot');
+    const text = document.getElementById('breathText');
+    const hint = document.getElementById('breathHint');
+    
+    circle.className = 'breath-visual exhale';
+    dot.style.top = '5%'; // 气从顶门出
+    
+    // 循环展示不同阶段的导引文字
+    const exhalePhases = [
+      '一呼出窍...',
+      '气贯周身...',
+      '神归丹田...',
+      '万念俱寂...'
+    ];
+    const phaseIdx = (this.cycle - 1) % exhalePhases.length;
+    text.textContent = exhalePhases[phaseIdx];
+    hint.textContent = '呼气6秒 · 松静自然';
+    
+    setTimeout(() => {
+      if (!this.active) return;
+      this.runInhale();
+    }, 6000);
+  }
+
+  stop() {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    document.getElementById('breathCircle').className = 'breath-visual';
+    document.getElementById('breathDot').style.top = '50%';
+    document.getElementById('breathText').textContent = '一吸到踵，一呼出窍';
+    document.getElementById('breathHint').textContent = '吸气4秒 → 屏息2秒 → 呼气6秒';
+  }
+}
+
+const breathGuide = new BreathGuide();
+
+function toggleBreathGuide() {
+  breathGuide.toggle();
+}
 
 function togglePlay() {
   const btn = document.getElementById('playBtn');
@@ -532,6 +775,7 @@ function setMode(mode) { therapy.setMode(mode); }
 function updateBaseFreq(v) { therapy.setBaseFreq(v); document.getElementById('baseFreqVal').textContent = v + ' Hz'; }
 function updateVolume(v) { therapy.setVolume(v); document.getElementById('volumeVal').textContent = v + '%'; }
 function updateTimer(v) { therapy.setTimer(v); document.getElementById('timerVal').textContent = v + ' 分钟'; }
+function toggleBreathGuide() { breathGuide.toggle(); }
 
 // 生成星星背景
 function createStars() {
@@ -547,6 +791,7 @@ function createStars() {
     container.appendChild(star);
   }
 }
+
 createStars();
 </script>
 </body>
