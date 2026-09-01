@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫庐AI直播 - 实时画面</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo { font-size: 24px; letter-spacing: 4px; color: #7a9a7a; }
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255,59,48,0.2);
+            border: 1px solid rgba(255,59,48,0.5);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff3b30;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        /* 主布局 */
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .main { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        
+        /* 视频区域 */
+        .video-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .video-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 20px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+        }
+        .scene-title {
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .scene-desc {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 2px;
+        }
+        
+        /* 视频控制 */
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { background: #7a9a7a; color: #fff; }
+        .btn-primary:hover { background: #8ab88a; transform: translateY(-2px); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        .btn-danger { background: rgba(255,59,48,0.2); color: #ff3b30; }
+        .btn-danger:hover { background: rgba(255,59,48,0.3); }
+        
+        /* 统计面板 */
+        .stats {
+            display: flex;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-value { font-size: 28px; font-weight: 300; color: #7a9a7a; }
+        .stat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+        
+        /* 侧边栏 */
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .panel-title {
+            font-size: 14px;
+            color: #7a9a7a;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* 弹幕输入 */
+        .danmu-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+            min-height: 80px;
+            transition: border-color 0.3s;
+        }
+        .danmu-input:focus { outline: none; border-color: #7a9a7a; }
+        .danmu-input::placeholder { color: rgba(255,255,255,0.3); }
+        
+        /* 关键词标签 */
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .tag {
+            padding: 6px 14px;
+            background: rgba(122,154,122,0.2);
+            border: 1px solid rgba(122,154,122,0.4);
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .tag:hover { background: rgba(122,154,122,0.4); transform: scale(1.05); }
+        .tag:active { transform: scale(0.95); }
+        
+        /* 弹幕列表 */
+        .danmu-list {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .danmu-list::-webkit-scrollbar { width: 4px; }
+        .danmu-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+        .danmu-item {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .danmu-time { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+        .danmu-content { color: rgba(255,255,255,0.9); line-height: 1.5; }
+        .danmu-scene { 
+            font-size: 11px; 
+            color: #7a9a7a; 
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(122,154,122,0.2);
+        }
+        
+        /* 场景按钮 */
+        .scene-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .scene-btn {
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .scene-btn:hover { background: rgba(122,154,122,0.3); border-color: #7a9a7a; }
+        .scene-btn.active { 
+            background: #7a9a7a; 
+            border-color: #7a9a7a;
+            box-shadow: 0 0 20px rgba(122,154,122,0.3);
+        }
+        .scene-btn .emoji { font-size: 24px; display: block; margin-bottom: 6px; }
+        
+        /* 日志 */
+        .log-list {
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .log-list::-webkit-scrollbar { width: 4px; }
+        .log-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        .log-item { padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .log-time { color: rgba(255,255,255,0.3); margin-right: 8px; }
+        
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .main { grid-template-columns: 1fr; }
+        }
+        
+        /* 加载状态 */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(122,154,122,0.3);
+            border-top-color: #7a9a7a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: rgba(255,255,255,0.6); font-size: 14px; }
+        
+        /* 音频控制 */
+        .audio-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .audio-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(122,154,122,0.3);
+            border: none;
+            color: #7a9a7a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        .audio-btn:hover { background: #7a9a7a; color: #fff; }
+        .audio-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">漫庐AI直播</div>
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                <span>直播中</span>
+                <span style="margin-left:10px;color:rgba(255,255,255,0.5)">|</span>
+                <span id="viewerCount" style="margin-left:10px;">观众: 0</span>
+            </div>
+        </header>
+        
+        <div class="main">
+            <!-- 视频区域 -->
+            <div class="video-section">
+                <div class="video-container">
+                    <video id="videoPlayer" autoplay loop muted playsinline>
+                        <source src="" type="video/mp4">
+                    </video>
+                    <div class="loading-overlay" id="loadingOverlay">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">正在加载场景...</div>
+                    </div>
+                    <div class="video-overlay">
+                        <div class="scene-title" id="sceneTitle">漫庐山居</div>
+                        <div class="scene-desc" id="sceneDesc">云卷云舒，竹影清风</div>
+                    </div>
+                </div>
+                
+                <div class="video-controls">
+                    <button class="btn btn-primary" onclick="autoPlay()">▶ 自动播放</button>
+                    <button class="btn btn-secondary" onclick="pausePlay()">⏸ 暂停</button>
+                    <button class="btn btn-secondary" onclick="refreshScene()">🔄 刷新</button>
+                    <button class="btn btn-secondary" onclick="screenshot()">📷 截图</button>
+                    <button class="btn btn-secondary" onclick="toggleFullscreen()">⛶ 全屏</button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayDanmu">0</div>
+                        <div class="stat-label">今日弹幕</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayCost">¥0</div>
+                        <div class="stat-label">生成费用</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentScene">山林</div>
+                        <div class="stat-label">当前场景</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="onlineTime">00:00</div>
+                        <div class="stat-label">直播时长</div>
+                    </div>
+                </div>
+                
+                <div class="audio-control">
+                    <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">🔇</button>
+                    <span class="audio-label">背景音乐: <span id="audioName">雨林禅意</span></span>
+                    <button class="audio-btn" onclick="prevTrack()">⏮</button>
+                    <button class="audio-btn" onclick="nextTrack()">⏭</button>
+                </div>
+            </div>
+            
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 弹幕输入 -->
+                <div class="panel">
+                    <div class="panel-title">💬 发送弹幕</div>
+                    <textarea class="danmu-input" id="danmuInput" placeholder="输入弹幕触发场景...&#10;例如：禅、坐、静、心、雨、竹、山、茶"></textarea>
+                    <button class="btn btn-primary" onclick="sendDanmu()" style="width:100%;margin-top:10px;">发送弹幕</button>
+                    <div class="tags">
+                        <span class="tag" onclick="insertKeyword('禅')">禅</span>
+                        <span class="tag" onclick="insertKeyword('坐')">坐</span>
+                        <span class="tag" onclick="insertKeyword('静')">静</span>
+                        <span class="tag" onclick="insertKeyword('心')">心</span>
+                        <span class="tag" onclick="insertKeyword('雨')">雨</span>
+                        <span class="tag" onclick="insertKeyword('竹')">竹</span>
+                        <span class="tag" onclick="insertKeyword('山')">山</span>
+                        <span class="tag" onclick="insertKeyword('茶')">茶</span>
+                    </div>
+                </div>
+                
+                <!-- 弹幕列表 -->
+                <div class="panel">
+                    <div class="panel-title">📜 实时弹幕</div>
+                    <div class="danmu-list" id="danmuList">
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);padding:30px;">
+                            暂无弹幕，发送第一条吧
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 场景切换 -->
+                <div class="panel">
+                    <div class="panel-title">🎬 场景切换</div>
+                    <div class="scene-grid">
+                        <button class="scene-btn active" onclick="switchScene('nature')" data-scene="nature">
+                            <span class="emoji">🌿</span>
+                            漫庐山居
+                        </button>
+                        <button class="scene-btn" onclick="switchScene('meditation')" data-scene="meditation">
+                            <span class="emoji">🧘</span>
+                            禅房静坐
+                        </button>
+                        <button class="scene-btn" onclick="switchScene('calligraphy')" data-scene="calligraphy">
+                            <span class="emoji">✍️</span>
+                            书房写字
+                        </button>
+                        <button class="scene-btn" onclick="switchScene('rain')" data-scene="rain">
+                            <span class="emoji">🌧️</span>
+                            雨夜听声
+                        </button>
+                        <button class="scene-btn" onclick="switchScene('bamboo')" data-scene="bamboo">
+                            <span class="emoji">🎋</span>
+                            竹林听风
+                        </button>
+                        <button class="scene-btn" onclick="switchScene('tea')" data-scene="tea">
+                            <span class="emoji">🍵</span>
+                            茶道静心
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 系统日志 -->
+                <div class="panel">
+                    <div class="panel-title">📋 系统日志</div>
+                    <div class="log-list" id="logList">
+                        <div class="log-item"><span class="log-time">[系统]</span>直播系统已启动</div>
+                        <div class="log-item"><span class="log-time">[系统]</span>正在加载场景资源...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 隐藏音频 -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_94bc5e566b.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // 场景配置（使用Pexels免费视频）
+        const SCENES = {
+            nature: {
+                title: '漫庐山居',
+                desc: '云卷云舒，竹影清风',
+                video: 'https://videos.pexels.com/video-files/4111390/4111390-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/10/25/audio_94bc5e566b.mp3',
+                audioName: '雨林禅意'
+            },
+            meditation: {
+                title: '禅房静坐',
+                desc: '晨钟暮鼓，竹影婆娑',
+                video: 'https://videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a73467.mp3',
+                audioName: '冥想音乐'
+            },
+            calligraphy: {
+                title: '书房写字',
+                desc: '笔墨纸砚，静心书写',
+                video: 'https://videos.pexels.com/video-files/4199324/4199324-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/05/16/audio_38515f6a02.mp3',
+                audioName: '古筝悠扬'
+            },
+            rain: {
+                title: '雨夜听声',
+                desc: '窗前听雨，墨香静心',
+                video: 'https://videos.pexels.com/video-files/3245323/3245323-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/03/23/audio_c51f7c4b85.mp3',
+                audioName: '雨夜钢琴'
+            },
+            bamboo: {
+                title: '竹林听风',
+                desc: '竹影摇曳，清风徐来',
+                video: 'https://videos.pexels.com/video-files/4191882/4191882-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/11/21/audio_f0a5cd7650.mp3',
+                audioName: '竹林风声'
+            },
+            tea: {
+                title: '茶道静心',
+                desc: '煮茶听雨，禅意人生',
+                video: 'https://videos.pexels.com/video-files/4869826/4869826-uhd_2560_1440_25fps.mp4',
+                audio: 'https://cdn.pixabay.com/audio/2022/04/27/audio_0758637b44.mp3',
+                audioName: '茶道音乐'
+            }
+        };
+        
+        // 弹幕关键词映射
+        const DANMU_TRIGGERS = {
+            '禅': 'meditation', '坐': 'meditation', '静': 'meditation', '心': 'meditation', '佛': 'meditation',
+            '书': 'calligraphy', '墨': 'calligraphy', '字': 'calligraphy', '写': 'calligraphy', '笔': 'calligraphy',
+            '雨': 'rain', '夜': 'rain', '听': 'rain',
+            '竹': 'bamboo', '林': 'bamboo', '风': 'bamboo',
+            '山': 'nature', '林': 'nature', '自然': 'nature', '云': 'nature',
+            '茶': 'tea', '道': 'tea'
+        };
+        
+        // 状态
+        let currentScene = 'nature';
+        let danmuCount = 0;
+        let lastTrigger = 0;
+        let cooldown = 5000;
+        let autoPlayInterval = null;
+        let startTime = Date.now();
+        let isMuted = true;
+        
+        // 初始化
+        function init() {
+            loadScene(currentScene);
+            startOnlineTimer();
+            addLog('直播系统启动成功');
+            addLog('已加载6个场景资源');
+            
+            // 模拟观众增长
+            setInterval(() => {
+                const count = Math.floor(Math.random() * 50) + 10;
+                document.getElementById('viewerCount').textContent = `观众: ${count}`;
+            }, 10000);
+        }
+        
+        // 加载场景
+        function loadScene(sceneKey) {
+            const scene = SCENES[sceneKey];
+            if (!scene) return;
+            
+            currentScene = sceneKey;
+            
+            // 显示加载
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loadingText') && (document.getElementById('loadingText').textContent = '正在加载场景...');
+            
+            // 加载视频
+            const video = document.getElementById('videoPlayer');
+            video.src = scene.video;
+            video.load();
+            
+            video.onloadeddata = () => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                video.play().catch(e => console.log('自动播放被阻止'));
+            };
+            
+            video.onerror = () => {
+                document.getElementById('loadingText').textContent = '视频加载失败，尝试其他来源...';
+                addLog('视频加载失败，使用备用场景');
+                // 尝试备用视频
+                fallbackVideo(sceneKey);
+            };
+            
+            // 更新UI
+            document.getElementById('sceneTitle').textContent = scene.title;
+            document.getElementById('sceneDesc').textContent = scene.desc;
+            document.getElementById('currentScene').textContent = scene.title;
+            
+            // 更新音频
+            const audio = document.getElementById('bgMusic');
+            audio.src = scene.audio;
+            document.getElementById('audioName').textContent = scene.audioName;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.scene-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.scene === sceneKey);
+            });
+            
+            addLog(`场景切换: ${scene.title}`);
+        }
+        
+        // 备用视频（使用静态图片）
+        function fallbackVideo(sceneKey) {
+            const images = {
+                nature: 'https://images.pexels.com/photos/1546270/pexels-photo-1546270.jpeg?auto=compress&cs=tinysrgb&w=1920',
+                meditation: 'https://images.pexels.com/photos/2613230/pexels-photo-2613230.jpeg?auto=compress&cs=tinysrgb&w=1920',
+                calligraphy: 'https://images.pexels.com/photos/1591669/pexels-photo-1591669.jpeg?auto=compress&cs=tinysrgb&w=1920',
+                rain: 'https://images.pexels.com/photos/1105666/pexels-photo-1105666.jpeg?auto=compress&cs=tinysrgb&w=1920',
+                bamboo: 'https://images.pexels.com/photos/162814/pexels-photo-162814.jpeg?auto=compress&cs=tinysrgb&w=1920',
+                tea: 'https://images.pexels.com/photos/3025279/pexels-photo-3025279.jpeg?auto=compress&cs=tinysrgb&w=1920'
+            };
+            
+            const video = document.getElementById('videoPlayer');
+            video.style.display = 'none';
+            
+            // 创建图片背景
+            let bgImg = document.getElementById('bgImage');
+            if (!bgImg) {
+                bgImg = document.createElement('div');
+                bgImg.id = 'bgImage';
+                bgImg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;';
+                document.querySelector('.video-container').appendChild(bgImg);
+            }
+            bgImg.style.backgroundImage = `url(${images[sceneKey]})`;
+            bgImg.style.display = 'block';
+            
+            document.getElementById('loadingOverlay').style.display = 'none';
+            addLog('已切换为图片模式');
+        }
+        
+        // 发送弹幕
+        function sendDanmu() {
+            const input = document.getElementById('danmuInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                addLog('请输入弹幕内容');
+                return;
+            }
+            
+            if (Date.now() - lastTrigger < cooldown) {
+                const remaining = Math.ceil((cooldown - (Date.now() - lastTrigger)) / 1000);
+                addLog(`冷却中，请${remaining}秒后再试`);
+                return;
+            }
+            
+            // 匹配场景
+            let triggeredScene = null;
+            for (const [keyword, scene] of Object.entries(DANMU_TRIGGERS)) {
+                if (text.includes(keyword)) {
+                    triggeredScene = scene;
+                    break;
+                }
+            }
+            
+            if (triggeredScene) {
+                switchScene(triggeredScene);
+                addDanmu(text, triggeredScene);
+            } else {
+                // 随机场景
+                const scenes = Object.keys(SCENES);
+                const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+                switchScene(randomScene);
+                addDanmu(text, randomScene);
+            }
+            
+            input.value = '';
+            lastTrigger = Date.now();
+            danmuCount++;
+            document.getElementById('todayDanmu').textContent = danmuCount;
+        }
+        
+        // 添加弹幕
+        function addDanmu(text, sceneKey) {
+            const list = document.getElementById('danmuList');
+            
+            // 清空提示
+            if (list.querySelector('div[style]')) {
+                list.innerHTML = '';
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'danmu-item';
+            const time = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+            item.innerHTML = `
+                <div class="danmu-time">${time}</div>
+                <div class="danmu-content">${escapeHtml(text)}</div>
+                <div class="danmu-scene">→ ${SCENES[sceneKey].title}</div>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            // 限制数量
+            while (list.children.length > 20) {
+                list.removeChild(list.lastChild);
+            }
+        }
+        
+        // 插入关键词
+        function insertKeyword(keyword) {
+            const input = document.getElementById('danmuInput');
+            input.value += keyword;
+            input.focus();
+        }
+        
+        // 切换场景
+        function switchScene(sceneKey) {
+            if (!SCENES[sceneKey]) return;
+            loadScene(sceneKey);
+        }
+        
+        // 自动播放
+        function autoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                addLog('已停止自动播放');
+                return;
+            }
+            
+            addLog('自动播放已启动');
+            autoPlayInterval = setInterval(() => {
+                const scenes = Object.keys(SCENES);
+                const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+                switchScene(randomScene);
+            }, 15000);
+        }
+        
+        // 暂停
+        function pausePlay() {
+            const video = document.getElementById('videoPlayer');
+            video.pause();
+            addLog('视频已暂停');
+        }
+        
+        // 刷新
+        function refreshScene() {
+            loadScene(currentScene);
+            addLog('场景已刷新');
+        }
+        
+        // 截图
+        function screenshot() {
+            const video = document.getElementById('videoPlayer');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            const link = document.createElement('a');
+            link.download = `manlu_${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            addLog('截图已保存');
+        }
+        
+        // 全屏
+        function toggleFullscreen() {
+            const container = document.querySelector('.video-container');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    addLog(`全屏失败: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // 音频控制
+        function toggleAudio() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('audioBtn');
+            
+            if (isMuted) {
+                audio.volume = 0.5;
+                audio.play().catch(e => addLog('音频播放失败'));
+                btn.textContent = '🔊';
+                isMuted = false;
+                addLog('已开启声音');
+            } else {
+                audio.pause();
+                btn.textContent = '🔇';
+                isMuted = true;
+                addLog('已静音');
+            }
+        }
+        
+        function prevTrack() {
+            const scenes = Object.keys(SCENES);
+            const idx = scenes.indexOf(currentScene);
+            const prev = scenes[(idx - 1 + scenes.length) % scenes.length];
+            loadScene(prev);
+        }
+        
+        function nextTrack() {
+            const scenes = Object.keys(SCENES);
+            const idx = scenes.indexOf(currentScene);
+            const next = scenes[(idx + 1) % scenes.length];
+            loadScene(next);
+        }
+        
+        // 工具函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function addLog(msg) {
+            const logList = document.getElementById('logList');
+            const time = new Date().toLocaleTimeString('zh-CN');
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.innerHTML = `<span class="log-time">[${time}]</span>${msg}`;
+            logList.insertBefore(item, logList.firstChild);
+            
+            while (logList.children.length > 30) {
+                logList.removeChild(logList.lastChild);
+            }
+        }
+        
+        function startOnlineTimer() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('onlineTime').textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+        
+        // 键盘事件
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement.id === 'danmuInput') {
+                sendDanmu();
+            }
+            if (e.key === ' ') {
+                e.preventDefault();
+                const video = document.getElementById('videoPlayer');
+                video.paused ? video.play() : video.pause();
+            }
+        });
+        
+        // 启动
+        window.onload = init;
+    </script>
+</body>
+</html>
