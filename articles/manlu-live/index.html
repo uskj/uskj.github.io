@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫庐AI直播 - 弹幕互动</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: #7a9a7a;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(255,59,48,0.2);
+            border: 1px solid rgba(255,59,48,0.5);
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff3b30;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .video-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.8));
+            pointer-events: none;
+        }
+
+        .video-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+        }
+
+        .scene-title {
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .scene-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #7a9a7a;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #8ab88a;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .stats-panel {
+            display: flex;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 300;
+            color: #7a9a7a;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 4px;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .panel-title {
+            font-size: 14px;
+            color: #7a9a7a;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .danmu-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .danmu-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            resize: none;
+            min-height: 80px;
+        }
+
+        .danmu-input:focus {
+            outline: none;
+            border-color: #7a9a7a;
+        }
+
+        .danmu-input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+
+        .keyword-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: rgba(122,154,122,0.2);
+            border: 1px solid rgba(122,154,122,0.4);
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tag:hover {
+            background: rgba(122,154,122,0.4);
+        }
+
+        .tag.active {
+            background: #7a9a7a;
+            border-color: #7a9a7a;
+        }
+
+        /* 弹幕列表 */
+        .danmu-list {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .danmu-item {
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .danmu-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 4px;
+        }
+
+        .danmu-content {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .danmu-action {
+            font-size: 11px;
+            color: #7a9a7a;
+            margin-top: 4px;
+        }
+
+        /* 场景切换 */
+        .scene-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .scene-btn {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .scene-btn:hover {
+            background: rgba(122,154,122,0.3);
+            border-color: #7a9a7a;
+        }
+
+        .scene-btn.active {
+            background: #7a9a7a;
+            border-color: #7a9a7a;
+        }
+
+        /* 控制面板 */
+        .control-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .control-btn.danger {
+            background: rgba(255,59,48,0.2);
+        }
+
+        .control-btn.danger:hover {
+            background: rgba(255,59,48,0.4);
+        }
+
+        /* 直播日志 */
+        .log-list {
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .log-item {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .log-time {
+            color: rgba(255,255,255,0.3);
+            margin-right: 8px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #7a9a7a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">漫庐AI直播</div>
+            <div class="live-status">
+                <div class="live-dot"></div>
+                <span id="liveStatus">直播中</span>
+                <span style="margin-left: 10px; color: rgba(255,255,255,0.5);">|</span>
+                <span id="viewerCount" style="margin-left: 10px;">观众: 0</span>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- 视频区域 -->
+            <div class="video-section">
+                <div class="video-container" id="videoContainer">
+                    <canvas id="videoCanvas" style="width:100%;height:100%;display:block;"></canvas>
+                    <div class="video-overlay"></div>
+                    <div class="video-info">
+                        <div class="scene-title" id="sceneTitle">漫庐山居</div>
+                        <div class="scene-desc" id="sceneDesc">云卷云舒，竹影清风</div>
+                    </div>
+                    <div class="loading" id="loading">
+                        <div class="loading-spinner"></div>
+                        <div>生成中...</div>
+                    </div>
+                </div>
+                <div class="video-controls">
+                    <button class="btn btn-primary" onclick="autoPlay()">▶ 自动播放</button>
+                    <button class="btn btn-secondary" onclick="pausePlay()">⏸ 暂停</button>
+                    <button class="btn btn-secondary" onclick="refreshScene()">🔄 刷新场景</button>
+                    <button class="btn btn-secondary" onclick="screenshot()">📷 截图</button>
+                </div>
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayDanmu">0</div>
+                        <div class="stat-label">今日弹幕</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayCost">¥0.00</div>
+                        <div class="stat-label">生成费用</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentScene">自然</div>
+                        <div class="stat-label">当前场景</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="onlineTime">00:00</div>
+                        <div class="stat-label">直播时长</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 弹幕输入 -->
+                <div class="panel">
+                    <div class="panel-title">发送弹幕</div>
+                    <div class="danmu-input-area">
+                        <textarea class="danmu-input" id="danmuInput" placeholder="输入弹幕触发场景...&#10;例如：禅、坐、静、心、雨、竹、山、茶"></textarea>
+                        <button class="btn btn-primary" onclick="sendDanmu()" style="width:100%;">发送</button>
+                    </div>
+                    <div class="keyword-tags">
+                        <span class="tag" onclick="insertKeyword('禅')">禅</span>
+                        <span class="tag" onclick="insertKeyword('坐')">坐</span>
+                        <span class="tag" onclick="insertKeyword('静')">静</span>
+                        <span class="tag" onclick="insertKeyword('心')">心</span>
+                        <span class="tag" onclick="insertKeyword('雨')">雨</span>
+                        <span class="tag" onclick="insertKeyword('竹')">竹</span>
+                        <span class="tag" onclick="insertKeyword('山')">山</span>
+                        <span class="tag" onclick="insertKeyword('茶')">茶</span>
+                        <span class="tag" onclick="insertKeyword('字')">字</span>
+                        <span class="tag" onclick="insertKeyword('墨')">墨</span>
+                    </div>
+                </div>
+
+                <!-- 弹幕列表 -->
+                <div class="panel">
+                    <div class="panel-title">实时弹幕</div>
+                    <div class="danmu-list" id="danmuList">
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);padding:20px;">
+                            暂无弹幕
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 场景切换 -->
+                <div class="panel">
+                    <div class="panel-title">手动切换场景</div>
+                    <div class="scene-selector">
+                        <button class="scene-btn active" onclick="switchScene('nature')">🌿 山林晨景</button>
+                        <button class="scene-btn" onclick="switchScene('meditation')">🧘 禅房静坐</button>
+                        <button class="scene-btn" onclick="switchScene('calligraphy')">✍️ 书房写字</button>
+                        <button class="scene-btn" onclick="switchScene('rain')">🌧️ 雨夜听声</button>
+                        <button class="scene-btn" onclick="switchScene('bamboo')">🎋 竹林听风</button>
+                        <button class="scene-btn" onclick="switchScene('tea')">🍵 茶道静心</button>
+                    </div>
+                </div>
+
+                <!-- 系统日志 -->
+                <div class="panel">
+                    <div class="panel-title">系统日志</div>
+                    <div class="log-list" id="logList">
+                        <div class="log-item"><span class="log-time">[系统]</span>直播系统已启动</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 配置 ============
+        const CONFIG = {
+            scenes: {
+                nature: {
+                    title: '漫庐山居',
+                    desc: '云卷云舒，竹影清风',
+                    color: '#2d5a27',
+                    prompt: 'Mountain retreat in morning mist, bamboo grove swaying, stone path through garden, traditional Chinese architecture with white walls and black tiles, distant mountain peaks, soft diffused light'
+                },
+                meditation: {
+                    title: '禅房静坐',
+                    desc: '晨钟暮鼓，竹影婆娑',
+                    color: '#4a3f35',
+                    prompt: 'Serene meditation room at dawn, morning light filtering through bamboo blinds, incense smoke curling from bronze censer, wooden floor with zafu cushion'
+                },
+                calligraphy: {
+                    title: '书房写字',
+                    desc: '笔墨纸砚，静心书写',
+                    color: '#3d3d3d',
+                    prompt: 'Traditional Chinese study room, wooden desk with inkstone and rice paper, hand holding brush writing characters'
+                },
+                rain: {
+                    title: '雨夜听声',
+                    desc: '窗前听雨，墨香静心',
+                    color: '#1a1a2e',
+                    prompt: 'Night scene in traditional Chinese study, rain streaks on paper window, single oil lamp on desk, warm amber light against cool blue rain darkness'
+                },
+                bamboo: {
+                    title: '竹林听风',
+                    desc: '竹影摇曳，清风徐来',
+                    color: '#2d4a2d',
+                    prompt: 'Walking through bamboo forest path, sunlight filtering through dense green canopy, dappled light on stone steps, gentle breeze making bamboo sway'
+                },
+                tea: {
+                    title: '茶道静心',
+                    desc: '煮茶听雨，禅意人生',
+                    color: '#4a3520',
+                    prompt: 'Traditional Chinese tea ceremony, wooden table with teapot and teacups, steam rising, warm natural light from window'
+                }
+            },
+            cooldown: 5000,
+            currentScene: 'nature',
+            danmuHistory: [],
+            totalCost: 0,
+            startTime: null
+        };
+
+        // ============ 弹幕关键词映射 ============
+        const DANMU_TRIGGERS = {
+            '禅': 'meditation', '坐': 'meditation', '静': 'meditation', '心': 'meditation',
+            '书': 'calligraphy', '墨': 'calligraphy', '字': 'calligraphy', '写': 'calligraphy',
+            '雨': 'rain', '竹': 'bamboo', '山': 'nature', '茶': 'tea',
+            '道': 'meditation', '福': 'nature', '安': 'meditation'
+        };
+
+        // ============ 初始化 ============
+        function init() {
+            CONFIG.startTime = Date.now();
+            drawScene(CONFIG.currentScene);
+            startOnlineTimer();
+            addLog('漫庐AI直播系统启动');
+            addLog('当前场景: ' + CONFIG.scenes[CONFIG.currentScene].title);
+            
+            // 模拟观众
+            setInterval(() => {
+                const count = Math.floor(Math.random() * 50) + 10;
+                document.getElementById('viewerCount').textContent = `观众: ${count}`;
+            }, 5000);
+        }
+
+        // ============ 绘制场景 ============
+        function drawScene(sceneKey) {
+            const canvas = document.getElementById('videoCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置画布大小
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const scene = CONFIG.scenes[sceneKey];
+            const w = canvas.width;
+            const h = canvas.height;
+            
+            // 背景渐变
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, scene.color);
+            grad.addColorStop(1, darkenColor(scene.color, 30));
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+            
+            // 绘制元素（简化版）
+            drawSceneElements(ctx, w, h, sceneKey);
+            
+            // 更新UI
+            document.getElementById('sceneTitle').textContent = scene.title;
+            document.getElementById('sceneDesc').textContent = scene.desc;
+            document.getElementById('currentScene').textContent = scene.title;
+        }
+
+        function drawSceneElements(ctx, w, h, sceneKey) {
+            ctx.globalAlpha = 0.3;
+            
+            switch(sceneKey) {
+                case 'nature':
+                    // 山形
+                    ctx.fillStyle = '#1a3a1a';
+                    ctx.beginPath();
+                    ctx.moveTo(0, h);
+                    ctx.lineTo(w * 0.3, h * 0.5);
+                    ctx.lineTo(w * 0.5, h * 0.6);
+                    ctx.lineTo(w * 0.7, h * 0.4);
+                    ctx.lineTo(w, h * 0.7);
+                    ctx.lineTo(w, h);
+                    ctx.fill();
+                    // 竹子
+                    for(let i = 0; i < 10; i++) {
+                        ctx.strokeStyle = '#2d5a2d';
+                        ctx.lineWidth = 2;
+                        const x = w * 0.1 + Math.random() * w * 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(x, h);
+                        ctx.quadraticCurveTo(x + 20, h * 0.5, x, h * 0.3);
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 'meditation':
+                    // 蒲团
+                    ctx.fillStyle = '#8B7355';
+                    ctx.beginPath();
+                    ctx.ellipse(w/2, h*0.7, 80, 30, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 香炉
+                    ctx.fillStyle = '#D4AF37';
+                    ctx.fillRect(w*0.7, h*0.6, 30, 40);
+                    // 烟雾
+                    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                    ctx.lineWidth = 1;
+                    for(let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(w*0.7 + 15, h*0.6);
+                        ctx.quadraticCurveTo(w*0.7 + 20 + i*10, h*0.4, w*0.7 + 15 + i*15, h*0.2);
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 'calligraphy':
+                    // 书桌
+                    ctx.fillStyle = '#5C4033';
+                    ctx.fillRect(w*0.2, h*0.6, w*0.6, 10);
+                    // 宣纸
+                    ctx.fillStyle = '#F5F5DC';
+                    ctx.fillRect(w*0.35, h*0.45, w*0.3, h*0.2);
+                    // 毛笔
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(w*0.6, h*0.5);
+                    ctx.lineTo(w*0.65, h*0.7);
+                    ctx.stroke();
+                    break;
+                    
+                case 'rain':
+                    // 窗户框架
+                    ctx.strokeStyle = '#5C4033';
+                    ctx.lineWidth = 5;
+                    ctx.strokeRect(w*0.2, h*0.2, w*0.6, h*0.5);
+                    // 雨滴
+                    ctx.strokeStyle = 'rgba(174,194,224,0.5)';
+                    ctx.lineWidth = 1;
+                    for(let i = 0; i < 30; i++) {
+                        const x = Math.random() * w;
+                        const y = Math.random() * h;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x - 5, y + 15);
+                        ctx.stroke();
+                    }
+                    break;
+                    
+                case 'bamboo':
+                    // 竹林
+                    for(let i = 0; i < 15; i++) {
+                        ctx.strokeStyle = '#2d5a2d';
+                        ctx.lineWidth = 3;
+                        const x = Math.random() * w;
+                        ctx.beginPath();
+                        ctx.moveTo(x, h);
+                        ctx.lineTo(x + 30, h * 0.3);
+                        ctx.stroke();
+                    }
+                    // 光斑
+                    ctx.fillStyle = 'rgba(255,255,200,0.1)';
+                    for(let i = 0; i < 20; i++) {
+                        ctx.beginPath();
+                        ctx.arc(Math.random() * w, Math.random() * h, 20 + Math.random() * 30, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+                    
+                case 'tea':
+                    // 茶桌
+                    ctx.fillStyle = '#5C4033';
+                    ctx.fillRect(w*0.2, h*0.6, w*0.6, 8);
+                    // 茶壶
+                    ctx.fillStyle = '#8B4513';
+                    ctx.beginPath();
+                    ctx.arc(w*0.5, h*0.55, 30, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 热气
+                    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = 1;
+                    for(let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(w*0.5 + i*10 - 10, h*0.45);
+                        ctx.quadraticCurveTo(w*0.5 + i*10, h*0.35, w*0.5 + i*10 - 5, h*0.25);
+                        ctx.stroke();
+                    }
+                    break;
+            }
+            
+            ctx.globalAlpha = 1;
+        }
+
+        function darkenColor(hex, percent) {
+            const num = parseInt(hex.replace('#', ''), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.max(0, (num >> 16) - amt);
+            const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+            const B = Math.max(0, (num & 0x0000FF) - amt);
+            return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+        }
+
+        // ============ 弹幕处理 ============
+        function sendDanmu() {
+            const input = document.getElementById('danmuInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                addLog('请输入弹幕内容');
+                return;
+            }
+            
+            // 检查冷却
+            if (Date.now() - CONFIG.lastTrigger < CONFIG.cooldown) {
+                addLog('冷却中，请稍后再试');
+                return;
+            }
+            
+            // 解析关键词
+            let triggeredScene = null;
+            for (const [keyword, scene] of Object.entries(DANMU_TRIGGERS)) {
+                if (text.includes(keyword)) {
+                    triggeredScene = scene;
+                    break;
+                }
+            }
+            
+            if (triggeredScene) {
+                switchScene(triggeredScene);
+                addDanmu(text, triggeredScene);
+                CONFIG.totalCost += 0.02;
+                updateStats();
+            } else {
+                addLog('未匹配到关键词，随机场景');
+                const randomScene = Object.keys(CONFIG.scenes)[Math.floor(Math.random() * Object.keys(CONFIG.scenes).length)];
+                switchScene(randomScene);
+            }
+            
+            input.value = '';
+            CONFIG.lastTrigger = Date.now();
+        }
+
+        function insertKeyword(keyword) {
+            const input = document.getElementById('danmuInput');
+            input.value += keyword;
+            input.focus();
+        }
+
+        function addDanmu(text, scene) {
+            const list = document.getElementById('danmuList');
+            if (list.querySelector('div[style]')) {
+                list.innerHTML = '';
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'danmu-item';
+            const time = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+            item.innerHTML = `
+                <div class="danmu-time">${time}</div>
+                <div class="danmu-content">${text}</div>
+                <div class="danmu-action">→ ${CONFIG.scenes[scene].title}</div>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            // 限制列表长度
+            while (list.children.length > 20) {
+                list.removeChild(list.lastChild);
+            }
+            
+            // 更新统计
+            const count = parseInt(document.getElementById('todayDanmu').textContent) + 1;
+            document.getElementById('todayDanmu').textContent = count;
+        }
+
+        // ============ 场景切换 ============
+        function switchScene(sceneKey) {
+            if (!CONFIG.scenes[sceneKey]) return;
+            
+            CONFIG.currentScene = sceneKey;
+            drawScene(sceneKey);
+            
+            // 更新按钮状态
+            document.querySelectorAll('.scene-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event?.target?.classList?.add('active');
+            
+            addLog('切换场景: ' + CONFIG.scenes[sceneKey].title);
+        }
+
+        // ============ 自动播放 ============
+        function autoPlay() {
+            addLog('自动播放模式启动');
+            setInterval(() => {
+                const scenes = Object.keys(CONFIG.scenes);
+                const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+                switchScene(randomScene);
+            }, 10000);
+        }
+
+        function pausePlay() {
+            addLog('自动播放已暂停');
+        }
+
+        function refreshScene() {
+            drawScene(CONFIG.currentScene);
+            addLog('场景已刷新');
+        }
+
+        function screenshot() {
+            const canvas = document.getElementById('videoCanvas');
+            const link = document.createElement('a');
+            link.download = `manlu_${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            addLog('截图已保存');
+        }
+
+        // ============ 工具函数 ============
+        function addLog(msg) {
+            const logList = document.getElementById('logList');
+            const time = new Date().toLocaleTimeString('zh-CN');
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.innerHTML = `<span class="log-time">[${time}]</span>${msg}`;
+            logList.insertBefore(item, logList.firstChild);
+            
+            while (logList.children.length > 30) {
+                logList.removeChild(logList.lastChild);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('todayCost').textContent = '¥' + CONFIG.totalCost.toFixed(2);
+        }
+
+        function startOnlineTimer() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - CONFIG.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('onlineTime').textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        // ============ 键盘事件 ============
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement.id === 'danmuInput') {
+                sendDanmu();
+            }
+        });
+
+        // ============ 启动 ============
+        window.onload = init;
+    </script>
+</body>
+</html>
