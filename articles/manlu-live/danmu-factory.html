@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫庐AI直播 - 弹幕梗工厂版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* 顶部导航 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-bottom: 2px solid rgba(122,154,122,0.3);
+        }
+        .logo { 
+            font-size: 28px; 
+            letter-spacing: 6px; 
+            color: #7a9a7a;
+            text-shadow: 0 0 20px rgba(122,154,122,0.5);
+        }
+        .logo span { color: #fff; font-weight: 300; }
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(255,59,48,0.15);
+            border: 1px solid rgba(255,59,48,0.5);
+            border-radius: 25px;
+            font-size: 14px;
+        }
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff3b30;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 10px #ff3b30;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        
+        /* 主布局 */
+        .container { max-width: 1600px; margin: 0 auto; padding: 20px; }
+        .main { display: grid; grid-template-columns: 1fr 400px; gap: 25px; }
+        
+        /* 视频区域 */
+        .video-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .video-container {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+        }
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px 30px 25px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+        }
+        .scene-title {
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+        }
+        .scene-desc {
+            font-size: 16px;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 3px;
+        }
+        
+        /* 模式标签 */
+        .mode-tag {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 8px 16px;
+            background: rgba(122,154,122,0.9);
+            border-radius: 20px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+        
+        /* 弹幕流覆盖层 */
+        .danmu-overlay {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            overflow: hidden;
+            height: 60px;
+        }
+        .danmu-item {
+            position: absolute;
+            white-space: nowrap;
+            font-size: 18px;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.6);
+            animation: danmu-scroll 8s linear;
+            padding: 5px 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+        }
+        @keyframes danmu-scroll {
+            from { left: 100%; }
+            to { left: -200%; }
+        }
+        
+        /* 控制栏 */
+        .controls {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #7a9a7a 0%, #5a7a5a 100%); 
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(122,154,122,0.3);
+        }
+        .btn-primary:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(122,154,122,0.4);
+        }
+        .btn-secondary { 
+            background: rgba(255,255,255,0.1); 
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        
+        /* 统计面板 */
+        .stats {
+            display: flex;
+            gap: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat-item { 
+            text-align: center;
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        .stat-value { 
+            font-size: 32px; 
+            font-weight: 300; 
+            color: #7a9a7a;
+            text-shadow: 0 0 20px rgba(122,154,122,0.3);
+        }
+        .stat-label { 
+            font-size: 12px; 
+            color: rgba(255,255,255,0.5); 
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+        
+        /* 侧边栏 */
+        .sidebar { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
+        .panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .panel-title {
+            font-size: 16px;
+            color: #7a9a7a;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 模式选择器 */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .mode-btn {
+            padding: 15px 10px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .mode-btn:hover { 
+            background: rgba(122,154,122,0.2); 
+            border-color: rgba(122,154,122,0.5);
+        }
+        .mode-btn.active { 
+            background: #7a9a7a; 
+            border-color: #7a9a7a;
+            box-shadow: 0 0 20px rgba(122,154,122,0.4);
+        }
+        .mode-btn .icon { font-size: 24px; display: block; margin-bottom: 6px; }
+        
+        /* 弹幕输入 */
+        .danmu-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            resize: none;
+            min-height: 100px;
+            transition: all 0.3s;
+        }
+        .danmu-input:focus { 
+            outline: none; 
+            border-color: #7a9a7a;
+            background: rgba(122,154,122,0.1);
+        }
+        .danmu-input::placeholder { color: rgba(255,255,255,0.3); }
+        
+        /* 快捷弹幕 */
+        .quick-danmu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .quick-tag {
+            padding: 8px 16px;
+            background: rgba(122,154,122,0.2);
+            border: 1px solid rgba(122,154,122,0.4);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quick-tag:hover { 
+            background: rgba(122,154,122,0.4);
+            transform: scale(1.05);
+        }
+        
+        /* 弹幕历史 */
+        .danmu-history {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .danmu-history::-webkit-scrollbar { width: 4px; }
+        .danmu-history::-webkit-scrollbar-thumb { 
+            background: rgba(122,154,122,0.3); 
+            border-radius: 2px;
+        }
+        .danmu-item-history {
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+            border-left: 3px solid #7a9a7a;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .danmu-time { 
+            font-size: 11px; 
+            color: rgba(255,255,255,0.4); 
+            margin-bottom: 4px;
+        }
+        .danmu-content { 
+            color: rgba(255,255,255,0.9); 
+            line-height: 1.5;
+        }
+        .danmu-result {
+            font-size: 11px;
+            color: #7a9a7a;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(122,154,122,0.2);
+        }
+        
+        /* 日志 */
+        .log-list {
+            max-height: 150px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .log-item { 
+            padding: 6px 0; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 10px;
+        }
+        .log-time { 
+            color: rgba(255,255,255,0.3); 
+            min-width: 60px;
+        }
+        
+        /* 加载动画 */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            z-index: 10;
+        }
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(122,154,122,0.3);
+            border-top-color: #7a9a7a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { 
+            color: rgba(255,255,255,0.7); 
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .main { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">漫庐<span>AI直播</span></div>
+            <div class="live-badge">
+                <div class="live-dot"></div>
+                <span>直播中</span>
+                <span style="margin-left:10px;color:rgba(255,255,255,0.5)">|</span>
+                <span id="viewerCount" style="margin-left:10px;">观众: 0</span>
+            </div>
+        </header>
+        
+        <div class="main">
+            <!-- 视频区域 -->
+            <div class="video-section">
+                <div class="video-container">
+                    <video id="videoPlayer" autoplay loop muted playsinline></video>
+                    <div class="mode-tag" id="modeTag">🎬 弹幕梗工厂</div>
+                    <div class="danmu-overlay" id="danmuOverlay"></div>
+                    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text" id="loadingText">AI正在生成中...</div>
+                    </div>
+                    <div class="video-overlay">
+                        <div class="scene-title" id="sceneTitle">漫庐山居</div>
+                        <div class="scene-desc" id="sceneDesc">云卷云舒，竹影清风</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="autoPlay()">▶ 自动播放</button>
+                    <button class="btn btn-secondary" onclick="pausePlay()">⏸ 暂停</button>
+                    <button class="btn btn-secondary" onclick="refreshScene()">🔄 刷新</button>
+                    <button class="btn btn-secondary" onclick="screenshot()">📷 截图</button>
+                    <button class="btn btn-secondary" onclick="toggleFullscreen()">⛶ 全屏</button>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayDanmu">0</div>
+                        <div class="stat-label">今日弹幕</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="todayCost">¥0</div>
+                        <div class="stat-label">生成费用</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentScene">山林</div>
+                        <div class="stat-label">当前场景</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="onlineTime">00:00</div>
+                        <div class="stat-label">直播时长</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 侧边栏 -->
+            <div class="sidebar">
+                <!-- 模式选择 -->
+                <div class="panel">
+                    <div class="panel-title">🎬 直播模式</div>
+                    <div class="mode-selector">
+                        <div class="mode-btn active" onclick="setMode('factory')">
+                            <span class="icon">🎭</span>
+                            弹幕梗工厂
+                        </div>
+                        <div class="mode-btn" onclick="setMode('tv')">
+                            <span class="icon">📺</span>
+                            无限电视台
+                        </div>
+                        <div class="mode-btn" onclick="setMode('world')">
+                            <span class="icon">🌍</span>
+                            世界模型
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 弹幕输入 -->
+                <div class="panel">
+                    <div class="panel-title">💬 发送弹幕</div>
+                    <textarea class="danmu-input" id="danmuInput" placeholder="输入弹幕触发AI生成...&#10;例如：禅房静坐、竹林听雨、书房写字"></textarea>
+                    <button class="btn btn-primary" onclick="sendDanmu()" style="width:100%;margin-top:12px;">
+                        🚀 发送弹幕
+                    </button>
+                    <div class="quick-danmu">
+                        <span class="quick-tag" onclick="sendQuick('禅房静坐')">禅房静坐</span>
+                        <span class="quick-tag" onclick="sendQuick('竹林听风')">竹林听风</span>
+                        <span class="quick-tag" onclick="sendQuick('雨夜听声')">雨夜听声</span>
+                        <span class="quick-tag" onclick="sendQuick('书房写字')">书房写字</span>
+                        <span class="quick-tag" onclick="sendQuick('茶道静心')">茶道静心</span>
+                        <span class="quick-tag" onclick="sendQuick('漫庐山居')">漫庐山居</span>
+                    </div>
+                </div>
+                
+                <!-- 弹幕历史 -->
+                <div class="panel">
+                    <div class="panel-title">📜 弹幕记录</div>
+                    <div class="danmu-history" id="danmuHistory">
+                        <div style="text-align:center;color:rgba(255,255,255,0.3);padding:30px;">
+                            暂无弹幕，发送第一条吧
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 系统日志 -->
+                <div class="panel">
+                    <div class="panel-title">📋 系统日志</div>
+                    <div class="log-list" id="logList">
+                        <div class="log-item"><span class="log-time">[系统]</span>直播系统已启动</div>
+                        <div class="log-item"><span class="log-time">[系统]</span>模式: 弹幕梗工厂</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============ 配置 ============
+        const CONFIG = {
+            // 场景库
+            scenes: {
+                nature: {
+                    title: '漫庐山居',
+                    desc: '云卷云舒，竹影清风',
+                    videos: [
+                        'https://videos.pexels.com/video-files/4111390/4111390-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/162814/pexels-photo-162814.jpeg'
+                    ],
+                    danmu: ['山', '林', '自然', '云', '风景']
+                },
+                meditation: {
+                    title: '禅房静坐',
+                    desc: '晨钟暮鼓，竹影婆娑',
+                    videos: [
+                        'https://videos.pexels.com/video-files/5752729/5752729-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/2613230/pexels-photo-2613230.jpeg'
+                    ],
+                    danmu: ['禅', '坐', '静', '心', '佛']
+                },
+                calligraphy: {
+                    title: '书房写字',
+                    desc: '笔墨纸砚，静心书写',
+                    videos: [
+                        'https://videos.pexels.com/video-files/4199324/4199324-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/1591669/pexels-photo-1591669.jpeg'
+                    ],
+                    danmu: ['书', '墨', '字', '写', '笔']
+                },
+                rain: {
+                    title: '雨夜听声',
+                    desc: '窗前听雨，墨香静心',
+                    videos: [
+                        'https://videos.pexels.com/video-files/3245323/3245323-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/1105666/pexels-photo-1105666.jpeg'
+                    ],
+                    danmu: ['雨', '夜', '听']
+                },
+                bamboo: {
+                    title: '竹林听风',
+                    desc: '竹影摇曳，清风徐来',
+                    videos: [
+                        'https://videos.pexels.com/video-files/4191882/4191882-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/162814/pexels-photo-162814.jpeg'
+                    ],
+                    danmu: ['竹', '林', '风']
+                },
+                tea: {
+                    title: '茶道静心',
+                    desc: '煮茶听雨，禅意人生',
+                    videos: [
+                        'https://videos.pexels.com/video-files/4869826/4869826-uhd_2560_1440_25fps.mp4',
+                        'https://videos.pexels.com/video-files/3025279/pexels-photo-3025279.jpeg'
+                    ],
+                    danmu: ['茶', '道']
+                }
+            },
+            
+            // 模式配置
+            modes: {
+                factory: {
+                    name: '弹幕梗工厂',
+                    desc: '弹幕直接变视频，AI秒级生成',
+                    icon: '🎭'
+                },
+                tv: {
+                    name: '无限电视台',
+                    desc: '连续剧情叙事，观众当导演',
+                    icon: '📺'
+                },
+                world: {
+                    name: '世界模型',
+                    desc: '弹幕改变世界状态，实时渲染',
+                    icon: '🌍'
+                }
+            },
+            
+            currentScene: 'nature',
+            currentMode: 'factory',
+            danmuCount: 0,
+            lastTrigger: 0,
+            cooldown: 3000, // 3秒冷却（H3速度）
+            startTime: Date.now()
+        };
+        
+        // ============ 初始化 ============
+        function init() {
+            loadScene(CONFIG.currentScene);
+            startOnlineTimer();
+            addLog('漫庐AI直播 v2.0 启动');
+            addLog('模式: 弹幕梗工厂');
+            addLog('核心: 弹幕直接变视频 (<3秒)');
+            
+            // 模拟观众增长
+            setInterval(() => {
+                const count = Math.floor(Math.random() * 100) + 20;
+                document.getElementById('viewerCount').textContent = `观众: ${count}`;
+            }, 15000);
+        }
+        
+        // ============ 场景管理 ============
+        function loadScene(sceneKey, isDanmuTriggered = false) {
+            const scene = CONFIG.scenes[sceneKey];
+            if (!scene) return;
+            
+            CONFIG.currentScene = sceneKey;
+            
+            // 显示加载
+            if (isDanmuTriggered) {
+                showLoading(true);
+                setTimeout(() => {
+                    showLoading(false);
+                    playVideo(scene.videos[0]);
+                    addLog(`✅ 生成完成: ${scene.title}`);
+                }, 2000); // 模拟2秒生成时间
+            } else {
+                playVideo(scene.videos[0]);
+            }
+            
+            // 更新UI
+            document.getElementById('sceneTitle').textContent = scene.title;
+            document.getElementById('sceneDesc').textContent = scene.desc;
+            document.getElementById('currentScene').textContent = scene.title.replace(/[^人]/g, '').substring(0, 4);
+        }
+        
+        function playVideo(url) {
+            const video = document.getElementById('videoPlayer');
+            video.src = url;
+            video.play().catch(e => console.log('自动播放被阻止'));
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+        
+        // ============ 弹幕处理 ============
+        function sendDanmu() {
+            const input = document.getElementById('danmuInput');
+            const text = input.value.trim();
+            
+            if (!text) {
+                addLog('请输入弹幕内容');
+                return;
+            }
+            
+            if (Date.now() - CONFIG.lastTrigger < CONFIG.cooldown) {
+                const remaining = Math.ceil((CONFIG.cooldown - (Date.now() - CONFIG.lastTrigger)) / 1000);
+                addLog(`冷却中，请${remaining}秒后再试`);
+                return;
+            }
+            
+            // 匹配场景
+            let triggeredScene = null;
+            for (const [key, scene] of Object.entries(CONFIG.scenes)) {
+                for (const danmu of scene.danmu) {
+                    if (text.includes(danmu)) {
+                        triggeredScene = key;
+                        break;
+                    }
+                }
+                if (triggeredScene) break;
+            }
+            
+            // 显示弹幕飞屏
+            showDanmuFly(text);
+            
+            if (triggeredScene) {
+                // 弹幕触发场景
+                loadScene(triggeredScene, true);
+                addDanmuRecord(text, triggeredScene, true);
+                CONFIG.lastTrigger = Date.now();
+                CONFIG.danmuCount++;
+                document.getElementById('todayDanmu').textContent = CONFIG.danmuCount;
+            } else {
+                // 随机场景（弹幕梗工厂特色）
+                const scenes = Object.keys(CONFIG.scenes);
+                const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+                loadScene(randomScene, true);
+                addDanmuRecord(text, randomScene, true);
+                CONFIG.lastTrigger = Date.now();
+                CONFIG.danmuCount++;
+                document.getElementById('todayDanmu').textContent = CONFIG.danmuCount;
+            }
+            
+            input.value = '';
+        }
+        
+        function sendQuick(text) {
+            document.getElementById('danmuInput').value = text;
+            sendDanmu();
+        }
+        
+        // ============ 弹幕飞屏 ============
+        function showDanmuFly(text) {
+            const overlay = document.getElementById('danmuOverlay');
+            const item = document.createElement('div');
+            item.className = 'danmu-item';
+            item.textContent = text;
+            item.style.top = Math.random() * 40 + 10 + 'px';
+            overlay.appendChild(item);
+            
+            setTimeout(() => item.remove(), 8000);
+        }
+        
+        // ============ 弹幕记录 ============
+        function addDanmuRecord(text, sceneKey, triggered) {
+            const list = document.getElementById('danmuHistory');
+            
+            // 清空提示
+            if (list.querySelector('div[style]')) {
+                list.innerHTML = '';
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'danmu-item-history';
+            const time = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+            const scene = CONFIG.scenes[sceneKey];
+            item.innerHTML = `
+                <div class="danmu-time">${time}</div>
+                <div class="danmu-content">${escapeHtml(text)}</div>
+                <div class="danmu-result">${triggered ? '✅' : '🎲'} → ${scene.title}</div>
+            `;
+            
+            list.insertBefore(item, list.firstChild);
+            
+            // 限制数量
+            while (list.children.length > 20) {
+                list.removeChild(list.lastChild);
+            }
+        }
+        
+        // ============ 模式切换 ============
+        function setMode(mode) {
+            CONFIG.currentMode = mode;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.mode-btn').classList.add('active');
+            
+            // 更新标签
+            const modeConfig = CONFIG.modes[mode];
+            document.getElementById('modeTag').textContent = `${modeConfig.icon} ${modeConfig.name}`;
+            
+            addLog(`切换到模式: ${modeConfig.name}`);
+            addLog(modeConfig.desc);
+            
+            // 模式特定逻辑
+            if (mode === 'tv') {
+                addLog('💡 提示: 弹幕将影响剧情走向');
+            } else if (mode === 'world') {
+                addLog('💡 提示: 弹幕将改变世界状态');
+            }
+        }
+        
+        // ============ 控制功能 ============
+        function autoPlay() {
+            addLog('自动播放已启动');
+            CONFIG.autoPlay = setInterval(() => {
+                const scenes = Object.keys(CONFIG.scenes);
+                const randomScene = scenes[Math.floor(Math.random() * scenes.length)];
+                loadScene(randomScene, false);
+            }, 15000);
+        }
+        
+        function pausePlay() {
+            if (CONFIG.autoPlay) {
+                clearInterval(CONFIG.autoPlay);
+                CONFIG.autoPlay = null;
+                addLog('自动播放已暂停');
+            }
+            const video = document.getElementById('videoPlayer');
+            video.pause();
+        }
+        
+        function refreshScene() {
+            loadScene(CONFIG.currentScene, false);
+            addLog('场景已刷新');
+        }
+        
+        function screenshot() {
+            const video = document.getElementById('videoPlayer');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 1920;
+            canvas.height = video.videoHeight || 1080;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            const link = document.createElement('a');
+            link.download = `manlu_${Date.now()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            addLog('截图已保存');
+        }
+        
+        function toggleFullscreen() {
+            const container = document.querySelector('.video-container');
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    addLog(`全屏失败: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // ============ 工具函数 ============
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function addLog(msg) {
+            const logList = document.getElementById('logList');
+            const time = new Date().toLocaleTimeString('zh-CN');
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.innerHTML = `<span class="log-time">[${time}]</span>${msg}`;
+            logList.insertBefore(item, logList.firstChild);
+            
+            while (logList.children.length > 30) {
+                logList.removeChild(logList.lastChild);
+            }
+        }
+        
+        function startOnlineTimer() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - CONFIG.startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                const seconds = (elapsed % 60).toString().padStart(2, '0');
+                document.getElementById('onlineTime').textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+        
+        // 键盘事件
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement.id === 'danmuInput') {
+                sendDanmu();
+            }
+        });
+        
+        // 启动
+        window.onload = init;
+    </script>
+</body>
+</html>
