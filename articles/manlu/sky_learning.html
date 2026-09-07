@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云境学域 - 秦澜馨的学习冒险</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .stars {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+        .star {
+            position: absolute; width: 2px; height: 2px; background: #fff;
+            border-radius: 50%; animation: twinkle 2s infinite;
+        }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; height: 60px;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo img { width: 40px; height: 40px; border-radius: 50%; }
+        .logo-text { font-size: 18px; font-weight: bold; background: linear-gradient(90deg, #ffd700, #ffA500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .resource { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 14px; }
+        .main { margin-top: 60px; padding: 20px; position: relative; z-index: 10; }
+        .profile-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.1));
+            border: 1px solid rgba(255,215,0,0.3); border-radius: 20px; padding: 20px;
+            margin-bottom: 20px; display: flex; align-items: center; gap: 20px;
+        }
+        .avatar {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; border: 3px solid #ffd700;
+        }
+        .profile-info { flex: 1; }
+        .profile-name { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+        .profile-title { color: #ffd700; font-size: 14px; margin-bottom: 10px; }
+        .level-bar { background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; overflow: hidden; }
+        .level-fill { height: 100%; background: linear-gradient(90deg, #ffd700, #ffA500); border-radius: 4px; transition: width 0.5s ease; }
+        .level-text { font-size: 12px; color: #aaa; margin-top: 5px; }
+        .map-container, .tasks-container {
+            background: rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px;
+        }
+        .map-title, .tasks-title { font-size: 20px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .map-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .map-node {
+            background: rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; cursor: pointer;
+            transition: all 0.3s ease; border: 2px solid transparent; position: relative; overflow: hidden;
+        }
+        .map-node:hover { transform: translateY(-5px); border-color: #ffd700; box-shadow: 0 10px 30px rgba(255,215,0,0.2); }
+        .map-node.active { background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,165,0,0.2)); border-color: #ffd700; }
+        .map-node.locked { opacity: 0.5; cursor: not-allowed; }
+        .map-node-icon { font-size: 32px; margin-bottom: 10px; }
+        .map-node-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+        .map-node-desc { font-size: 12px; color: #aaa; }
+        .map-node-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: #ffd700; transition: width 0.3s ease; }
+        .task-item {
+            background: rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s ease;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.15); }
+        .task-item.completed { opacity: 0.6; }
+        .task-item.completed .task-check { background: #4CAF50; }
+        .task-check {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ffd700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .task-check::after { content: '✓'; color: #fff; font-size: 14px; }
+        .task-info { flex: 1; }
+        .task-name { font-size: 16px; margin-bottom: 3px; }
+        .task-desc { font-size: 12px; color: #aaa; }
+        .task-reward { display: flex; align-items: center; gap: 5px; color: #ffd700; font-size: 14px; }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 10px 20px; }
+        .nav-item:hover, .nav-item.active { color: #ffd700; }
+        .nav-icon { font-size: 24px; }
+        .nav-text { font-size: 12px; }
+        .achievement-popup {
+            position: fixed; top: 80px; right: 20px; background: linear-gradient(135deg, rgba(255,215,0,0.9), rgba(255,165,0,0.9));
+            color: #000; padding: 15px 20px; border-radius: 15px; display: none; align-items: center; gap: 15px; z-index: 150; animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .achievement-popup.show { display: flex; }
+        .achievement-icon { font-size: 32px; }
+        .achievement-text { flex: 1; }
+        .achievement-title { font-weight: bold; font-size: 14px; }
+        .achievement-desc { font-size: 12px; opacity: 0.8; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); } 50% { box-shadow: 0 0 40px rgba(255,215,0,0.6); } }
+        .glow { animation: glow 2s ease-in-out infinite; }
+        .quiz-btn { background: linear-gradient(90deg, #ffd700, #ffA500); color: #000; border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .quiz-btn:hover { transform: scale(1.05); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+        .modal.show { display: flex; }
+        .modal-content { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 20px; padding: 30px; max-width: 400px; width: 100%; border: 1px solid rgba(255,215,0,0.3); text-align: center; }
+        .modal-icon { font-size: 64px; margin-bottom: 20px; }
+        .modal-title { font-size: 24px; margin-bottom: 10px; color: #ffd700; }
+        .modal-desc { font-size: 14px; color: #aaa; margin-bottom: 20px; }
+        .modal-btn { background: linear-gradient(90deg, #ffd700, #ffA500); color: #000; border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="header">
+        <div class="logo">
+            <img src="logo.jpg" alt="漫庐">
+            <span class="logo-text">云境学域</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <div class="resource"><span>🪶</span><span id="light-wings">12</span></div>
+            <div class="resource"><span>🕯️</span><span id="candles">45</span></div>
+            <div class="resource"><span>⭐</span><span id="xp">150</span></div>
+        </div>
+    </div>
+    
+    <div class="main">
+        <div class="profile-card">
+            <div class="avatar floating">👩‍🎓</div>
+            <div class="profile-info">
+                <div class="profile-name">秦澜馨</div>
+                <div class="profile-title">🌟 探索者 Lv.<span id="level">1</span></div>
+                <div class="level-bar"><div class="level-fill" id="level-fill" style="width:15%"></div></div>
+                <div class="level-text">经验值: <span id="xp-text">150</span>/1000</div>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <div class="map-title"><span>🗺️</span><span>云境学域</span></div>
+            <div class="map-grid" id="map-grid"></div>
+        </div>
+        
+        <div class="tasks-container">
+            <div class="tasks-title"><span>📋 每日任务</span><span style="font-size:14px;color:#aaa" id="task-progress">今日进度: 2/5</span></div>
+            <div id="task-list"></div>
+        </div>
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('map')"><span class="nav-icon">🗺️</span><span class="nav-text">学域地图</span></div>
+        <div class="nav-item" onclick="switchTab('quiz')"><span class="nav-icon">🎯</span><span class="nav-text">知识测验</span></div>
+        <div class="nav-item" onclick="switchTab('achievements')"><span class="nav-icon">🏆</span><span class="nav-text">成就徽章</span></div>
+        <div class="nav-item" onclick="switchTab('profile')"><span class="nav-icon">👤</span><span class="nav-text">我的角色</span></div>
+    </div>
+    
+    <div class="achievement-popup" id="achievement-popup">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-text">
+            <div class="achievement-title" id="ach-title">解锁新成就！</div>
+            <div class="achievement-desc" id="ach-desc">初火 - 完成第一次学习</div>
+        </div>
+    </div>
+    
+    <div class="modal" id="quiz-modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="quiz-icon">🎯</div>
+            <div class="modal-title" id="quiz-title">知识测验</div>
+            <div class="modal-desc" id="quiz-desc">回答问题获取光之翼</div>
+            <button class="modal-btn" onclick="startQuiz()">开始测验</button>
+        </div>
+    </div>
+    
+    <script>
+        // 数据
+        const chapters = [
+            { id: 'psych', icon: '🌅', title: '心理学导论', desc: '探索心理学的基本概念', progress: 80, locked: false },
+            { id: 'research', icon: '🌄', title: '研究方法', desc: '学习研究设计方法', progress: 40, locked: false },
+            { id: 'bio', icon: '🌧️', title: '生物心理学', desc: '大脑与行为的关系', progress: 0, locked: true },
+            { id: 'cognitive', icon: '🌆', title: '认知心理学', desc: '记忆与思维过程', progress: 0, locked: true },
+            { id: 'social', icon: '🏔️', title: '社会心理学', desc: '人际互动与社会影响', progress: 0, locked: true },
+            { id: 'clinical', icon: '🌙', title: '临床心理学', desc: '心理障碍与治疗', progress: 0, locked: true }
+        ];
+        
+        const tasks = [
+            { id: 1, name: '晨间复习', desc: 'Anki复习昨日卡片', reward: 10, completed: true },
+            { id: 2, name: '新课预习', desc: '阅读下一章内容', reward: 20, completed: false },
+            { id: 3, name: '课后测验', desc: '完成章节练习题', reward: 30, completed: false },
+            { id: 4, name: '错题整理', desc: '整理当日错题', reward: 15, completed: false },
+            { id: 5, name: '分享讲解', desc: '给同学讲解一个概念', reward: 25, completed: false }
+        ];
+        
+        const quizzes = {
+            'psych': [
+                { q: '心理学的定义是什么？', options: ['研究行为的科学', '研究大脑的学科', '研究心理活动和行为的科学', '研究社会的学科'], correct: 2 },
+                { q: '下列哪位被称为"心理学之父"？', options: ['弗洛伊德', '威廉·詹姆斯', '巴甫洛夫', '冯特'], correct: 3 },
+                { q: '结构主义学派的主要代表是？', options: ['铁钦纳', '詹姆斯', '华生', '罗杰斯'], correct: 0 }
+            ],
+            'research': [
+                { q: '实验研究的核心特征是？', options: ['观察自然行为', '控制变量并操纵自变量', '仅收集问卷数据', '分析历史文献'], correct: 1 },
+                { q: '相关系数的取值范围是？', options: ['0到1', '-1到1', '0到100', '-100到100'], correct: 1 }
+            ]
+        };
+        
+        // 初始化
+        function init() {
+            createStars();
+            renderMap();
+            renderTasks();
+            loadStats();
+        }
+        
+        function createStars() {
+            const container = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(star);
+            }
+        }
+        
+        function renderMap() {
+            const grid = document.getElementById('map-grid');
+            grid.innerHTML = chapters.map(c => `
+                <div class="map-node ${c.locked ? 'locked' : c.progress === 100 ? 'active' : ''} glow" onclick="${c.locked ? 'showLockMsg()' : `openChapter('${c.id}')`}">
+                    <div class="map-node-icon">${c.icon}</div>
+                    <div class="map-node-title">${c.title}</div>
+                    <div class="map-node-desc">${c.desc}</div>
+                    ${c.locked ? '<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:24px">🔒</div>' : `<div class="map-node-progress" style="width:${c.progress}%"></div>`}
+                </div>
+            `).join('');
+        }
+        
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            const completed = tasks.filter(t => t.completed).length;
+            document.getElementById('task-progress').textContent = `今日进度: ${completed}/5`;
+            
+            list.innerHTML = tasks.map(t => `
+                <div class="task-item ${t.completed ? 'completed' : ''}" onclick="${t.completed ? '' : `completeTask(${t.id})`}">
+                    <div class="task-check"></div>
+                    <div class="task-info">
+                        <div class="task-name">${t.name}</div>
+                        <div class="task-desc">${t.desc}</div>
+                    </div>
+                    <div class="task-reward">+${t.reward} 🪶</div>
+                </div>
+            `).join('');
+        }
+        
+        function loadStats() {
+            const saved = localStorage.getItem('sky_learning_stats');
+            if (saved) {
+                const stats = JSON.parse(saved);
+                document.getElementById('light-wings').textContent = stats.wings || 12;
+                document.getElementById('candles').textContent = stats.candles || 45;
+                document.getElementById('xp').textContent = stats.xp || 150;
+                document.getElementById('xp-text').textContent = stats.xp || 150;
+                document.getElementById('level').textContent = stats.level || 1;
+                document.getElementById('level-fill').style.width = ((stats.xp || 150) % 1000) + '%';
+            }
+        }
+        
+        function saveStats() {
+            const wings = parseInt(document.getElementById('light-wings').textContent);
+            const candles = parseInt(document.getElementById('candles').textContent);
+            const xp = parseInt(document.getElementById('xp').textContent);
+            const level = Math.floor(xp / 1000) + 1;
+            localStorage.setItem('sky_learning_stats', JSON.stringify({ wings, candles, xp, level }));
+        }
+        
+        function completeTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task || task.completed) return;
+            
+            task.completed = true;
+            const wings = parseInt(document.getElementById('light-wings').textContent) + task.reward;
+            document.getElementById('light-wings').textContent = wings;
+            saveStats();
+            renderTasks();
+            
+            showNotification(`+${task.reward} 光之翼`);
+            
+            // 检查成就
+            const completedCount = tasks.filter(t => t.completed).length;
+            if (completedCount === 1) showAchievement('🕯️', '初火', '完成第一次学习');
+            if (completedCount === 5) showAchievement('🌅', '黎明', '完成全部每日任务');
+        }
+        
+        function openChapter(id) {
+            const chapter = chapters.find(c => c.id === id);
+            if (!chapter || chapter.locked) return;
+            
+            document.getElementById('quiz-icon').textContent = chapter.icon;
+            document.getElementById('quiz-title').textContent = chapter.title;
+            document.getElementById('quiz-desc').textContent = chapter.desc;
+            document.getElementById('quiz-modal').classList.add('show');
+            document.getElementById('quiz-modal').dataset.chapterId = id;
+        }
+        
+        function startQuiz() {
+            document.getElementById('quiz-modal').classList.remove('show');
+            const chapterId = document.getElementById('quiz-modal').dataset.chapterId;
+            runQuiz(chapterId);
+        }
+        
+        function runQuiz(chapterId) {
+            const questions = quizzes[chapterId] || quizzes['psych'];
+            let current = 0;
+            let score = 0;
+            
+            function showQ() {
+                if (current >= questions.length) {
+                    finishQuiz(score, questions.length);
+                    return;
+                }
+                const q = questions[current];
+                const modal = document.getElementById('quiz-modal');
+                modal.querySelector('.modal-icon').textContent = '❓';
+                modal.querySelector('.modal-title').textContent = q.q;
+                modal.querySelector('.modal-desc').innerHTML = `
+                    <div style="text-align:left;margin-top:15px">
+                        ${q.options.map((opt, i) => `<div onclick="answer(${i})" style="padding:12px;background:rgba(255,255,255,0.1);border-radius:10px;margin-bottom:8px;cursor:pointer">${opt}</div>`).join('')}
+                    </div>
+                    <div style="margin-top:15px;color:#aaa;font-size:12px">题目 ${current+1}/${questions.length}</div>
+                `;
+                modal.dataset.score = score;
+                modal.dataset.current = current;
+            }
+            
+            window.answer = function(idx) {
+                const correct = questions[current].correct;
+                if (idx === correct) {
+                    score++;
+                    showNotification('✓ 正确！+10 XP');
+                    const xp = parseInt(document.getElementById('xp').textContent) + 10;
+                    document.getElementById('xp').textContent = xp;
+                    document.getElementById('xp-text').textContent = xp;
+                    const wings = parseInt(document.getElementById('light-wings').textContent) + 5;
+                    document.getElementById('light-wings').textContent = wings;
+                    saveStats();
+                } else {
+                    showNotification('✗ 再想想');
+                }
+                current++;
+                showQ();
+            };
+            
+            showQ();
+        }
+        
+        function finishQuiz(score, total) {
+            const modal = document.getElementById('quiz-modal');
+            modal.querySelector('.modal-icon').textContent = score >= total * 0.7 ? '🎉' : '💪';
+            modal.querySelector('.modal-title').textContent = `测验完成！${score}/${total}`;
+            modal.querySelector('.modal-desc').textContent = score >= total * 0.8 ? '太棒了！解锁新区域' : '继续加油！';
+            modal.querySelector('.modal-btn').textContent = '返回地图';
+            modal.onclick = function(e) { if(e.target === modal) modal.classList.remove('show'); };
+            modal.classList.add('show');
+        }
+        
+        function showLockMsg() {
+            showNotification('请先完成前置章节以解锁');
+        }
+        
+        function showNotification(text) {
+            const popup = document.getElementById('achievement-popup');
+            document.getElementById('ach-title').textContent = '';
+            document.getElementById('ach-desc').textContent = text;
+            popup.querySelector('.achievement-icon').textContent = '✨';
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 2000);
+        }
+        
+        function showAchievement(icon, title, desc) {
+            const popup = document.getElementById('achievement-popup');
+            popup.querySelector('.achievement-icon').textContent = icon;
+            document.getElementById('ach-title').textContent = title;
+            document.getElementById('ach-desc').textContent = desc;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 3000);
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            
+            if (tab === 'map') {
+                document.querySelector('.map-container').style.display = 'block';
+                document.querySelector('.tasks-container').style.display = 'block';
+            } else if (tab === 'quiz') {
+                document.querySelector('.map-container').style.display = 'none';
+                document.querySelector('.tasks-container').style.display = 'none';
+                openChapter('psych');
+            } else if (tab === 'achievements') {
+                showNotification('成就系统开发中...');
+            } else if (tab === 'profile') {
+                showNotification('角色信息：秦澜馨 - UC Davis心理学大一');
+            }
+        }
+        
+        init();
+    </script>
+</body>
+</html>
